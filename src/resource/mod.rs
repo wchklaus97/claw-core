@@ -7,6 +7,12 @@ pub struct RuntimeStats {
     total_commands: AtomicU64,
 }
 
+impl Default for RuntimeStats {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl RuntimeStats {
     pub fn new() -> Self {
         Self {
