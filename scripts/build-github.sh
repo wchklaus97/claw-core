@@ -44,11 +44,11 @@ if echo "$DX_VER" | grep -qE '0\.7\.([3-9]|[1-9][0-9])'; then
 fi
 rustup target add wasm32-unknown-unknown 2>/dev/null || true
 
-# Optional: configure base_path for GitHub Pages (project site e.g. user.github.io/claw)
+# Optional: configure base_path for GitHub Pages (project site e.g. user.github.io/claw-core)
 DIOXUS_TOML="apps/web/Dioxus.toml"
 if [ "$GITHUB_PAGES" = true ] && [ -f "$DIOXUS_TOML" ]; then
-  sed -i.bak 's|base_path = ".*"|base_path = "/claw"|' "$DIOXUS_TOML"
-  echo "✅ Set base_path to /claw in $DIOXUS_TOML"
+  sed -i.bak 's|base_path = ".*"|base_path = "/claw-core"|' "$DIOXUS_TOML"
+  echo "✅ Set base_path to /claw-core in $DIOXUS_TOML"
 fi
 
 # Build Dioxus web app (release)
