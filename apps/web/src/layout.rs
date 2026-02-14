@@ -5,6 +5,29 @@ use crate::{
 };
 use dioxus::prelude::*;
 use dioxus_i18n::t;
+use web_sys::ScrollBehavior;
+
+/// Anchor link that scrolls in-page (avoids base-href navigation issues on GitHub Pages).
+#[component]
+fn ScrollToLink(id: &'static str, children: Element) -> Element {
+    rsx! {
+        a {
+            href: "#{id}",
+            onclick: move |ev| {
+                ev.prevent_default();
+                if let Some(doc) = web_sys::window().and_then(|w| w.document()) {
+                    if let Some(el) = doc.get_element_by_id(id) {
+                        let opts = web_sys::ScrollIntoViewOptions::new();
+                        opts.set_block(web_sys::ScrollLogicalPosition::Start);
+                        opts.set_behavior(ScrollBehavior::Smooth);
+                        el.scroll_into_view_with_scroll_into_view_options(&opts);
+                    }
+                }
+            },
+            {children}
+        }
+    }
+}
 
 /// Which page we're on — locale switcher stays on the same page when changing language.
 #[derive(Clone, Copy, PartialEq)]
@@ -44,14 +67,14 @@ pub fn LandingHeader(#[props(into)] locale: String, page_kind: PageKind) -> Elem
                     }
                 }
                 nav { class: "nav-links", role: "navigation", aria_label: "Main",
-                    a { href: "#features", { t!("nav-features") } }
-                    a { href: "#who", { t!("nav-who") } }
-                    a { href: "#origin", { t!("nav-origin") } }
-                    a { href: "#how", { t!("nav-how") } }
-                    a { href: "#setup", { t!("nav-setup") } }
-                    a { href: "#quickstart", { t!("nav-quickstart") } }
-                    a { href: "#pricing", { t!("nav-pricing") } }
-                    a { href: "#faq", { t!("nav-faq") } }
+                    ScrollToLink { id: "features", { t!("nav-features") } }
+                    ScrollToLink { id: "who", { t!("nav-who") } }
+                    ScrollToLink { id: "origin", { t!("nav-origin") } }
+                    ScrollToLink { id: "how", { t!("nav-how") } }
+                    ScrollToLink { id: "setup", { t!("nav-setup") } }
+                    ScrollToLink { id: "quickstart", { t!("nav-quickstart") } }
+                    ScrollToLink { id: "pricing", { t!("nav-pricing") } }
+                    ScrollToLink { id: "faq", { t!("nav-faq") } }
                     a { href: "https://github.com/wchklaus97/claw-core", target: "_blank", rel: "noopener", "GitHub" }
                     if locale_open() {
                         div {
@@ -104,14 +127,14 @@ pub fn LandingFooter(#[props(into)] locale: String) -> Element {
                     nav { class: "footer-col", "aria-label": "Products",
                         h3 { class: "footer-col-title", { t!("footer-products") } }
                         ul { class: "footer-links",
-                            li { a { href: "#features", { t!("nav-features") } } }
-                            li { a { href: "#who", { t!("nav-who") } } }
-                            li { a { href: "#origin", { t!("nav-origin") } } }
-                            li { a { href: "#how", { t!("footer-how-works") } } }
-                            li { a { href: "#setup", { t!("nav-setup") } } }
-                            li { a { href: "#quickstart", { t!("nav-quickstart") } } }
-                            li { a { href: "#pricing", { t!("nav-pricing") } } }
-                            li { a { href: "#faq", { t!("nav-faq") } } }
+                            li { ScrollToLink { id: "features", { t!("nav-features") } } }
+                            li { ScrollToLink { id: "who", { t!("nav-who") } } }
+                            li { ScrollToLink { id: "origin", { t!("nav-origin") } } }
+                            li { ScrollToLink { id: "how", { t!("footer-how-works") } } }
+                            li { ScrollToLink { id: "setup", { t!("nav-setup") } } }
+                            li { ScrollToLink { id: "quickstart", { t!("nav-quickstart") } } }
+                            li { ScrollToLink { id: "pricing", { t!("nav-pricing") } } }
+                            li { ScrollToLink { id: "faq", { t!("nav-faq") } } }
                         }
                     }
                     nav { class: "footer-col", "aria-label": "Resources",
