@@ -1,0 +1,11 @@
+# Skills installed by the claw-core plugin.
+# One skill name per line. Sourced by install/remove/verify scripts.
+# Must match the directory names under plugin/skills/.
+claw-core-runtime
+claw-core-sessions
+claw-core-daemon
+cron-helper
+cursor-agent
+cursor-cron-bridge
+plans-mode
+status-dashboard

@@ -1,0 +1,52 @@
+{
+  "name": "@wchklaus97hk/claw-core",
+  "version": "0.1.0",
+  "description": "OpenClaw plugin: Terminal Runtime Layer (claw_core) — session-managed command execution for AI agents",
+  "main": "index.ts",
+  "openclaw": {
+    "extensions": [
+      "./index.ts"
+    ]
+  },
+  "files": [
+    "index.ts",
+    "openclaw.plugin.json",
+    "README.md",
+    "hooks/",
+    "scripts/",
+    "skills/"
+  ],
+  "scripts": {
+    "postinstall": "chmod +x scripts/claw_core_daemon.sh 2>/dev/null || true; bash scripts/install-skills-to-openclaw.sh 2>/dev/null || true"
+  },
+  "keywords": [
+    "openclaw",
+    "openclaw-plugin",
+    "claw-core",
+    "terminal",
+    "runtime",
+    "exec",
+    "agent",
+    "cursor",
+    "ai"
+  ],
+  "author": "wchklaus97hk",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wchklaus97/claw-core.git"
+  },
+  "homepage": "https://github.com/wchklaus97/claw-core#readme",
+  "bugs": {
+    "url": "https://github.com/wchklaus97/claw-core/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0"
+  }
+}

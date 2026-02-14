@@ -1,0 +1,2147 @@
+# Simplified Chinese (简体中文) translation for Claw Core.
+# Copyright (C) 2025 Claw Core
+# This file is distributed under the same license as the Claw Core book.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Claw Core book\n"
+"POT-Creation-Date: 2026-02-14 18:56+0800\n"
+"PO-Revision-Date: 2026-02-14 18:56+0800\n"
+"Last-Translator: \n"
+"Language-Team: Simplified Chinese\n"
+"Language: zh_CN\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/SUMMARY.md:1
+msgid "Summary"
+msgstr "目录"
+
+#: src/SUMMARY.md:3
+msgid "Introduction"
+msgstr "简介"
+
+#: src/SUMMARY.md:7 src/openclaw-integration.md:16
+msgid "Architecture"
+msgstr "架构"
+
+#: src/SUMMARY.md:8
+msgid "API Specification"
+msgstr "API 规范"
+
+#: src/SUMMARY.md:9
+msgid "Session Lifecycle"
+msgstr "会话生命周期"
+
+#: src/SUMMARY.md:10
+msgid "Security"
+msgstr "安全"
+
+#: src/SUMMARY.md:11
+msgid "Resource Control"
+msgstr "资源控制"
+
+#: src/SUMMARY.md:12 src/openclaw-integration.md:1
+msgid "OpenClaw Integration"
+msgstr "OpenClaw 集成"
+
+#: src/introduction.md:1
+msgid "Claw Core"
+msgstr "Claw Core"
+
+#: src/introduction.md:8
+msgid ""
+"The **core execution layer** that packages and runs agent CLI commands. It "
+"manages terminal sessions, executes commands with timeouts, and returns "
+"structured output through a clean JSON API."
+msgstr ""
+"用于封装并运行代理 CLI 命令的**核心执行层**。它管理终端会话，按超时执行命令，"
+"并通过清晰的 JSON API 返回结构化输出。"
+
+#: src/introduction.md:10
+msgid "What Is This?"
+msgstr "这是什么？"
+
+#: src/introduction.md:12
+msgid ""
+"**Claw Core** is the agent CLI packing core — the middle layer between AI "
+"agents and the OS. Agents run CLI commands (e.g. `cursor agent`, `npm run`, "
+"shell scripts); Claw Core wraps that execution with sessions, timeouts, and "
+"structured output."
+msgstr ""
+"**Claw Core** 是代理 CLI 的封装核心——位于 AI 代理与操作系统之间的中间层。代理"
+"会运行 CLI 命令（例如 `cursor agent`、`npm run`、shell 脚本）；Claw Core 用会话、"
+"超时和结构化输出来封装这些执行。"
+
+#: src/introduction.md:14
+msgid ""
+"Instead of agents calling `exec` directly on the host (fragile, "
+"uncontrolled, unscalable), they talk to **Claw Core** — a lightweight "
+"runtime that:"
+msgstr ""
+
+#: src/introduction.md:16
+msgid "**Manages sessions** — create, list, inspect, destroy terminal sessions"
+msgstr ""
+
+#: src/introduction.md:17
+msgid "**Executes commands** — buffered or streaming, with timeout enforcement"
+msgstr ""
+
+#: src/introduction.md:18
+msgid ""
+"**Handles secrets** — forwards env vars to processes without persisting them"
+msgstr ""
+
+#: src/introduction.md:19
+msgid "**Exposes a clean API** — JSON over Unix socket, HTTP, or stdin/stdout"
+msgstr ""
+
+#: src/introduction.md:25
+msgid "Quick Start"
+msgstr "快速开始"
+
+#: src/introduction.md:27
+msgid "Install (no Rust needed)"
+msgstr "安装（无需 Rust）"
+
+#: src/introduction.md:29
+msgid ""
+"Download a prebuilt binary from [GitHub Releases](https://github.com/your-"
+"org/claw/releases), or:"
+msgstr ""
+
+#: src/introduction.md:35
+msgid "Run the Runtime"
+msgstr "运行 Runtime"
+
+#: src/introduction.md:38
+msgid "# Or: claw_core --socket-path /tmp/trl.sock\n"
+msgstr ""
+
+#: src/introduction.md:42
+msgid "Probe the Runtime"
+msgstr "探测 Runtime"
+
+#: src/introduction.md:45
+msgid "'{\"id\":\"1\",\"method\":\"system.ping\",\"params\":{}}'"
+msgstr ""
+
+#: src/introduction.md:48 src/architecture.md:86
+msgid "Design Principles"
+msgstr "设计原则"
+
+#: src/introduction.md:50
+msgid "**Single binary, zero runtime dependencies** — just Rust"
+msgstr ""
+
+#: src/introduction.md:51
+msgid ""
+"**Agent is the brain, TRL is the hands** — TRL never decides what to run"
+msgstr ""
+
+#: src/introduction.md:52
+msgid ""
+"**Fail loud, fail safe** — structured errors, enforced timeouts, zombie "
+"cleanup"
+msgstr ""
+
+#: src/introduction.md:53
+msgid ""
+"**Secrets pass through, never persist** — env vars flow, never written to "
+"disk"
+msgstr ""
+
+#: src/introduction.md:54
+msgid "**MVP first** — Unix socket + buffered exec + session CRUD = shippable"
+msgstr ""
+
+#: src/introduction.md:56
+msgid "Status"
+msgstr "状态"
+
+#: src/introduction.md:58
+msgid "**Phase: Production v1** (Unix socket + buffered execution)"
+msgstr ""
+
+#: src/introduction.md:60
+msgid "MVP: `system.ping`, `session.*`, `exec.run`, `system.stats`"
+msgstr ""
+
+#: src/introduction.md:61
+msgid "Tests and CI"
+msgstr ""
+
+#: src/introduction.md:62
+msgid "Streaming support"
+msgstr ""
+
+#: src/introduction.md:63
+msgid "HTTP transport"
+msgstr ""
+
+#: src/introduction.md:64
+msgid "Multi-runtime support (L2)"
+msgstr ""
+
+#: src/architecture.md:1
+msgid "Architecture — Terminal Lightweight Runtime Layer"
+msgstr ""
+
+#: src/architecture.md:3
+msgid ""
+"A Rust-based execution layer that sits between the AI agent (\"brain\") and "
+"the operating system, managing terminal sessions, running commands, and "
+"returning output through a clean API."
+msgstr ""
+
+#: src/architecture.md:5 src/openclaw-integration.md:7
+msgid "Overview"
+msgstr ""
+
+#: src/architecture.md:7
+msgid ""
+"The Terminal Runtime Layer (TRL) solves a fundamental problem: AI agents "
+"like OpenClaw currently execute commands directly on the host via raw "
+"`exec`. This is fragile, uncontrolled, and impossible to scale."
+msgstr ""
+
+#: src/architecture.md:9
+msgid ""
+"TRL is the **execution pod** — it owns terminal sessions, runs commands "
+"inside them, captures output, and exposes a minimal API for the agent to "
+"talk to."
+msgstr ""
+
+#: src/architecture.md:11
+msgid ""
+"```\n"
+"┌──────────────────────────────────────────────┐\n"
+"│  Agent (OpenClaw / any AI orchestrator)       │\n"
+"│  - Receives user intent (Telegram, CLI, etc)  │\n"
+"│  - Decides WHAT to run and WHERE              │\n"
+"└──────────────────┬───────────────────────────┘\n"
+"                   │  JSON over socket/HTTP\n"
+"                   │  \"run <cmd> in session <id>\"\n"
+"                   ▼\n"
+"┌──────────────────────────────────────────────┐\n"
+"│  Terminal Runtime Layer (Rust binary)        │\n"
+"│  - Manages sessions (id ↔ process group)     │\n"
+"│  - Spawns processes, captures stdout/stderr  │\n"
+"│  - Timeout, env vars, lightweight isolation   │\n"
+"└──────────────────┬───────────────────────────┘\n"
+"                   │  fork/exec, pipes\n"
+"                   ▼\n"
+"┌──────────────────────────────────────────────┐\n"
+"│  OS (macOS / Linux)                           │\n"
+"│  - Real processes (shell, python, node, etc)  │\n"
+"└──────────────────────────────────────────────┘\n"
+"```"
+msgstr ""
+
+#: src/architecture.md:34
+msgid "Maturity Levels"
+msgstr ""
+
+#: src/architecture.md:36
+msgid "Level"
+msgstr ""
+
+#: src/architecture.md:36 src/api-spec.md:67 src/session-lifecycle.md:46
+msgid "Description"
+msgstr ""
+
+#: src/architecture.md:36
+msgid "What Changes"
+msgstr ""
+
+#: src/architecture.md:38
+msgid "**L0**"
+msgstr ""
+
+#: src/architecture.md:38
+msgid "Direct exec on host"
+msgstr ""
+
+#: src/architecture.md:38
+msgid "Agent calls `exec` directly. No session management."
+msgstr ""
+
+#: src/architecture.md:39
+msgid "**L1**"
+msgstr ""
+
+#: src/architecture.md:39
+msgid "Single runtime"
+msgstr ""
+
+#: src/architecture.md:39
+msgid "Agent talks to ONE TRL instance. TRL manages sessions, returns output."
+msgstr ""
+
+#: src/architecture.md:40
+msgid "**L2**"
+msgstr ""
+
+#: src/architecture.md:40
+msgid "Multi-runtime"
+msgstr ""
+
+#: src/architecture.md:40
+msgid ""
+"Multiple TRL instances (host, Docker, remote SSH). Agent picks runtime per "
+"task."
+msgstr ""
+
+#: src/architecture.md:42
+msgid "**We're building L1 first.** L2 comes naturally once the API is stable."
+msgstr ""
+
+#: src/architecture.md:44
+msgid "Core Components"
+msgstr ""
+
+#: src/architecture.md:46
+msgid "1. Session Manager"
+msgstr ""
+
+#: src/architecture.md:48
+msgid "Owns the lifecycle of terminal sessions. Each session has:"
+msgstr ""
+
+#: src/architecture.md:50
+msgid "**Session ID** — unique identifier (UUID or short hash)"
+msgstr ""
+
+#: src/architecture.md:51
+msgid "**Shell process** — the underlying shell (bash/zsh) or direct command"
+msgstr ""
+
+#: src/architecture.md:52
+msgid "**Working directory** — isolated per session"
+msgstr ""
+
+#: src/architecture.md:53
+msgid "**Environment** — variables inherited + session-specific overrides"
+msgstr ""
+
+#: src/architecture.md:54
+msgid "**State** — `creating`, `idle`, `running`, `terminated`"
+msgstr ""
+
+#: src/architecture.md:56
+msgid "2. Command Executor"
+msgstr ""
+
+#: src/architecture.md:58
+msgid "Receives execution requests and runs them inside a session:"
+msgstr ""
+
+#: src/architecture.md:60
+msgid "Spawns child process via `std::process::Command`"
+msgstr ""
+
+#: src/architecture.md:61
+msgid "Pipes stdout/stderr back to caller"
+msgstr ""
+
+#: src/architecture.md:62
+msgid ""
+"Supports **synchronous** (wait for exit) and **streaming** (real-time "
+"output) modes"
+msgstr ""
+
+#: src/architecture.md:63
+msgid "Enforces timeouts (configurable per-command or per-session)"
+msgstr ""
+
+#: src/architecture.md:65
+msgid "3. Output Handler"
+msgstr ""
+
+#: src/architecture.md:67
+msgid "**Buffered mode** — collect all output, return on process exit"
+msgstr ""
+
+#: src/architecture.md:68
+msgid "**Streaming mode** — push output chunks as they arrive"
+msgstr ""
+
+#: src/architecture.md:69
+msgid "Always includes: stdout, stderr, exit code, duration"
+msgstr ""
+
+#: src/architecture.md:71
+msgid "4. API Server"
+msgstr ""
+
+#: src/architecture.md:73
+msgid ""
+"**Transport:** Unix domain socket (local), HTTP (remote/Docker), stdin/"
+"stdout (CLI)"
+msgstr ""
+
+#: src/architecture.md:74
+msgid "**Protocol:** JSON request/response"
+msgstr ""
+
+#: src/architecture.md:75
+msgid ""
+"**Authentication:** Token-based for HTTP; file permissions for Unix socket"
+msgstr ""
+
+#: src/architecture.md:77
+msgid "5. Isolation Layer (Optional)"
+msgstr ""
+
+#: src/architecture.md:79
+msgid "Technique"
+msgstr ""
+
+#: src/architecture.md:79
+msgid "Effort"
+msgstr ""
+
+#: src/architecture.md:79
+msgid "Isolation"
+msgstr ""
+
+#: src/architecture.md:81
+msgid "Environment variables"
+msgstr ""
+
+#: src/architecture.md:81 src/architecture.md:82
+msgid "Trivial"
+msgstr ""
+
+#: src/architecture.md:81
+msgid "Env scoping"
+msgstr ""
+
+#: src/architecture.md:82
+msgid "Working directory"
+msgstr ""
+
+#: src/architecture.md:82
+msgid "File system scoping"
+msgstr ""
+
+#: src/architecture.md:83
+msgid "`cgroups` (Linux)"
+msgstr ""
+
+#: src/architecture.md:83
+msgid "Medium"
+msgstr ""
+
+#: src/architecture.md:83
+msgid "CPU, memory limits (see [Resource Control](resource-control.md))"
+msgstr ""
+
+#: src/architecture.md:84
+msgid "Docker"
+msgstr ""
+
+#: src/architecture.md:84
+msgid "High"
+msgstr ""
+
+#: src/architecture.md:84
+msgid "Full containerization"
+msgstr ""
+
+#: src/architecture.md:88
+msgid "**Single binary, zero dependencies at runtime.**"
+msgstr ""
+
+#: src/architecture.md:89
+msgid ""
+"**The agent is the brain; TRL is the hands.** TRL only executes and reports."
+msgstr ""
+
+#: src/architecture.md:90
+msgid ""
+"**Fail loud, fail safe.** Structured errors, enforced timeouts, zombie "
+"cleanup."
+msgstr ""
+
+#: src/architecture.md:91
+msgid "**Secrets pass through, never persist.**"
+msgstr ""
+
+#: src/architecture.md:92
+msgid ""
+"**MVP first, scale later.** Unix socket + buffered output + session CRUD = "
+"shippable."
+msgstr ""
+
+#: src/api-spec.md:1
+msgid "API Specification — Terminal Runtime Layer"
+msgstr "API 规范 — 终端 Runtime 层"
+
+#: src/api-spec.md:3
+msgid ""
+"Protocol and endpoint definitions for communication between the agent and "
+"the runtime layer."
+msgstr "用于代理与 Runtime 层通信的协议和端点定义。"
+
+#: src/api-spec.md:5
+msgid "Transport"
+msgstr "传输"
+
+#: src/api-spec.md:7
+msgid "Mode"
+msgstr ""
+
+#: src/api-spec.md:7
+msgid "When to Use"
+msgstr ""
+
+#: src/api-spec.md:7
+msgid "Details"
+msgstr ""
+
+#: src/api-spec.md:9
+msgid "**Unix socket**"
+msgstr ""
+
+#: src/api-spec.md:9
+msgid "Local, same machine"
+msgstr ""
+
+#: src/api-spec.md:9
+msgid "Default. Fast, secure (file perms). Path: `/tmp/trl-<instance>.sock`"
+msgstr ""
+
+#: src/api-spec.md:10
+msgid "**HTTP**"
+msgstr ""
+
+#: src/api-spec.md:10
+msgid "Remote, Docker, multi-host"
+msgstr ""
+
+#: src/api-spec.md:10
+msgid "Binds to `127.0.0.1:<port>`. Token auth required."
+msgstr ""
+
+#: src/api-spec.md:11
+msgid "**Stdin/Stdout**"
+msgstr ""
+
+#: src/api-spec.md:11
+msgid "CLI testing, piping"
+msgstr ""
+
+#: src/api-spec.md:11
+msgid "One-shot mode. Read JSON from stdin, write JSON to stdout."
+msgstr ""
+
+#: src/api-spec.md:13
+msgid "Protocol"
+msgstr ""
+
+#: src/api-spec.md:15
+msgid ""
+"All messages are **JSON**. Every request has a `method` and optional "
+"`params`. Every response has `ok` (bool), optional `data`, and optional "
+"`error`."
+msgstr ""
+
+#: src/api-spec.md:17
+msgid "Request Format"
+msgstr ""
+
+#: src/api-spec.md:21 src/api-spec.md:35 src/api-spec.md:48
+msgid "\"id\""
+msgstr ""
+
+#: src/api-spec.md:21 src/api-spec.md:35 src/api-spec.md:48
+msgid "\"req-001\""
+msgstr ""
+
+#: src/api-spec.md:22
+msgid "\"method\""
+msgstr ""
+
+#: src/api-spec.md:22
+msgid "\"session.create\""
+msgstr ""
+
+#: src/api-spec.md:23
+msgid "\"params\""
+msgstr ""
+
+#: src/api-spec.md:24
+msgid "\"shell\""
+msgstr ""
+
+#: src/api-spec.md:24
+msgid "\"/bin/zsh\""
+msgstr ""
+
+#: src/api-spec.md:25
+msgid "\"env\""
+msgstr ""
+
+#: src/api-spec.md:25
+msgid "\"MY_VAR\""
+msgstr ""
+
+#: src/api-spec.md:25
+msgid "\"value\""
+msgstr ""
+
+#: src/api-spec.md:26
+msgid "\"working_dir\""
+msgstr ""
+
+#: src/api-spec.md:26
+msgid "\"/tmp/sandbox\""
+msgstr ""
+
+#: src/api-spec.md:31
+msgid "Response Format (Success)"
+msgstr ""
+
+#: src/api-spec.md:36 src/api-spec.md:49
+msgid "\"ok\""
+msgstr ""
+
+#: src/api-spec.md:37
+msgid "\"data\""
+msgstr ""
+
+#: src/api-spec.md:38
+msgid "\"session_id\""
+msgstr ""
+
+#: src/api-spec.md:38
+msgid "\"s-a1b2c3\""
+msgstr ""
+
+#: src/api-spec.md:39
+msgid "\"created_at\""
+msgstr ""
+
+#: src/api-spec.md:39
+msgid "\"2026-02-13T12:00:00Z\""
+msgstr ""
+
+#: src/api-spec.md:44
+msgid "Response Format (Error)"
+msgstr ""
+
+#: src/api-spec.md:50
+msgid "\"error\""
+msgstr ""
+
+#: src/api-spec.md:51
+msgid "\"code\""
+msgstr ""
+
+#: src/api-spec.md:51
+msgid "\"SESSION_NOT_FOUND\""
+msgstr ""
+
+#: src/api-spec.md:52
+msgid "\"message\""
+msgstr ""
+
+#: src/api-spec.md:52
+msgid "\"No session with id 's-xyz'\""
+msgstr ""
+
+#: src/api-spec.md:57
+msgid "Methods"
+msgstr ""
+
+#: src/api-spec.md:59
+msgid "Session Management"
+msgstr ""
+
+#: src/api-spec.md:61
+msgid "`session.create`"
+msgstr ""
+
+#: src/api-spec.md:63
+msgid "Create a new terminal session."
+msgstr ""
+
+#: src/api-spec.md:65
+msgid "**Params:**"
+msgstr ""
+
+#: src/api-spec.md:67
+msgid "Field"
+msgstr ""
+
+#: src/api-spec.md:67
+msgid "Type"
+msgstr ""
+
+#: src/api-spec.md:67
+msgid "Required"
+msgstr ""
+
+#: src/api-spec.md:67
+msgid "Default"
+msgstr ""
+
+#: src/api-spec.md:69
+msgid "`shell`"
+msgstr ""
+
+#: src/api-spec.md:69 src/api-spec.md:71 src/api-spec.md:72
+msgid "string"
+msgstr ""
+
+#: src/api-spec.md:69 src/api-spec.md:70 src/api-spec.md:71 src/api-spec.md:72
+#: src/api-spec.md:73
+msgid "No"
+msgstr ""
+
+#: src/api-spec.md:69
+msgid "`/bin/sh`"
+msgstr ""
+
+#: src/api-spec.md:69
+msgid "Shell to use for the session"
+msgstr ""
+
+#: src/api-spec.md:70
+msgid "`env`"
+msgstr ""
+
+#: src/api-spec.md:70
+msgid "object"
+msgstr ""
+
+#: src/api-spec.md:70
+msgid "`{}`"
+msgstr ""
+
+#: src/api-spec.md:70
+msgid "Additional environment variables"
+msgstr ""
+
+#: src/api-spec.md:71
+msgid "`working_dir`"
+msgstr ""
+
+#: src/api-spec.md:71
+msgid "`/tmp`"
+msgstr ""
+
+#: src/api-spec.md:71
+msgid "Initial working directory"
+msgstr ""
+
+#: src/api-spec.md:72
+msgid "`name`"
+msgstr ""
+
+#: src/api-spec.md:72
+msgid "`null`"
+msgstr ""
+
+#: src/api-spec.md:72
+msgid "Human-readable session label"
+msgstr ""
+
+#: src/api-spec.md:73
+msgid "`timeout_s`"
+msgstr ""
+
+#: src/api-spec.md:73
+msgid "int"
+msgstr ""
+
+#: src/api-spec.md:73
+msgid "`0` (none)"
+msgstr ""
+
+#: src/api-spec.md:73
+msgid "Default command timeout for this session"
+msgstr ""
+
+#: src/api-spec.md:75
+msgid ""
+"**Response data:** `session_id`, `shell`, `working_dir`, `state`, "
+"`created_at`"
+msgstr ""
+
+#: src/api-spec.md:79
+msgid "`session.list`"
+msgstr ""
+
+#: src/api-spec.md:81
+msgid "List all active sessions. **Params:** None."
+msgstr ""
+
+#: src/api-spec.md:85
+msgid "`session.info`"
+msgstr ""
+
+#: src/api-spec.md:87
+msgid ""
+"Get details about a specific session. **Params:** `session_id` (required)."
+msgstr ""
+
+#: src/api-spec.md:91
+msgid "`session.destroy`"
+msgstr ""
+
+#: src/api-spec.md:93
+msgid ""
+"Terminate and clean up a session. **Params:** `session_id` (required), "
+"`force` (optional bool)."
+msgstr ""
+
+#: src/api-spec.md:97
+msgid "Command Execution"
+msgstr ""
+
+#: src/api-spec.md:99
+msgid "`exec.run`"
+msgstr ""
+
+#: src/api-spec.md:101
+msgid "Execute a command in a session (buffered mode). Waits for completion."
+msgstr ""
+
+#: src/api-spec.md:103
+msgid "**Params:** `session_id`, `command`, `timeout_s`, `stdin`, `env`"
+msgstr ""
+
+#: src/api-spec.md:105
+msgid ""
+"**Response data:** `stdout`, `stderr`, `exit_code`, `duration_ms`, "
+"`timed_out`"
+msgstr ""
+
+#: src/api-spec.md:109
+msgid "`exec.stream`"
+msgstr ""
+
+#: src/api-spec.md:111
+msgid ""
+"Execute with real-time output streaming. Returns `stream_id`, then pushes "
+"chunks."
+msgstr ""
+
+#: src/api-spec.md:115
+msgid "`exec.cancel`"
+msgstr ""
+
+#: src/api-spec.md:117
+msgid ""
+"Cancel a running command. **Params:** `session_id`, `signal` (optional)."
+msgstr ""
+
+#: src/api-spec.md:121
+msgid "System"
+msgstr ""
+
+#: src/api-spec.md:123
+msgid "`system.ping`"
+msgstr ""
+
+#: src/api-spec.md:125
+msgid "Health check. Response: `uptime_s`, `version`."
+msgstr ""
+
+#: src/api-spec.md:127
+msgid "`system.stats`"
+msgstr ""
+
+#: src/api-spec.md:129
+msgid ""
+"Runtime statistics: `active_sessions`, `total_commands_run`, `uptime_s`, "
+"`memory_rss_bytes`."
+msgstr ""
+
+#: src/api-spec.md:133
+msgid "Error Codes"
+msgstr ""
+
+#: src/api-spec.md:135
+msgid "Code"
+msgstr ""
+
+#: src/api-spec.md:135
+msgid "Meaning"
+msgstr ""
+
+#: src/api-spec.md:137
+msgid "`SESSION_NOT_FOUND`"
+msgstr ""
+
+#: src/api-spec.md:137
+msgid "No session with given ID"
+msgstr ""
+
+#: src/api-spec.md:138
+msgid "`SESSION_BUSY`"
+msgstr ""
+
+#: src/api-spec.md:138
+msgid "Session already running a command"
+msgstr ""
+
+#: src/api-spec.md:139
+msgid "`COMMAND_TIMEOUT`"
+msgstr ""
+
+#: src/api-spec.md:139
+msgid "Command exceeded timeout"
+msgstr ""
+
+#: src/api-spec.md:140
+msgid "`COMMAND_FAILED`"
+msgstr ""
+
+#: src/api-spec.md:140
+msgid "Command exited with non-zero"
+msgstr ""
+
+#: src/api-spec.md:141
+msgid "`INVALID_PARAMS`"
+msgstr ""
+
+#: src/api-spec.md:141
+msgid "Missing or malformed parameters"
+msgstr ""
+
+#: src/api-spec.md:142
+msgid "`INTERNAL_ERROR`"
+msgstr ""
+
+#: src/api-spec.md:142
+msgid "Unexpected runtime error"
+msgstr ""
+
+#: src/api-spec.md:143
+msgid "`AUTH_FAILED`"
+msgstr ""
+
+#: src/api-spec.md:143
+msgid "Invalid or missing authentication token"
+msgstr ""
+
+#: src/api-spec.md:147
+msgid "Authentication (HTTP mode)"
+msgstr ""
+
+#: src/api-spec.md:149
+msgid "When running over HTTP, requests must include:"
+msgstr ""
+
+#: src/api-spec.md:155
+msgid ""
+"The token is set via `TRL_AUTH_TOKEN` environment variable when starting the "
+"runtime. Unix socket mode relies on filesystem permissions instead."
+msgstr ""
+
+#: src/session-lifecycle.md:1
+msgid "Session Lifecycle — Terminal Runtime Layer"
+msgstr ""
+
+#: src/session-lifecycle.md:3
+msgid ""
+"How terminal sessions are created, used, and destroyed within the runtime "
+"layer."
+msgstr ""
+
+#: src/session-lifecycle.md:5
+msgid "Session States"
+msgstr ""
+
+#: src/session-lifecycle.md:44
+msgid "State Descriptions"
+msgstr ""
+
+#: src/session-lifecycle.md:46
+msgid "State"
+msgstr ""
+
+#: src/session-lifecycle.md:46
+msgid "Allowed Actions"
+msgstr ""
+
+#: src/session-lifecycle.md:48
+msgid "**CREATING**"
+msgstr ""
+
+#: src/session-lifecycle.md:48
+msgid "Shell process is starting"
+msgstr ""
+
+#: src/session-lifecycle.md:48
+msgid "Wait (internal only)"
+msgstr ""
+
+#: src/session-lifecycle.md:49
+msgid "**IDLE**"
+msgstr ""
+
+#: src/session-lifecycle.md:49
+msgid "Session is alive, no command running"
+msgstr ""
+
+#: src/session-lifecycle.md:49
+msgid "`exec.run`, `exec.stream`, `session.destroy`, `session.info`"
+msgstr ""
+
+#: src/session-lifecycle.md:50
+msgid "**RUNNING**"
+msgstr ""
+
+#: src/session-lifecycle.md:50
+msgid "A command is actively executing"
+msgstr ""
+
+#: src/session-lifecycle.md:50
+msgid "`exec.cancel`, `session.info`, `session.destroy`"
+msgstr ""
+
+#: src/session-lifecycle.md:51
+msgid "**TERMINATED**"
+msgstr ""
+
+#: src/session-lifecycle.md:51
+msgid "Session is dead, cleaned up"
+msgstr ""
+
+#: src/session-lifecycle.md:51
+msgid "`session.info` (read-only)"
+msgstr ""
+
+#: src/session-lifecycle.md:53
+msgid "Session Creation"
+msgstr ""
+
+#: src/session-lifecycle.md:55
+msgid "When `session.create` is called, the runtime:"
+msgstr ""
+
+#: src/session-lifecycle.md:57
+msgid "Generates a session ID (e.g., `s-a1b2c3`)"
+msgstr ""
+
+#: src/session-lifecycle.md:58
+msgid "Resolves the shell (provided or `/bin/sh`)"
+msgstr ""
+
+#: src/session-lifecycle.md:59
+msgid "Prepares environment (runtime base + session-specific)"
+msgstr ""
+
+#: src/session-lifecycle.md:60
+msgid "Sets working directory"
+msgstr ""
+
+#: src/session-lifecycle.md:61
+msgid "Starts the shell process"
+msgstr ""
+
+#: src/session-lifecycle.md:62
+msgid "Registers in session pool"
+msgstr ""
+
+#: src/session-lifecycle.md:63
+msgid "Returns session metadata"
+msgstr ""
+
+#: src/session-lifecycle.md:65
+msgid "Failure Modes"
+msgstr ""
+
+#: src/session-lifecycle.md:67
+msgid "Failure"
+msgstr ""
+
+#: src/session-lifecycle.md:67
+msgid "Handling"
+msgstr ""
+
+#: src/session-lifecycle.md:69
+msgid "Shell binary not found"
+msgstr ""
+
+#: src/session-lifecycle.md:69
+msgid "Return error, no session created"
+msgstr ""
+
+#: src/session-lifecycle.md:70
+msgid "Too many active sessions"
+msgstr ""
+
+#: src/session-lifecycle.md:70
+msgid "Return `MAX_SESSIONS_REACHED`"
+msgstr ""
+
+#: src/session-lifecycle.md:71
+msgid "Shell crashes immediately"
+msgstr ""
+
+#: src/session-lifecycle.md:71
+msgid "Return error, clean up"
+msgstr ""
+
+#: src/session-lifecycle.md:73
+msgid "Command Execution Within a Session"
+msgstr ""
+
+#: src/session-lifecycle.md:75
+msgid "Buffered Mode (`exec.run`)"
+msgstr ""
+
+#: src/session-lifecycle.md:77
+msgid "Agent sends `exec.run` with session ID and command"
+msgstr ""
+
+#: src/session-lifecycle.md:78
+msgid "TRL checks session state is `IDLE`"
+msgstr ""
+
+#: src/session-lifecycle.md:79
+msgid "TRL writes command to session's shell stdin"
+msgstr ""
+
+#: src/session-lifecycle.md:80
+msgid "TRL reads stdout/stderr until command completes (or timeout)"
+msgstr ""
+
+#: src/session-lifecycle.md:81
+msgid "TRL captures exit code, session returns to `IDLE`"
+msgstr ""
+
+#: src/session-lifecycle.md:82
+msgid "TRL returns `{stdout, stderr, exit_code, duration_ms}` to agent"
+msgstr ""
+
+#: src/session-lifecycle.md:84
+msgid "Streaming Mode (`exec.stream`)"
+msgstr ""
+
+#: src/session-lifecycle.md:86
+msgid "Agent sends `exec.stream`; TRL returns `stream_id`"
+msgstr ""
+
+#: src/session-lifecycle.md:87
+msgid "TRL writes command to shell stdin"
+msgstr ""
+
+#: src/session-lifecycle.md:88
+msgid "As output arrives, TRL pushes chunks to agent"
+msgstr ""
+
+#: src/session-lifecycle.md:89
+msgid "On completion, TRL pushes final `exit` chunk; session returns to `IDLE`"
+msgstr ""
+
+#: src/session-lifecycle.md:91
+msgid "Timeout Handling"
+msgstr ""
+
+#: src/session-lifecycle.md:93
+msgid "When a timeout fires:"
+msgstr ""
+
+#: src/session-lifecycle.md:95
+msgid "Send `SIGTERM` to the command's process group"
+msgstr ""
+
+#: src/session-lifecycle.md:96
+msgid "Wait 5 seconds"
+msgstr ""
+
+#: src/session-lifecycle.md:97
+msgid "If still alive, send `SIGKILL`"
+msgstr ""
+
+#: src/session-lifecycle.md:98
+msgid "Return result with `timed_out: true`"
+msgstr ""
+
+#: src/session-lifecycle.md:99
+msgid "Session returns to `IDLE` (session survives timeouts)"
+msgstr ""
+
+#: src/session-lifecycle.md:101
+msgid "Session Destruction"
+msgstr ""
+
+#: src/session-lifecycle.md:103
+msgid "When `session.destroy` is called:"
+msgstr ""
+
+#: src/session-lifecycle.md:105
+msgid "If a command is running, cancel it first (SIGTERM → SIGKILL)"
+msgstr ""
+
+#: src/session-lifecycle.md:106
+msgid "Send SIGTERM to the session's shell process"
+msgstr ""
+
+#: src/session-lifecycle.md:107
+msgid "Wait up to 5 seconds for graceful exit"
+msgstr ""
+
+#: src/session-lifecycle.md:108
+msgid "If `force: true` or grace period exceeded, send SIGKILL"
+msgstr ""
+
+#: src/session-lifecycle.md:109
+msgid "Close all pipes, remove from session pool"
+msgstr ""
+
+#: src/session-lifecycle.md:111
+msgid "Zombie Prevention"
+msgstr ""
+
+#: src/session-lifecycle.md:113
+msgid "Use async process handling that automatically reaps"
+msgstr ""
+
+#: src/session-lifecycle.md:114
+msgid "Periodically scan for orphaned PIDs"
+msgstr ""
+
+#: src/session-lifecycle.md:115
+msgid "On runtime shutdown, destroy all active sessions"
+msgstr ""
+
+#: src/session-lifecycle.md:117
+msgid "Session Pool Management"
+msgstr ""
+
+#: src/session-lifecycle.md:119
+msgid "**max_sessions** — configurable limit"
+msgstr ""
+
+#: src/session-lifecycle.md:120
+msgid ""
+"**Housekeeping** — periodic cleanup of stale/idle sessions, dead sessions"
+msgstr ""
+
+#: src/session-lifecycle.md:121
+msgid ""
+"**Concurrency** — multiple sessions can be IDLE or RUNNING; commands within "
+"a single session are sequential in buffered mode"
+msgstr ""
+
+#: src/security.md:1
+msgid "Security & Token Handling — Terminal Runtime Layer"
+msgstr ""
+
+#: src/security.md:3
+msgid ""
+"How the runtime handles secrets, authentication, and isolation boundaries."
+msgstr ""
+
+#: src/security.md:5
+msgid "Core Principle"
+msgstr ""
+
+#: src/security.md:7
+msgid "**Secrets pass through. They never persist.**"
+msgstr ""
+
+#: src/security.md:9
+msgid ""
+"The runtime receives tokens and environment variables from the agent or "
+"startup configuration, forwards them to child processes, and never writes "
+"them to disk."
+msgstr ""
+
+#: src/security.md:11
+msgid "Token Flow"
+msgstr ""
+
+#: src/security.md:21
+msgid "Environment Variable Handling"
+msgstr ""
+
+#: src/security.md:23
+msgid "Injection Points"
+msgstr ""
+
+#: src/security.md:25
+msgid "**Runtime startup** — from the runtime's own environment or `.env` file"
+msgstr ""
+
+#: src/security.md:26
+msgid "**Session creation** — per-session vars via `session.create` params"
+msgstr ""
+
+#: src/security.md:27
+msgid ""
+"**Command execution** — per-command vars via `exec.run` / `exec.stream` "
+"params"
+msgstr ""
+
+#: src/security.md:29
+msgid "Scoping Rules"
+msgstr ""
+
+#: src/security.md:31
+msgid "Scope"
+msgstr ""
+
+#: src/security.md:31
+msgid "Visibility"
+msgstr ""
+
+#: src/security.md:31
+msgid "Lifetime"
+msgstr ""
+
+#: src/security.md:33
+msgid "Runtime-level"
+msgstr ""
+
+#: src/security.md:33
+msgid "All sessions, all commands"
+msgstr ""
+
+#: src/security.md:33
+msgid "Until runtime restarts"
+msgstr ""
+
+#: src/security.md:34
+msgid "Session-level"
+msgstr ""
+
+#: src/security.md:34
+msgid "All commands in that session"
+msgstr ""
+
+#: src/security.md:34
+msgid "Until session destroyed"
+msgstr ""
+
+#: src/security.md:35
+msgid "Command-level"
+msgstr ""
+
+#: src/security.md:35
+msgid "Only the specific command"
+msgstr ""
+
+#: src/security.md:35
+msgid "Until command exits"
+msgstr ""
+
+#: src/security.md:37
+msgid "What NOT to Do"
+msgstr ""
+
+#: src/security.md:39
+msgid "**Never log env var values.** Log keys only, never values."
+msgstr ""
+
+#: src/security.md:40
+msgid "**Never write env vars to disk.** No temp files, no config dumps."
+msgstr ""
+
+#: src/security.md:41
+msgid ""
+"**Never return env vars in API responses** unless explicitly requested (and "
+"consider masking)."
+msgstr ""
+
+#: src/security.md:42
+msgid "**Never embed secrets in the runtime binary.**"
+msgstr ""
+
+#: src/security.md:44
+msgid "API Authentication"
+msgstr ""
+
+#: src/security.md:46
+msgid "Unix Socket Mode (Default)"
+msgstr ""
+
+#: src/security.md:48
+msgid "**Mechanism:** File system permissions on the socket file"
+msgstr ""
+
+#: src/security.md:49
+msgid "**Recommendation:** Set socket permissions to `0600` (owner only)"
+msgstr ""
+
+#: src/security.md:51
+msgid "HTTP Mode"
+msgstr ""
+
+#: src/security.md:53
+msgid "**Mechanism:** Bearer token authentication"
+msgstr ""
+
+#: src/security.md:54
+msgid "**Token source:** `TRL_AUTH_TOKEN` environment variable"
+msgstr ""
+
+#: src/security.md:55
+msgid "**Every request:** `Authorization: Bearer <token>`"
+msgstr ""
+
+#: src/security.md:56
+msgid ""
+"If `TRL_AUTH_TOKEN` is not set when HTTP is enabled, the runtime should "
+"**refuse to start**."
+msgstr ""
+
+#: src/security.md:58
+msgid "Isolation Boundaries"
+msgstr ""
+
+#: src/security.md:60
+msgid "What TRL Isolates"
+msgstr ""
+
+#: src/security.md:62 src/security.md:71
+msgid "Aspect"
+msgstr ""
+
+#: src/security.md:62
+msgid "How"
+msgstr ""
+
+#: src/security.md:64
+msgid "**Environment**"
+msgstr ""
+
+#: src/security.md:64
+msgid "Each session gets its own env set."
+msgstr ""
+
+#: src/security.md:65
+msgid "**Working directory**"
+msgstr ""
+
+#: src/security.md:65
+msgid "Each session has its own cwd."
+msgstr ""
+
+#: src/security.md:66
+msgid "**Process tree**"
+msgstr ""
+
+#: src/security.md:66
+msgid "Each session's processes are tracked; `session.destroy` kills the tree."
+msgstr ""
+
+#: src/security.md:67
+msgid "**Output**"
+msgstr ""
+
+#: src/security.md:67
+msgid "stdout/stderr are per-session, per-command."
+msgstr ""
+
+#: src/security.md:69
+msgid "What TRL Does NOT Isolate (MVP)"
+msgstr ""
+
+#: src/security.md:71
+msgid "Future Fix"
+msgstr ""
+
+#: src/security.md:73
+msgid "**File system**"
+msgstr ""
+
+#: src/security.md:73
+msgid "L2: chroot or Docker"
+msgstr ""
+
+#: src/security.md:74
+msgid "**Network**"
+msgstr ""
+
+#: src/security.md:74
+msgid "L2: network namespaces"
+msgstr ""
+
+#: src/security.md:75
+msgid "**Resources**"
+msgstr ""
+
+#: src/security.md:75
+msgid "L2: cgroups; see [Resource Control](resource-control.md)"
+msgstr ""
+
+#: src/security.md:76
+msgid "**Users**"
+msgstr ""
+
+#: src/security.md:76
+msgid "L2: per-session user"
+msgstr ""
+
+#: src/security.md:78
+msgid "Threat Model (For Agent Developers)"
+msgstr ""
+
+#: src/security.md:80
+msgid "Threat"
+msgstr ""
+
+#: src/security.md:80
+msgid "Mitigation"
+msgstr ""
+
+#: src/security.md:82
+msgid "Agent sends malicious command"
+msgstr ""
+
+#: src/security.md:82
+msgid ""
+"TRL executes blindly — agent is responsible for safety. TRL provides "
+"timeouts and kill switches."
+msgstr ""
+
+#: src/security.md:83
+msgid "Secret exfiltration via output"
+msgstr ""
+
+#: src/security.md:83
+msgid "Agent should redact secrets before displaying to users."
+msgstr ""
+
+#: src/security.md:84
+msgid "Unauthorized API access"
+msgstr ""
+
+#: src/security.md:84
+msgid ""
+"Socket permissions (local) or bearer token (HTTP). Fail secure if "
+"misconfigured."
+msgstr ""
+
+#: src/security.md:85
+msgid "Session hijacking"
+msgstr ""
+
+#: src/security.md:85
+msgid "Session IDs are random UUIDs. No enumeration."
+msgstr ""
+
+#: src/security.md:86
+msgid "Zombie processes after crash"
+msgstr ""
+
+#: src/security.md:86
+msgid "Periodic reaping; clean orphaned processes on startup."
+msgstr ""
+
+#: src/security.md:87
+msgid "Resource exhaustion"
+msgstr ""
+
+#: src/security.md:87
+msgid ""
+"Max session limits, per-command timeouts, setrlimit; see [Resource Control]"
+"(resource-control.md)."
+msgstr ""
+
+#: src/security.md:89
+msgid "Security Checklist for Deployment"
+msgstr ""
+
+#: src/security.md:91
+msgid "Runtime runs as **non-root** user"
+msgstr ""
+
+#: src/security.md:92
+msgid "`.env` file has `0600` permissions"
+msgstr ""
+
+#: src/security.md:93
+msgid "Unix socket has `0600` permissions"
+msgstr ""
+
+#: src/security.md:94
+msgid "`TRL_AUTH_TOKEN` is set if HTTP mode is enabled"
+msgstr ""
+
+#: src/security.md:95
+msgid "Logging does NOT include env var values"
+msgstr ""
+
+#: src/security.md:96
+msgid "Max session limit is configured"
+msgstr ""
+
+#: src/security.md:97
+msgid "Default timeout is set"
+msgstr ""
+
+#: src/security.md:98
+msgid "Runtime binary is not world-writable"
+msgstr ""
+
+#: src/resource-control.md:1
+msgid "CPU & RAM Control — Keeping the Service Layer Alive"
+msgstr ""
+
+#: src/resource-control.md:3
+msgid ""
+"Mechanisms to limit CPU and memory use so that runaway sessions or commands "
+"do **not** crash the whole runtime."
+msgstr ""
+
+#: src/resource-control.md:5 src/resource-control.md:62
+msgid "Goal"
+msgstr ""
+
+#: src/resource-control.md:7
+msgid ""
+"**Child processes** (commands run in sessions) must not exhaust host CPU or "
+"RAM."
+msgstr ""
+
+#: src/resource-control.md:8
+msgid "**Runtime process** (the Rust daemon) must stay within bounds."
+msgstr ""
+
+#: src/resource-control.md:9
+msgid ""
+"**Failure mode:** When limits are hit, **reject or kill the offending unit** "
+"(one session / one command), not the entire service."
+msgstr ""
+
+#: src/resource-control.md:11
+msgid "1. Application-Level Controls (All Platforms)"
+msgstr ""
+
+#: src/resource-control.md:13
+msgid "1.1 Session and concurrency limits"
+msgstr ""
+
+#: src/resource-control.md:15 src/resource-control.md:24
+msgid "Control"
+msgstr ""
+
+#: src/resource-control.md:15 src/resource-control.md:24
+#: src/openclaw-integration.md:71
+msgid "Purpose"
+msgstr ""
+
+#: src/resource-control.md:15 src/resource-control.md:24
+msgid "Example"
+msgstr ""
+
+#: src/resource-control.md:17
+msgid "**Max sessions**"
+msgstr ""
+
+#: src/resource-control.md:17
+msgid "Cap total sessions"
+msgstr ""
+
+#: src/resource-control.md:17
+msgid "`max_sessions: 64`"
+msgstr ""
+
+#: src/resource-control.md:18
+msgid "**Max concurrent commands**"
+msgstr ""
+
+#: src/resource-control.md:18
+msgid "Limit commands at once"
+msgstr ""
+
+#: src/resource-control.md:18
+msgid "1 per session or 16 global"
+msgstr ""
+
+#: src/resource-control.md:19
+msgid "**Session idle timeout**"
+msgstr ""
+
+#: src/resource-control.md:19
+msgid "Destroy idle sessions"
+msgstr ""
+
+#: src/resource-control.md:19
+msgid "`max_idle_sec: 3600`"
+msgstr ""
+
+#: src/resource-control.md:20
+msgid "**Max sessions per client**"
+msgstr ""
+
+#: src/resource-control.md:20
+msgid "Optional"
+msgstr ""
+
+#: src/resource-control.md:20
+msgid "e.g. 8 per client"
+msgstr ""
+
+#: src/resource-control.md:22
+msgid "1.2 Per-command limits"
+msgstr ""
+
+#: src/resource-control.md:26
+msgid "**Command timeout**"
+msgstr ""
+
+#: src/resource-control.md:26
+msgid "Stop long-running commands"
+msgstr ""
+
+#: src/resource-control.md:26
+msgid "`timeout_s: 300` per `exec.run`"
+msgstr ""
+
+#: src/resource-control.md:27
+msgid "**Default timeout**"
+msgstr ""
+
+#: src/resource-control.md:27
+msgid "Fallback"
+msgstr ""
+
+#: src/resource-control.md:27
+msgid "e.g. 60s"
+msgstr ""
+
+#: src/resource-control.md:28
+msgid "**Output buffer cap**"
+msgstr ""
+
+#: src/resource-control.md:28
+msgid "Limit stdout/stderr size"
+msgstr ""
+
+#: src/resource-control.md:28
+msgid "e.g. 4 MiB per stream"
+msgstr ""
+
+#: src/resource-control.md:29
+msgid "**Stdin size cap**"
+msgstr ""
+
+#: src/resource-control.md:29
+msgid "Limit input"
+msgstr ""
+
+#: src/resource-control.md:29
+msgid "e.g. 1 MiB"
+msgstr ""
+
+#: src/resource-control.md:31
+msgid "1.3 Backpressure and rejection"
+msgstr ""
+
+#: src/resource-control.md:33
+msgid "**Reject new sessions** when `active_sessions >= max_sessions`"
+msgstr ""
+
+#: src/resource-control.md:34
+msgid "**Reject new commands** when session is busy → `SESSION_BUSY`"
+msgstr ""
+
+#: src/resource-control.md:35
+msgid "**Optional:** Rate limit API requests per client"
+msgstr ""
+
+#: src/resource-control.md:37
+msgid "1.4 Runtime self-monitoring"
+msgstr ""
+
+#: src/resource-control.md:39
+msgid "**Periodic reaping** — zombie children, dead sessions"
+msgstr ""
+
+#: src/resource-control.md:40
+msgid "**Health endpoint** — `system.ping` / `system.stats`"
+msgstr ""
+
+#: src/resource-control.md:41
+msgid ""
+"**Graceful shutdown** — On SIGTERM, stop accepting, drain or kill commands, "
+"destroy sessions"
+msgstr ""
+
+#: src/resource-control.md:43
+msgid "2. Per-Child Resource Limits (Unix)"
+msgstr ""
+
+#: src/resource-control.md:45
+msgid ""
+"Use **setrlimit** in the child (before exec). In Rust: "
+"`Command::unsafe_pre_exec`."
+msgstr ""
+
+#: src/resource-control.md:47
+msgid "Resource"
+msgstr ""
+
+#: src/resource-control.md:47
+msgid "Constant"
+msgstr ""
+
+#: src/resource-control.md:47
+msgid "Effect"
+msgstr ""
+
+#: src/resource-control.md:49
+msgid "**CPU time (seconds)**"
+msgstr ""
+
+#: src/resource-control.md:49
+msgid "`RLIMIT_CPU`"
+msgstr ""
+
+#: src/resource-control.md:49
+msgid "Process killed when CPU time exceeds limit"
+msgstr ""
+
+#: src/resource-control.md:50
+msgid "**Address space (bytes)**"
+msgstr ""
+
+#: src/resource-control.md:50
+msgid "`RLIMIT_AS`"
+msgstr ""
+
+#: src/resource-control.md:50
+msgid "Virtual memory cap"
+msgstr ""
+
+#: src/resource-control.md:51
+msgid "**Process count**"
+msgstr ""
+
+#: src/resource-control.md:51
+msgid "`RLIMIT_NPROC`"
+msgstr ""
+
+#: src/resource-control.md:51
+msgid "Limits fork bombs from the command"
+msgstr ""
+
+#: src/resource-control.md:52
+msgid "**Open files**"
+msgstr ""
+
+#: src/resource-control.md:52
+msgid "`RLIMIT_NOFILE`"
+msgstr ""
+
+#: src/resource-control.md:52
+msgid "Prevents exhausting FDs"
+msgstr ""
+
+#: src/resource-control.md:54
+msgid "**Rust crate:** `rlimit` (docs.rs/rlimit) — Unix-only."
+msgstr ""
+
+#: src/resource-control.md:56
+msgid ""
+"**Config:** Make limits configurable (e.g. `limit_cpu_sec`, "
+"`limit_memory_bytes`, `limit_nproc`)."
+msgstr ""
+
+#: src/resource-control.md:58
+msgid "3. Cgroups (Linux) — Stronger Isolation"
+msgstr ""
+
+#: src/resource-control.md:60
+msgid ""
+"For **strict** CPU and memory limits per session, use cgroups so the kernel "
+"enforces them."
+msgstr ""
+
+#: src/resource-control.md:62
+msgid "Mechanism"
+msgstr ""
+
+#: src/resource-control.md:64
+msgid "**Memory cap per session**"
+msgstr ""
+
+#: src/resource-control.md:64
+msgid "cgroup v2 `memory.max`"
+msgstr ""
+
+#: src/resource-control.md:65
+msgid "**CPU cap per session**"
+msgstr ""
+
+#: src/resource-control.md:65
+msgid "cgroup v2 `cpu.max` (quota + period)"
+msgstr ""
+
+#: src/resource-control.md:66
+msgid "**Scope**"
+msgstr ""
+
+#: src/resource-control.md:66
+msgid "One cgroup per session; add shell and children to that cgroup"
+msgstr ""
+
+#: src/resource-control.md:68
+msgid "**Rust crate:** `cgroups-rs` (kata-containers/cgroups-rs)."
+msgstr ""
+
+#: src/resource-control.md:70
+msgid "4. Summary: What to Implement and When"
+msgstr ""
+
+#: src/resource-control.md:72
+msgid "Layer"
+msgstr ""
+
+#: src/resource-control.md:72
+msgid "MVP (ship first)"
+msgstr ""
+
+#: src/resource-control.md:72
+msgid "Next (L2)"
+msgstr ""
+
+#: src/resource-control.md:74
+msgid "**Application**"
+msgstr ""
+
+#: src/resource-control.md:74
+msgid ""
+"Max sessions, command timeout, output buffer cap, reject at capacity, "
+"graceful shutdown"
+msgstr ""
+
+#: src/resource-control.md:74
+msgid "Session idle timeout, per-client limit, rate limit"
+msgstr ""
+
+#: src/resource-control.md:75
+msgid "**Child process**"
+msgstr ""
+
+#: src/resource-control.md:75
+msgid "`setrlimit` in `pre_exec`: CPU, AS, NPROC (configurable)"
+msgstr ""
+
+#: src/resource-control.md:75
+msgid "Tune per env"
+msgstr ""
+
+#: src/resource-control.md:76
+msgid "**Linux isolation**"
+msgstr ""
+
+#: src/resource-control.md:76
+msgid "—"
+msgstr ""
+
+#: src/resource-control.md:76
+msgid "cgroups per session (memory.max, cpu.max)"
+msgstr ""
+
+#: src/resource-control.md:77
+msgid "**Memory layer**"
+msgstr ""
+
+#: src/resource-control.md:77
+msgid "Cap index size or batch size"
+msgstr ""
+
+#: src/resource-control.md:77
+msgid "Query rate limit, monitoring"
+msgstr ""
+
+#: src/resource-control.md:79
+msgid ""
+"**Principle:** Prefer **application-level + setrlimit** first (works on "
+"macOS and Linux, no root). Add **cgroups** when you need stronger guarantees "
+"on Linux."
+msgstr ""
+
+#: src/resource-control.md:81
+msgid "5. Checklist: Avoid Service Layer Crash"
+msgstr ""
+
+#: src/resource-control.md:83
+msgid "**max_sessions** configured; reject when full"
+msgstr ""
+
+#: src/resource-control.md:84
+msgid "**Command timeout** enforced (default + per-request)"
+msgstr ""
+
+#: src/resource-control.md:85
+msgid "**Output buffer** capped (stdout/stderr)"
+msgstr ""
+
+#: src/resource-control.md:86
+msgid ""
+"**pre_exec** sets **RLIMIT_CPU** and **RLIMIT_AS** (and optionally NPROC) "
+"for each child"
+msgstr ""
+
+#: src/resource-control.md:87
+msgid "**Graceful shutdown** on SIGTERM"
+msgstr ""
+
+#: src/resource-control.md:88
+msgid "**Periodic reaping** of zombies and dead sessions"
+msgstr ""
+
+#: src/resource-control.md:89
+msgid "(L2) **cgroups** per session on Linux for hard memory/CPU limits"
+msgstr ""
+
+#: src/openclaw-integration.md:3
+msgid ""
+"How `claw_core` integrates with OpenClaw for automatic startup and managed "
+"command execution."
+msgstr ""
+
+#: src/openclaw-integration.md:5
+msgid ""
+"**Path placeholders:** `$CLAW_ROOT` = claw repo, `$WORKSPACE` = OpenClaw "
+"workspace, `$PLUGIN_ROOT` = plugin install dir."
+msgstr ""
+
+#: src/openclaw-integration.md:9
+msgid ""
+"**claw_core** is a Rust-based Terminal Runtime Layer. **OpenClaw** is an AI "
+"agent framework. This integration allows OpenClaw to:"
+msgstr ""
+
+#: src/openclaw-integration.md:11
+msgid "**Auto-start claw_core** when the gateway starts (via boot hook)"
+msgstr ""
+
+#: src/openclaw-integration.md:12
+msgid "**Prefer claw_core** for command execution when available"
+msgstr ""
+
+#: src/openclaw-integration.md:13
+msgid "**Manage claw_core** lifecycle via skills"
+msgstr ""
+
+#: src/openclaw-integration.md:14
+msgid "**Fall back gracefully** to normal exec if claw_core is unavailable"
+msgstr ""
+
+#: src/openclaw-integration.md:46
+msgid "Components"
+msgstr ""
+
+#: src/openclaw-integration.md:48
+msgid "Boot Hook"
+msgstr ""
+
+#: src/openclaw-integration.md:50
+msgid "**Location:** Plugin hook `boot-claw-core` (or `$WORKSPACE/BOOT.md`)"
+msgstr ""
+
+#: src/openclaw-integration.md:52
+msgid "Runs on `gateway:startup` and starts claw_core via the daemon script."
+msgstr ""
+
+#: src/openclaw-integration.md:54
+msgid "Daemon Management Script"
+msgstr ""
+
+#: src/openclaw-integration.md:56
+msgid ""
+"**Location:** `$PLUGIN_ROOT/scripts/claw_core_daemon.sh` or `$CLAW_ROOT/"
+"scripts/claw_core_daemon.sh`"
+msgstr ""
+
+#: src/openclaw-integration.md:59
+msgid "# Start\n"
+msgstr ""
+
+#: src/openclaw-integration.md:60
+msgid "# Stop\n"
+msgstr ""
+
+#: src/openclaw-integration.md:61
+msgid "# Restart\n"
+msgstr ""
+
+#: src/openclaw-integration.md:62
+msgid "# Check status\n"
+msgstr ""
+
+#: src/openclaw-integration.md:65
+msgid "PID: `/tmp/claw_core.pid`"
+msgstr ""
+
+#: src/openclaw-integration.md:66
+msgid "Log: `/tmp/claw_core.log`"
+msgstr ""
+
+#: src/openclaw-integration.md:67
+msgid "Socket: `/tmp/trl.sock` (or `$CLAW_CORE_SOCKET`)"
+msgstr ""
+
+#: src/openclaw-integration.md:69
+msgid "OpenClaw Skills"
+msgstr ""
+
+#: src/openclaw-integration.md:71
+msgid "Skill"
+msgstr ""
+
+#: src/openclaw-integration.md:73
+msgid "**claw-core-runtime**"
+msgstr ""
+
+#: src/openclaw-integration.md:73
+msgid "Execute commands through claw_core (wrapper around `claw_core_exec.py`)"
+msgstr ""
+
+#: src/openclaw-integration.md:74
+msgid "**claw-core-sessions**"
+msgstr ""
+
+#: src/openclaw-integration.md:74
+msgid "List and manage claw_core sessions"
+msgstr ""
+
+#: src/openclaw-integration.md:75
+msgid "**claw-core-daemon**"
+msgstr ""
+
+#: src/openclaw-integration.md:75
+msgid "Start/stop/status the daemon from the agent"
+msgstr ""
+
+#: src/openclaw-integration.md:77
+msgid "Install as Plugin"
+msgstr ""
+
+#: src/openclaw-integration.md:83
+msgid ""
+"Restart the OpenClaw gateway after installing. Config: `~/.openclaw/"
+"openclaw.json` under `plugins.entries.claw-core`."
+msgstr ""
+
+#: src/openclaw-integration.md:85
+msgid "Quick Reference"
+msgstr ""
+
+#: src/openclaw-integration.md:87
+msgid "**Start runtime:** `openclaw clawcore start` or daemon script"
+msgstr ""
+
+#: src/openclaw-integration.md:88
+msgid "**Status:** `openclaw clawcore status`"
+msgstr ""
+
+#: src/openclaw-integration.md:89
+msgid "**RPC:** `clawcore.status` from the gateway"
+msgstr ""

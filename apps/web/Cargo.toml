@@ -1,0 +1,22 @@
+[package]
+name = "claw-web"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+dioxus = { version = "0.7", features = ["web", "router"] }
+dioxus-i18n = "0.5"
+dioxus-router = "0.7"
+unic-langid = { version = "0.9", features = ["macros"] }
+dioxus-web = "0.7"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+web-sys = { version = "0.3", features = ["Window", "Document", "Element", "HtmlElement", "HtmlMediaElement", "HtmlVideoElement", "Storage", "Location", "History", "Request", "RequestInit", "Headers"] }
+wasm-bindgen = "0.2"
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true

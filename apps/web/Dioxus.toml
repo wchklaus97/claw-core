@@ -1,0 +1,9 @@
+[application]
+name = "Cursor Runtime Layer"
+default_platform = "web"
+asset_dir = "assets"
+
+[web.app]
+out_dir = "dist"
+base_path = "/"
+title = "Cursor Runtime Layer"

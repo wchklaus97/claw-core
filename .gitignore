@@ -1,0 +1,29 @@
+# Rust build output
+/target/
+
+# Dioxus + mdBook build output (GitHub Pages)
+/dist/
+
+# Environment & secrets (backup configs with tokens)
+.env/
+.env
+.env.local
+.env.*.local
+
+# Node (plugin)
+plugin/node_modules/
+node_modules/
+
+# IDE / tooling
+.cargo/
+.cursor/
+
+# Tests
+/tests/
+
+# macOS
+.DS_Store
+
+# Build artifacts
+*.bak
+*.log

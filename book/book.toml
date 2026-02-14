@@ -1,0 +1,31 @@
+[book]
+title = "Claw Core"
+description = "Agent CLI packing core — terminal runtime for AI agents"
+authors = ["Claw Core"]
+language = "en"
+src = "src"
+
+[build]
+build-dir = "book"
+create-missing = true
+extra-watch-dirs = ["po"]
+
+[preprocessor.gettext]
+optional = true
+after = ["links"]
+
+[output.html]
+default-theme = "rust"
+preferred-dark-theme = "navy"
+mathjax-support = false
+no-section-label = false
+cname = ""
+git-repository-url = ""
+git-repository-icon = "fa-github"
+edit-url-template = ""
+site-url = ""
+input-404 = ""
+print.enable = false
+fold.enable = false
+fold.level = 0
+search.enable = true
