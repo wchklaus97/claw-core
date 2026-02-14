@@ -39,10 +39,9 @@ pub(crate) enum Route {
 
 #[component]
 fn Home() -> Element {
+    let navigator = use_navigator();
     use_effect(move || {
-        if let Some(window) = web_sys::window() {
-            let _ = window.location().set_pathname("/en");
-        }
+        navigator.replace(Route::En);
     });
     rsx! { div { class: "landing-page", "Loading…" } }
 }

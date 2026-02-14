@@ -108,6 +108,14 @@ if [ -f "dist/index.html" ] && [ ! -f "dist/404.html" ]; then
   echo "✅ Created 404.html"
 fi
 
+# Inject <base href> for GitHub Pages so relative links and SPA routing work
+if [ "$GITHUB_PAGES" = true ] && [ -f "dist/index.html" ]; then
+  for html in dist/index.html dist/404.html; do
+    [ -f "$html" ] && sed -i.bak 's|<head>|<head><base href="/claw-core/">|' "$html" && rm -f "${html}.bak"
+  done
+  echo "✅ Injected base href=/claw-core/ into HTML"
+fi
+
 # SEO: robots.txt and sitemap.xml at root (if present)
 for dir in apps/web/assets assets; do
   [ -f "$dir/robots.txt" ] && cp "$dir/robots.txt" dist/robots.txt && echo "✅ Copied robots.txt" && break
@@ -248,7 +256,7 @@ done
 
 # Redirect /book and /book/ to default locale book
 BOOK_BASE=""
-[ "$GITHUB_PAGES" = true ] && BOOK_BASE="/claw"
+[ "$GITHUB_PAGES" = true ] && BOOK_BASE="/claw-core"
 BOOK_REDIRECT_URL="${BOOK_BASE}/en/book/"
 mkdir -p dist/book
 cat > dist/book/index.html << EOF
