@@ -12,6 +12,7 @@
 
 # Node (plugin)
 plugin/node_modules/
+plugin/bin/
 node_modules/
 
 # IDE / tooling

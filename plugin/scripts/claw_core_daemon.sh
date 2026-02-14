@@ -13,6 +13,14 @@ find_binary() {
     echo "$CLAW_CORE_BINARY"
     return 0
   fi
+  if [ -x "$PLUGIN_ROOT/bin/claw_core" ]; then
+    echo "$PLUGIN_ROOT/bin/claw_core"
+    return 0
+  fi
+  if [ -x "$PLUGIN_ROOT/bin/claw_core.exe" ]; then
+    echo "$PLUGIN_ROOT/bin/claw_core.exe"
+    return 0
+  fi
   if command -v claw_core >/dev/null 2>&1; then
     command -v claw_core
     return 0

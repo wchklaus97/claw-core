@@ -17,7 +17,7 @@
     "skills/"
   ],
   "scripts": {
-    "postinstall": "chmod +x scripts/claw_core_daemon.sh 2>/dev/null || true; bash scripts/install-skills-to-openclaw.sh 2>/dev/null || true"
+    "postinstall": "chmod +x scripts/claw_core_daemon.sh scripts/postinstall-download-binary.sh 2>/dev/null || true; bash scripts/postinstall-download-binary.sh 2>/dev/null || true; node scripts/postinstall-config-openclaw.js 2>/dev/null || true; bash scripts/install-skills-to-openclaw.sh 2>/dev/null || true"
   },
   "keywords": [
     "openclaw",
