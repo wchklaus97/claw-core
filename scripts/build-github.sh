@@ -108,12 +108,24 @@ if [ -f "dist/index.html" ] && [ ! -f "dist/404.html" ]; then
   echo "✅ Created 404.html"
 fi
 
-# Inject <base href> for GitHub Pages so relative links and SPA routing work
+# Fix paths for GitHub Pages subpath: base tag + rewrite absolute asset paths
 if [ "$GITHUB_PAGES" = true ] && [ -f "dist/index.html" ]; then
+  BASE_PREFIX="/claw-core"
   for html in dist/index.html dist/404.html; do
-    [ -f "$html" ] && sed -i.bak 's|<head>|<head><base href="/claw-core/">|' "$html" && rm -f "${html}.bak"
+    if [ -f "$html" ]; then
+      # Inject base tag
+      sed -i.bak "s|<head>|<head><base href=\"${BASE_PREFIX}/\">|" "$html"
+      # Rewrite absolute asset paths so they load from subpath (avoid double-replace)
+      if ! grep -q "href=\"${BASE_PREFIX}/" "$html" 2>/dev/null; then
+        sed -i.bak "s|href=\"/|href=\"${BASE_PREFIX}/|g" "$html"
+      fi
+      if ! grep -q "src=\"${BASE_PREFIX}/" "$html" 2>/dev/null; then
+        sed -i.bak "s|src=\"/|src=\"${BASE_PREFIX}/|g" "$html"
+      fi
+      rm -f "${html}.bak"
+    fi
   done
-  echo "✅ Injected base href=/claw-core/ into HTML"
+  echo "✅ Injected base href and rewrote asset paths for /claw-core/"
 fi
 
 # SEO: robots.txt and sitemap.xml at root (if present)
