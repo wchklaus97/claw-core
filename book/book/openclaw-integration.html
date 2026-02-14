@@ -16,7 +16,7 @@
         <link rel="shortcut icon" href="favicon-8114d1fc.png">
         <link rel="stylesheet" href="css/variables-8adf115d.css">
         <link rel="stylesheet" href="css/general-2459343d.css">
-        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/chrome-62b496c4.css">
 
         <!-- Fonts -->
         <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
@@ -34,7 +34,7 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-b7e232a4.js";
+            window.path_to_searchindex_js = "searchindex-3a1e89ec.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-876e0338.js"></script>
@@ -172,6 +172,7 @@
                     <main>
                         <h1 id="openclaw-integration"><a class="header" href="#openclaw-integration">OpenClaw Integration</a></h1>
 <p>How <code>claw_core</code> integrates with OpenClaw for automatic startup and managed command execution.</p>
+<p><strong>Documentation:</strong> <a href="https://wchklaus97.github.io/claw-core/en/book/">https://wchklaus97.github.io/claw-core/en/book/</a></p>
 <p><strong>Path placeholders:</strong> <code>$CLAW_ROOT</code> = claw repo, <code>$WORKSPACE</code> = OpenClaw workspace, <code>$PLUGIN_ROOT</code> = plugin install dir.</p>
 <h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
 <p><strong>claw_core</strong> is a Rust-based Terminal Runtime Layer. <strong>OpenClaw</strong> is an AI agent framework. This integration allows OpenClaw to:</p>
@@ -224,7 +225,18 @@
 <li>Log: <code>/tmp/claw_core.log</code></li>
 <li>Socket: <code>/tmp/trl.sock</code> (or <code>$CLAW_CORE_SOCKET</code>)</li>
 </ul>
+<p><strong>Auto-download binary:</strong> OpenClaw extracts npm packages without running <code>npm install</code>, so postinstall scripts do not run. The daemon script compensates: on first <code>start</code>, if the plugin binary is missing (and <code>CLAW_CORE_BINARY</code> / <code>CLAW_CORE_SOURCE</code> are unset), it downloads the binary from GitHub Releases, configures <code>openclaw.json</code>, and installs skills. One-command install: <code>openclaw plugins install @wchklaus97hk/claw-core</code> then <code>openclaw clawcore start</code>.</p>
+<h3 id="implementation-daemon-auto-download"><a class="header" href="#implementation-daemon-auto-download">Implementation: Daemon auto-download</a></h3>
+<p><strong>Problem:</strong> OpenClaw installs plugins by extracting the npm tarball directly; it does not run <code>npm install</code> in the extracted directory. As a result, <code>postinstall</code> scripts (binary download, config, skills) never execute.</p>
+<p><strong>Solution:</strong> The daemon script (<code>claw_core_daemon.sh</code>) runs the missing setup when <code>start</code> is invoked and the plugin binary is absent. In <code>start()</code>:</p>
+<ol>
+<li><strong>Condition:</strong> <code>CLAW_CORE_BINARY</code> and <code>CLAW_CORE_SOURCE</code> are unset, and <code>$PLUGIN_ROOT/bin/claw_core</code> does not exist.</li>
+<li><strong>Action:</strong> Run <code>postinstall-download-binary.sh</code> (download binary from GitHub Releases), <code>postinstall-config-openclaw.js</code> (set <code>binaryPath</code> in <code>openclaw.json</code>), and <code>install-skills-to-openclaw.sh</code> (copy skills to <code>~/.openclaw/skills/</code>).</li>
+<li><strong>Then:</strong> Proceed with <code>find_binary()</code> and start the daemon.</li>
+</ol>
+<p>This ensures a one-command install works: <code>openclaw plugins install @wchklaus97hk/claw-core</code> followed by <code>openclaw clawcore start</code> completes setup without manual steps.</p>
 <h3 id="openclaw-skills"><a class="header" href="#openclaw-skills">OpenClaw Skills</a></h3>
+<p>The plugin ships 8 skills (canonical list: <code>scripts/claw-core-skills.list</code>):</p>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -234,15 +246,39 @@
 <tr><td><strong>claw-core-runtime</strong></td><td>Execute commands through claw_core (wrapper around <code>claw_core_exec.py</code>)</td></tr>
 <tr><td><strong>claw-core-sessions</strong></td><td>List and manage claw_core sessions</td></tr>
 <tr><td><strong>claw-core-daemon</strong></td><td>Start/stop/status the daemon from the agent</td></tr>
+<tr><td><strong>cron-helper</strong></td><td>Cron job scheduling helpers</td></tr>
+<tr><td><strong>cursor-agent</strong></td><td>Cursor agent coordination</td></tr>
+<tr><td><strong>cursor-cron-bridge</strong></td><td>Bridge between Cursor and cron</td></tr>
+<tr><td><strong>plans-mode</strong></td><td>Planning mode workflow</td></tr>
+<tr><td><strong>status-dashboard</strong></td><td>Status dashboard for monitoring</td></tr>
 </tbody>
 </table>
 </div>
-<h3 id="install-as-plugin"><a class="header" href="#install-as-plugin">Install as Plugin</a></h3>
-<pre><code class="language-bash">openclaw plugins install @openclaw/claw-core
+<h3 id="install--remove"><a class="header" href="#install--remove">Install / Remove</a></h3>
+<p><strong>One-command install (npm):</strong></p>
+<pre><code class="language-bash">openclaw plugins install @wchklaus97hk/claw-core
+openclaw clawcore start   # daemon auto-downloads binary on first run
 </code></pre>
-<p>Restart the OpenClaw gateway after installing. Config: <code>~/.openclaw/openclaw.json</code> under <code>plugins.entries.claw-core</code>.</p>
+<p><strong>Local/development install (builds binary, installs plugin, auto-configures openclaw.json):</strong></p>
+<pre><code class="language-bash"># Install
+./scripts/install-claw-core-openclaw.sh
+
+# Reinstall
+./scripts/install-claw-core-openclaw.sh --force
+
+# Remove
+./scripts/remove-claw-core-openclaw.sh
+
+# Verify
+./scripts/verify_integration.sh
+</code></pre>
+<p>Restart the OpenClaw gateway after installing.</p>
 <h2 id="quick-reference"><a class="header" href="#quick-reference">Quick Reference</a></h2>
 <ul>
+<li><strong>One-command install:</strong> <code>openclaw plugins install @wchklaus97hk/claw-core</code> then <code>openclaw clawcore start</code></li>
+<li><strong>Local install:</strong> <code>./scripts/install-claw-core-openclaw.sh</code> (use <code>--force</code> to reinstall)</li>
+<li><strong>Remove:</strong> <code>./scripts/remove-claw-core-openclaw.sh</code></li>
+<li><strong>Verify:</strong> <code>./scripts/verify_integration.sh</code></li>
 <li><strong>Start runtime:</strong> <code>openclaw clawcore start</code> or daemon script</li>
 <li><strong>Status:</strong> <code>openclaw clawcore status</code></li>
 <li><strong>RPC:</strong> <code>clawcore.status</code> from the gateway</li>
@@ -277,22 +313,6 @@
         <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
         <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
 
-        <!-- Livereload script (if served using the cli tool) -->
-        <script>
-            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
-            const wsAddress = wsProtocol + "//" + location.host + "/" + "__livereload";
-            const socket = new WebSocket(wsAddress);
-            socket.onmessage = function (event) {
-                if (event.data === "reload") {
-                    socket.close();
-                    location.reload();
-                }
-            };
-
-            window.onbeforeunload = function() {
-                socket.close();
-            }
-        </script>
 
 
         <script>

@@ -88,11 +88,11 @@ The runtime receives tokens and environment variables from the agent or startup 
 
 ## Security Checklist for Deployment
 
-- [ ] Runtime runs as **non-root** user
+- [x] Runtime runs as **non-root** user
 - [ ] `.env` file has `0600` permissions
-- [ ] Unix socket has `0600` permissions
+- [x] Unix socket has `0600` permissions
 - [ ] `TRL_AUTH_TOKEN` is set if HTTP mode is enabled
 - [ ] Logging does NOT include env var values
-- [ ] Max session limit is configured
-- [ ] Default timeout is set
+- [x] Max session limit is configured
+- [x] Default timeout is set
 - [ ] Runtime binary is not world-writable

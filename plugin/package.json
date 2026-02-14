@@ -1,7 +1,7 @@
 {
   "name": "@wchklaus97hk/claw-core",
-  "version": "0.1.1",
-  "description": "OpenClaw plugin: Terminal Runtime Layer (claw_core) — session-managed command execution for AI agents. Linux and macOS only.",
+  "version": "0.1.2",
+  "description": "OpenClaw plugin: Terminal Runtime Layer (claw_core) — session-managed command execution for AI agents. Linux and macOS only. Daemon auto-downloads binary on first start (OpenClaw does not run postinstall).",
   "main": "index.ts",
   "os": ["darwin", "linux"],
   "openclaw": {
@@ -40,7 +40,8 @@
     "type": "git",
     "url": "git+https://github.com/wchklaus97/claw-core.git"
   },
-  "homepage": "https://github.com/wchklaus97/claw-core#readme",
+  "homepage": "https://wchklaus97.github.io/claw-core/en/book/",
+  "documentation": "https://wchklaus97.github.io/claw-core/en/book/",
   "bugs": {
     "url": "https://github.com/wchklaus97/claw-core/issues"
   },

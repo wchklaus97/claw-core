@@ -92,7 +92,7 @@ With OpenClaw installed, add `--openclaw` to also verify plugin integration:
 ./scripts/pre-push-test.sh --openclaw
 ```
 
-See [verify_integration.sh](scripts/verify_integration.sh) and [plugin README](plugin/README.md) for OpenClaw setup (clear config, install from local path).
+See [verify_integration.sh](scripts/verify_integration.sh) and [plugin README](plugin/README.md) for OpenClaw setup (clear config, install from local path). One-command install: `openclaw plugins install @wchklaus97hk/claw-core` — the daemon auto-downloads the binary on first start (OpenClaw does not run npm postinstall).
 
 ---
 

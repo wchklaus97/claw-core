@@ -322,10 +322,18 @@ fn Landing(#[props(into)] locale: String) -> Element {
                         }
                         p { class: "quickstart-comment", { t!("quickstart-comment") } }
                         pre { class: "quickstart-code",
-                            code { { t!("quickstart-command") } }
+                            code {
+                                { t!("quickstart-command") }
+                                "\n"
+                                { t!("quickstart-command-2") }
+                            }
                         }
                     }
-                    p { class: "quickstart-note", { t!("quickstart-note") } }
+                    p { class: "quickstart-note",
+                        { t!("quickstart-note-prefix") }
+                        a { href: "https://wchklaus97.github.io/claw-core/en/book/", target: "_blank", rel: "noopener noreferrer", { t!("quickstart-note-docs") } }
+                        { t!("quickstart-note-suffix") }
+                    }
                 }
 
                 section { id: "pricing", class: "pricing-section", "data-motion": "section",

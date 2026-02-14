@@ -90,6 +90,8 @@ cargo test
 ./scripts/pre-push-test.sh --openclaw
 ```
 
+參見 [verify_integration.sh](scripts/verify_integration.sh) 與 [外掛說明](plugin/README.md) 完成 OpenClaw 配置。一步安裝：`openclaw plugins install @wchklaus97hk/claw-core`，首次執行 `openclaw clawcore start` 時 daemon 會自動下載 binary（OpenClaw 不執行 npm postinstall）。
+
 ---
 
 ## Build 與 Deploy

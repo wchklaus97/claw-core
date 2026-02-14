@@ -56,6 +56,19 @@ start() {
     fi
   fi
 
+  # Ensure plugin binary exists (OpenClaw extracts packages without running npm postinstall)
+  if [ -z "$CLAW_CORE_BINARY" ] && [ -z "$CLAW_CORE_SOURCE" ] && [ ! -x "$PLUGIN_ROOT/bin/claw_core" ]; then
+    DOWNLOAD_SH="$PLUGIN_ROOT/scripts/postinstall-download-binary.sh"
+    CONFIG_JS="$PLUGIN_ROOT/scripts/postinstall-config-openclaw.js"
+    if [ -f "$DOWNLOAD_SH" ]; then
+      echo "Downloading claw_core binary (OpenClaw does not run postinstall)..."
+      CLAW_CORE_PLUGIN_ROOT="$PLUGIN_ROOT" bash "$DOWNLOAD_SH" 2>/dev/null || true
+      [ -f "$CONFIG_JS" ] && node "$CONFIG_JS" 2>/dev/null || true
+      INSTALL_SKILLS="$PLUGIN_ROOT/scripts/install-skills-to-openclaw.sh"
+      [ -f "$INSTALL_SKILLS" ] && bash "$INSTALL_SKILLS" 2>/dev/null || true
+    fi
+  fi
+
   echo "Starting claw_core..."
 
   BINARY=$(find_binary)
