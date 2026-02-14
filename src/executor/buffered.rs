@@ -79,11 +79,11 @@ pub async fn run(input: ExecInput, config: &Config) -> Result<ExecResult, ExecEr
     let mut child = command.spawn()?;
     let pid = child.id();
 
-    if let Some(stdin_data) = input.stdin {
-        if let Some(mut child_stdin) = child.stdin.take() {
-            child_stdin.write_all(stdin_data.as_bytes()).await?;
-            child_stdin.shutdown().await?;
-        }
+    if let Some(stdin_data) = input.stdin
+        && let Some(mut child_stdin) = child.stdin.take()
+    {
+        child_stdin.write_all(stdin_data.as_bytes()).await?;
+        child_stdin.shutdown().await?;
     }
 
     let join = tokio::spawn(async move { child.wait_with_output().await });

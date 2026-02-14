@@ -196,17 +196,17 @@ async fn exec_run(req: RpcRequest, state: AppState) -> RpcResponse {
     // GC: Check if session exceeded max commands before running
     {
         let sessions = state.sessions.read().await;
-        if let Some(session) = sessions.get_session(&params.session_id) {
-            if session.has_exceeded_max_commands(state.config.session_max_commands) {
-                return RpcResponse::error(
-                    req.id,
-                    "SESSION_LIMIT_EXCEEDED",
-                    format!(
-                        "session has exceeded max commands ({}); create a new session",
-                        state.config.session_max_commands
-                    ),
-                );
-            }
+        if let Some(session) = sessions.get_session(&params.session_id)
+            && session.has_exceeded_max_commands(state.config.session_max_commands)
+        {
+            return RpcResponse::error(
+                req.id,
+                "SESSION_LIMIT_EXCEEDED",
+                format!(
+                    "session has exceeded max commands ({}); create a new session",
+                    state.config.session_max_commands
+                ),
+            );
         }
     }
 
@@ -287,6 +287,26 @@ fn looks_like_cursor_agent(command: &str) -> bool {
         || normalized.starts_with("cursor-agent ")
 }
 
+fn err_code(err: &SessionPoolError) -> &'static str {
+    match err {
+        SessionPoolError::MaxSessionsReached => "MAX_SESSIONS_REACHED",
+        SessionPoolError::SessionNotFound => "SESSION_NOT_FOUND",
+        SessionPoolError::SessionBusy => "SESSION_BUSY",
+        SessionPoolError::InvalidShell(_) => "INVALID_PARAMS",
+        SessionPoolError::InvalidWorkingDir(_) => "INVALID_PARAMS",
+    }
+}
+
+fn err_message(err: SessionPoolError) -> String {
+    match err {
+        SessionPoolError::MaxSessionsReached => "max sessions reached".to_string(),
+        SessionPoolError::SessionNotFound => "session not found".to_string(),
+        SessionPoolError::SessionBusy => "session is already running".to_string(),
+        SessionPoolError::InvalidShell(shell) => format!("shell not found: {shell}"),
+        SessionPoolError::InvalidWorkingDir(cwd) => format!("working_dir not found: {cwd}"),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -307,25 +327,5 @@ mod tests {
     #[test]
     fn keeps_session_timeout_for_non_cursor_command() {
         assert_eq!(resolve_timeout_s(None, 75, "echo hello"), 75);
-    }
-}
-
-fn err_code(err: &SessionPoolError) -> &'static str {
-    match err {
-        SessionPoolError::MaxSessionsReached => "MAX_SESSIONS_REACHED",
-        SessionPoolError::SessionNotFound => "SESSION_NOT_FOUND",
-        SessionPoolError::SessionBusy => "SESSION_BUSY",
-        SessionPoolError::InvalidShell(_) => "INVALID_PARAMS",
-        SessionPoolError::InvalidWorkingDir(_) => "INVALID_PARAMS",
-    }
-}
-
-fn err_message(err: SessionPoolError) -> String {
-    match err {
-        SessionPoolError::MaxSessionsReached => "max sessions reached".to_string(),
-        SessionPoolError::SessionNotFound => "session not found".to_string(),
-        SessionPoolError::SessionBusy => "session is already running".to_string(),
-        SessionPoolError::InvalidShell(shell) => format!("shell not found: {shell}"),
-        SessionPoolError::InvalidWorkingDir(cwd) => format!("working_dir not found: {cwd}"),
     }
 }
