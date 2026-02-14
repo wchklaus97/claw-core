@@ -2,6 +2,8 @@
 
 说明 `claw_core` 如何与 OpenClaw 集成，实现自动启动与受管命令执行。
 
+**文档：** [https://wchklaus97.github.io/claw-core/zh-Hans/book/](https://wchklaus97.github.io/claw-core/zh-Hans/book/)
+
 **路径占位符：** `$CLAW_ROOT` = claw 仓库，`$WORKSPACE` = OpenClaw 工作区，`$PLUGIN_ROOT` = 插件安装目录。
 
 ## 概览
@@ -56,15 +58,29 @@
 **位置：** `$PLUGIN_ROOT/scripts/claw_core_daemon.sh` 或 `$CLAW_ROOT/scripts/claw_core_daemon.sh`
 
 ```bash
-./claw_core_daemon.sh start   # Start
-./claw_core_daemon.sh stop    # Stop
-./claw_core_daemon.sh restart # Restart
-./claw_core_daemon.sh status  # Check status
+./claw_core_daemon.sh start   # 启动
+./claw_core_daemon.sh stop    # 停止
+./claw_core_daemon.sh restart # 重启
+./claw_core_daemon.sh status  # 查看状态
 ```
 
 - PID：`/tmp/claw_core.pid`
 - 日志：`/tmp/claw_core.log`
 - Socket：`/tmp/trl.sock`（或 `$CLAW_CORE_SOCKET`）
+
+**自动下载 binary：** OpenClaw 安装插件时只解压 npm 包，不执行 `npm install`，因此 postinstall 不会运行。daemon 脚本会补齐：首次执行 `start` 时，若插件 binary 不存在（且未设置 `CLAW_CORE_BINARY` / `CLAW_CORE_SOURCE`），会自动从 GitHub Releases 下载 binary、配置 `openclaw.json` 并安装 skills。一步安装：`openclaw plugins install @wchklaus97hk/claw-core`，然后执行 `openclaw clawcore start`。
+
+### 实现：Daemon 自动下载
+
+**问题：** OpenClaw 安装插件时只解压 npm 包，不在解压目录中执行 `npm install`，因此 `postinstall` 脚本（binary 下载、配置、skills）不会运行。
+
+**方案：** daemon 脚本（`claw_core_daemon.sh`）在 `start` 被调用且插件 binary 缺失时，补全缺失的安装步骤。在 `start()` 中：
+
+1. **条件：** 未设置 `CLAW_CORE_BINARY` 和 `CLAW_CORE_SOURCE`，且 `$PLUGIN_ROOT/bin/claw_core` 不存在。
+2. **动作：** 依次执行 `postinstall-download-binary.sh`（从 GitHub Releases 下载 binary）、`postinstall-config-openclaw.js`（在 `openclaw.json` 中设置 `binaryPath`）、`install-skills-to-openclaw.sh`（将 skills 复制到 `~/.openclaw/skills/`）。
+3. **之后：** 调用 `find_binary()` 并启动 daemon。
+
+这样可实现一步安装：`openclaw plugins install @wchklaus97hk/claw-core` 后再执行 `openclaw clawcore start`，即可完成安装，无需额外手动操作。
 
 ### OpenClaw Skills
 
@@ -83,8 +99,17 @@
 
 ### 安装 / 卸载
 
+**一步安装（npm）：**
+
 ```bash
-# 安装（构建二进制、安装插件、自动配置 openclaw.json）
+openclaw plugins install @wchklaus97hk/claw-core
+openclaw clawcore start   # 首次运行 daemon 自动下载 binary
+```
+
+**本地/开发安装（构建二进制、安装插件、自动配置 openclaw.json）：**
+
+```bash
+# 安装
 ./scripts/install-claw-core-openclaw.sh
 
 # 重新安装
@@ -101,7 +126,8 @@
 
 ## 快速参考
 
-- **安装：** `./scripts/install-claw-core-openclaw.sh`（用 `--force` 重装）
+- **一步安装：** `openclaw plugins install @wchklaus97hk/claw-core`，然后 `openclaw clawcore start`
+- **本地安装：** `./scripts/install-claw-core-openclaw.sh`（用 `--force` 重装）
 - **卸载：** `./scripts/remove-claw-core-openclaw.sh`
 - **验证：** `./scripts/verify_integration.sh`
 - **启动 Runtime：** `openclaw clawcore start` 或 daemon 脚本

@@ -88,11 +88,11 @@ Runtime 从 Agent 或启动配置接收 token 与环境变量，将其传给子�
 
 ## 部署安全检查清单
 
-- [ ] Runtime 以**非 root** 用户运行
+- [x] Runtime 以**非 root** 用户运行
 - [ ] `.env` 权限为 `0600`
-- [ ] Unix Socket 权限为 `0600`
+- [x] Unix Socket 权限为 `0600`
 - [ ] 启用 HTTP 时已设置 `TRL_AUTH_TOKEN`
 - [ ] 日志中不包含环境变量值
-- [ ] 已配置最大会话数
-- [ ] 已设置默认超时
+- [x] 已配置最大会话数
+- [x] 已设置默认超时
 - [ ] Runtime 二进制不可被所有用户写入

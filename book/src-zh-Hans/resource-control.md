@@ -80,10 +80,10 @@
 
 ## 5. 防止服务层崩溃检查清单
 
-- [ ] 已配置 **max_sessions**，超限时拒绝
-- [ ] 已强制 **命令超时**（默认值 + 每请求覆盖）
-- [ ] 已限制 **输出缓冲**（stdout/stderr）
-- [ ] 每个子进程在 **pre_exec** 设置 **RLIMIT_CPU**、**RLIMIT_AS**（可选 NPROC）
-- [ ] 支持 SIGTERM 下的 **优雅停机**
-- [ ] 有僵尸与死亡会话的 **周期回收**
+- [x] 已配置 **max_sessions**，超限时拒绝
+- [x] 已强制 **命令超时**（默认值 + 每请求覆盖）
+- [x] 已限制 **输出缓冲**（stdout/stderr）
+- [x] 每个子进程在 **pre_exec** 设置 **RLIMIT_CPU**、**RLIMIT_AS**（可选 NPROC）
+- [x] 支持 SIGTERM 下的 **优雅停机**
+- [x] 有僵尸与死亡会话的 **周期回收**
 - [ ] （L2）Linux 每会话启用 **cgroups** 做硬性 CPU/内存限制

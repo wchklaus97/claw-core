@@ -2,6 +2,8 @@
 
 How `claw_core` integrates with OpenClaw for automatic startup and managed command execution.
 
+**Documentation:** [https://wchklaus97.github.io/claw-core/en/book/](https://wchklaus97.github.io/claw-core/en/book/)
+
 **Path placeholders:** `$CLAW_ROOT` = claw repo, `$WORKSPACE` = OpenClaw workspace, `$PLUGIN_ROOT` = plugin install dir.
 
 ## Overview
@@ -66,6 +68,20 @@ Runs on `gateway:startup` and starts claw_core via the daemon script.
 - Log: `/tmp/claw_core.log`
 - Socket: `/tmp/trl.sock` (or `$CLAW_CORE_SOCKET`)
 
+**Auto-download binary:** OpenClaw extracts npm packages without running `npm install`, so postinstall scripts do not run. The daemon script compensates: on first `start`, if the plugin binary is missing (and `CLAW_CORE_BINARY` / `CLAW_CORE_SOURCE` are unset), it downloads the binary from GitHub Releases, configures `openclaw.json`, and installs skills. One-command install: `openclaw plugins install @wchklaus97hk/claw-core` then `openclaw clawcore start`.
+
+### Implementation: Daemon auto-download
+
+**Problem:** OpenClaw installs plugins by extracting the npm tarball directly; it does not run `npm install` in the extracted directory. As a result, `postinstall` scripts (binary download, config, skills) never execute.
+
+**Solution:** The daemon script (`claw_core_daemon.sh`) runs the missing setup when `start` is invoked and the plugin binary is absent. In `start()`:
+
+1. **Condition:** `CLAW_CORE_BINARY` and `CLAW_CORE_SOURCE` are unset, and `$PLUGIN_ROOT/bin/claw_core` does not exist.
+2. **Action:** Run `postinstall-download-binary.sh` (download binary from GitHub Releases), `postinstall-config-openclaw.js` (set `binaryPath` in `openclaw.json`), and `install-skills-to-openclaw.sh` (copy skills to `~/.openclaw/skills/`).
+3. **Then:** Proceed with `find_binary()` and start the daemon.
+
+This ensures a one-command install works: `openclaw plugins install @wchklaus97hk/claw-core` followed by `openclaw clawcore start` completes setup without manual steps.
+
 ### OpenClaw Skills
 
 The plugin ships 8 skills (canonical list: `scripts/claw-core-skills.list`):
@@ -83,8 +99,17 @@ The plugin ships 8 skills (canonical list: `scripts/claw-core-skills.list`):
 
 ### Install / Remove
 
+**One-command install (npm):**
+
 ```bash
-# Install (builds binary, installs plugin, auto-configures openclaw.json)
+openclaw plugins install @wchklaus97hk/claw-core
+openclaw clawcore start   # daemon auto-downloads binary on first run
+```
+
+**Local/development install (builds binary, installs plugin, auto-configures openclaw.json):**
+
+```bash
+# Install
 ./scripts/install-claw-core-openclaw.sh
 
 # Reinstall
@@ -101,7 +126,8 @@ Restart the OpenClaw gateway after installing.
 
 ## Quick Reference
 
-- **Install:** `./scripts/install-claw-core-openclaw.sh` (use `--force` to reinstall)
+- **One-command install:** `openclaw plugins install @wchklaus97hk/claw-core` then `openclaw clawcore start`
+- **Local install:** `./scripts/install-claw-core-openclaw.sh` (use `--force` to reinstall)
 - **Remove:** `./scripts/remove-claw-core-openclaw.sh`
 - **Verify:** `./scripts/verify_integration.sh`
 - **Start runtime:** `openclaw clawcore start` or daemon script

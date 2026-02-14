@@ -258,8 +258,7 @@ EOF
 
 build_book_from_src "en" "src" "$ROOT/dist/en/book"
 build_book_from_src "zh-Hans" "src-zh-Hans" "$ROOT/dist/zh-Hans/book"
-# Temporary: zh-Hant reuses translated Chinese source to avoid English fallback.
-build_book_from_src "zh-Hant" "src-zh-Hans" "$ROOT/dist/zh-Hant/book"
+build_book_from_src "zh-Hant" "src-zh-Hant" "$ROOT/dist/zh-Hant/book"
 
 # So /en, /zh-Hans, /zh-Hant serve the SPA (same app as /)
 for loc_dir in en zh-Hans zh-Hant; do

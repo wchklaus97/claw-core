@@ -754,3 +754,4 @@ html:not(.js) .sidebar-resize-handle {
     /* mdbook's margin for h2 is way too large. */
     margin: 10px;
 }
+

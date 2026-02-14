@@ -80,10 +80,10 @@ For **strict** CPU and memory limits per session, use cgroups so the kernel enfo
 
 ## 5. Checklist: Avoid Service Layer Crash
 
-- [ ] **max_sessions** configured; reject when full
-- [ ] **Command timeout** enforced (default + per-request)
-- [ ] **Output buffer** capped (stdout/stderr)
-- [ ] **pre_exec** sets **RLIMIT_CPU** and **RLIMIT_AS** (and optionally NPROC) for each child
-- [ ] **Graceful shutdown** on SIGTERM
-- [ ] **Periodic reaping** of zombies and dead sessions
+- [x] **max_sessions** configured; reject when full
+- [x] **Command timeout** enforced (default + per-request)
+- [x] **Output buffer** capped (stdout/stderr)
+- [x] **pre_exec** sets **RLIMIT_CPU** and **RLIMIT_AS** (and optionally NPROC) for each child
+- [x] **Graceful shutdown** on SIGTERM
+- [x] **Periodic reaping** of zombies and dead sessions
 - [ ] (L2) **cgroups** per session on Linux for hard memory/CPU limits
