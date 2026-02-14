@@ -107,6 +107,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  # Requires repo secret: NPM_TOKEN (npm automation token with publish access for @wchklaus97hk)
   publish-npm:
     needs: release
     runs-on: ubuntu-latest
@@ -118,7 +119,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          registry-url: https://registry.npmjs.org
+          registry-url: "https://registry.npmjs.org"
 
       - name: Publish plugin to npm
         run: npm publish --access public
