@@ -6,9 +6,9 @@ Protocol and endpoint definitions for communication between the agent and the ru
 
 | Mode | When to Use | Details |
 |------|------------|---------|
-| **Unix socket** | Local, same machine | Default. Fast, secure (file perms). Path: `/tmp/trl-<instance>.sock` |
-| **HTTP** | Remote, Docker, multi-host | Binds to `127.0.0.1:<port>`. Token auth required. |
-| **Stdin/Stdout** | CLI testing, piping | One-shot mode. Read JSON from stdin, write JSON to stdout. |
+| **Unix socket** | Local, same machine | **Implemented.** Default path: `/tmp/trl.sock` (or `TRL_SOCKET_PATH`). Fast, secure (file perms). |
+| **HTTP** | Remote, Docker, multi-host | *Planned.* Would bind to `127.0.0.1:<port>` with token auth. |
+| **Stdin/Stdout** | CLI testing, piping | *Planned.* One-shot mode. Read JSON from stdin, write JSON to stdout. |
 
 ## Protocol
 
@@ -106,15 +106,15 @@ Execute a command in a session (buffered mode). Waits for completion.
 
 ---
 
-#### `exec.stream`
+#### `exec.stream` *(planned)*
 
-Execute with real-time output streaming. Returns `stream_id`, then pushes chunks.
+Execute with real-time output streaming. Would return `stream_id`, then push chunks. Not yet implemented.
 
 ---
 
-#### `exec.cancel`
+#### `exec.cancel` *(planned)*
 
-Cancel a running command. **Params:** `session_id`, `signal` (optional).
+Cancel a running command. **Params:** `session_id`, `signal` (optional). Not yet implemented.
 
 ---
 

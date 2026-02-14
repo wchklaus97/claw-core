@@ -6,9 +6,9 @@
 
 | 模式 | 適用情境 | 說明 |
 |------|------------|---------|
-| **Unix Socket** | 本機、同機 | 預設。快且安全（檔案權限）。路徑：`/tmp/trl-<instance>.sock` |
-| **HTTP** | 遠端、Docker、多主機 | 綁定 `127.0.0.1:<port>`。必須啟用 Token 認證。 |
-| **Stdin/Stdout** | CLI 測試、管道呼叫 | 一次性模式。從 stdin 讀 JSON，向 stdout 寫 JSON。 |
+| **Unix Socket** | 本機、同機 | **已實作。** 預設路徑：`/tmp/trl.sock`（或 `TRL_SOCKET_PATH`）。快且安全（檔案權限）。 |
+| **HTTP** | 遠端、Docker、多主機 | *計畫中。* 將綁定 `127.0.0.1:<port>`，需 Token 認證。 |
+| **Stdin/Stdout** | CLI 測試、管道呼叫 | *計畫中。* 一次性模式，從 stdin 讀 JSON，向 stdout 寫 JSON。 |
 
 ## 協定
 
@@ -106,15 +106,15 @@
 
 ---
 
-#### `exec.stream`
+#### `exec.stream` *（計畫中）*
 
-以即時串流輸出執行命令。先回傳 `stream_id`，然後持續推送輸出塊。
+以即時串流輸出執行命令。將先回傳 `stream_id`，然後持續推送輸出塊。尚未實作。
 
 ---
 
-#### `exec.cancel`
+#### `exec.cancel` *（計畫中）*
 
-取消正在執行的命令。**參數：** `session_id`、`signal`（可選）。
+取消正在執行的命令。**參數：** `session_id`、`signal`（可選）。尚未實作。
 
 ---
 

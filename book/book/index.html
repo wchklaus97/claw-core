@@ -34,7 +34,7 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-3a1e89ec.js";
+            window.path_to_searchindex_js = "searchindex-917b6e83.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-876e0338.js"></script>
@@ -179,28 +179,33 @@
 <p>Instead of agents calling <code>exec</code> directly on the host (fragile, uncontrolled, unscalable), they talk to <strong>Claw Core</strong> — a lightweight runtime that:</p>
 <ul>
 <li><strong>Manages sessions</strong> — create, list, inspect, destroy terminal sessions</li>
-<li><strong>Executes commands</strong> — buffered or streaming, with timeout enforcement</li>
+<li><strong>Executes commands</strong> — buffered mode with timeout enforcement (streaming planned)</li>
 <li><strong>Handles secrets</strong> — forwards env vars to processes without persisting them</li>
-<li><strong>Exposes a clean API</strong> — JSON over Unix socket, HTTP, or stdin/stdout</li>
+<li><strong>Exposes a clean API</strong> — JSON over Unix socket (HTTP and stdin/stdout planned)</li>
 </ul>
 <pre><code>Agent (CLI commands) ──JSON──&gt; Claw Core (packing core) ──fork/exec──&gt; OS processes
 </code></pre>
 <h2 id="quick-start"><a class="header" href="#quick-start">Quick Start</a></h2>
-<h3 id="install-no-rust-needed"><a class="header" href="#install-no-rust-needed">Install (no Rust needed)</a></h3>
-<p>Download a prebuilt binary from <a href="https://github.com/wchklaus97/claw-core/releases">GitHub Releases</a>, or:</p>
-<pre><code class="language-bash">curl -sSL https://raw.githubusercontent.com/your-org/claw/main/scripts/install-from-release.sh | bash -s v0.1.0
+<h3 id="openclaw-users-recommended"><a class="header" href="#openclaw-users-recommended">OpenClaw users (recommended)</a></h3>
+<p>One-command install with daemon auto-download. See <a href="openclaw-integration.html">OpenClaw Integration</a> for details.</p>
+<pre><code class="language-bash">openclaw plugins install @wchklaus97hk/claw-core
+openclaw clawcore start   # daemon auto-downloads binary on first run
 </code></pre>
-<h3 id="run-the-runtime"><a class="header" href="#run-the-runtime">Run the Runtime</a></h3>
+<h3 id="standalone-no-openclaw"><a class="header" href="#standalone-no-openclaw">Standalone (no OpenClaw)</a></h3>
+<p><strong>Install (no Rust needed):</strong> Download a prebuilt binary from <a href="https://github.com/wchklaus97/claw-core/releases">GitHub Releases</a>, or:</p>
+<pre><code class="language-bash">curl -sSL https://raw.githubusercontent.com/wchklaus97/claw-core/main/scripts/install-from-release.sh | bash -s v0.1.0
+</code></pre>
+<p><strong>Run the runtime:</strong></p>
 <pre><code class="language-bash">cargo run -- --socket-path /tmp/trl.sock
 # Or: claw_core --socket-path /tmp/trl.sock
 </code></pre>
-<h3 id="probe-the-runtime"><a class="header" href="#probe-the-runtime">Probe the Runtime</a></h3>
+<p><strong>Probe the runtime</strong> (requires <code>socat</code>):</p>
 <pre><code class="language-bash">echo '{"id":"1","method":"system.ping","params":{}}' | socat - UNIX-CONNECT:/tmp/trl.sock
 </code></pre>
 <h2 id="design-principles"><a class="header" href="#design-principles">Design Principles</a></h2>
 <ol>
 <li><strong>Single binary, zero runtime dependencies</strong> — just Rust</li>
-<li><strong>Agent is the brain, TRL is the hands</strong> — TRL never decides what to run</li>
+<li><strong>Agent is the brain, Claw Core is the hands</strong> — Claw Core only executes; it never decides what to run</li>
 <li><strong>Fail loud, fail safe</strong> — structured errors, enforced timeouts, zombie cleanup</li>
 <li><strong>Secrets pass through, never persist</strong> — env vars flow, never written to disk</li>
 <li><strong>MVP first</strong> — Unix socket + buffered exec + session CRUD = shippable</li>
