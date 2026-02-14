@@ -115,12 +115,12 @@ fn Landing(#[props(into)] locale: String) -> Element {
                     div { class: "hero-card",
                         div { id: "hero-video-anchor", class: "hero-video-anchor",
                             if hero_video_failed() {
-                                img { src: "/icon-192.png", alt: "", class: "hero-icon-tile", width: "100", height: "100" }
+                                img { src: "icon-192.png", alt: "", class: "hero-icon-tile", width: "100", height: "100" }
                             } else {
                                 video {
                                     id: "hero-video",
                                     class: "hero-icon-tile-video",
-                                    src: "/claw-shrimp-box-breakout-v1.mp4",
+                                    src: "claw-shrimp-box-breakout-v1.mp4",
                                     autoplay: true,
                                     muted: hero_video_muted(),
                                     loop: true,
@@ -171,19 +171,19 @@ fn Landing(#[props(into)] locale: String) -> Element {
                     p { class: "who-desc", { t!("who-desc") } }
                     div { class: "who-grid",
                         div { class: "who-card", "data-motion": "card",
-                            img { class: "who-card-icon-img", src: "/icons/plan.svg", alt: "" }
+                            img { class: "who-card-icon-img", src: "icons/plan.svg", alt: "" }
                             p { class: "who-card-text", { t!("who-card1") } }
                         }
                         div { class: "who-card", "data-motion": "card",
-                            img { class: "who-card-icon-img", src: "/icons/timeout.svg", alt: "" }
+                            img { class: "who-card-icon-img", src: "icons/timeout.svg", alt: "" }
                             p { class: "who-card-text", { t!("who-card2") } }
                         }
                         div { class: "who-card", "data-motion": "card",
-                            img { class: "who-card-icon-img", src: "/icons/flow.svg", alt: "" }
+                            img { class: "who-card-icon-img", src: "icons/flow.svg", alt: "" }
                             p { class: "who-card-text", { t!("who-card3") } }
                         }
                         div { class: "who-card", "data-motion": "card",
-                            img { class: "who-card-icon-img", src: "/icons/mobile.svg", alt: "" }
+                            img { class: "who-card-icon-img", src: "icons/mobile.svg", alt: "" }
                             p { class: "who-card-text", { t!("who-card4") } }
                         }
                     }
@@ -218,37 +218,37 @@ fn Landing(#[props(into)] locale: String) -> Element {
                     p { class: "section-subtitle", { t!("features-subtitle") } }
                     div { class: "features-grid",
                         div { class: "feature-card", "data-motion": "card",
-                            img { class: "feature-icon-img", src: "/icons/session.svg", alt: "" }
+                            img { class: "feature-icon-img", src: "icons/session.svg", alt: "" }
                             h3 { { t!("features-sessions-title") } }
                             p { { t!("features-sessions-desc") } }
                         }
                         div { class: "feature-card", "data-motion": "card",
-                            img { class: "feature-icon-img", src: "/icons/timeout.svg", alt: "" }
+                            img { class: "feature-icon-img", src: "icons/timeout.svg", alt: "" }
                             h3 { { t!("features-timeouts-title") } }
                             p { { t!("features-timeouts-desc") } }
                         }
                         div { class: "feature-card", "data-motion": "card",
-                            img { class: "feature-icon-img", src: "/icons/api.svg", alt: "" }
+                            img { class: "feature-icon-img", src: "icons/api.svg", alt: "" }
                             h3 { { t!("features-api-title") } }
                             p { { t!("features-api-desc") } }
                         }
                         div { class: "feature-card", "data-motion": "card",
-                            img { class: "feature-icon-img", src: "/icons/secrets.svg", alt: "" }
+                            img { class: "feature-icon-img", src: "icons/secrets.svg", alt: "" }
                             h3 { { t!("features-secrets-title") } }
                             p { { t!("features-secrets-desc") } }
                         }
                         div { class: "feature-card", "data-motion": "card",
-                            img { class: "feature-icon-img", src: "/icons/cli.svg", alt: "" }
+                            img { class: "feature-icon-img", src: "icons/cli.svg", alt: "" }
                             h3 { { t!("features-cli-title") } }
                             p { { t!("features-cli-desc") } }
                         }
                         div { class: "feature-card", "data-motion": "card",
-                            img { class: "feature-icon-img", src: "/icons/integrations.svg", alt: "" }
+                            img { class: "feature-icon-img", src: "icons/integrations.svg", alt: "" }
                             h3 { { t!("features-integrations-title") } }
                             p { { t!("features-integrations-desc") } }
                         }
                         div { class: "feature-card", "data-motion": "card",
-                            img { class: "feature-icon-img", src: "/icons/binary.svg", alt: "" }
+                            img { class: "feature-icon-img", src: "icons/binary.svg", alt: "" }
                             h3 { { t!("features-binary-title") } }
                             p { { t!("features-binary-desc") } }
                         }
@@ -261,17 +261,17 @@ fn Landing(#[props(into)] locale: String) -> Element {
                     div { class: "how-content",
                         div { class: "how-steps",
                             div { class: "how-step", "data-motion": "card",
-                                img { class: "how-step-icon-img", src: "/icons/api.svg", alt: "" }
+                                img { class: "how-step-icon-img", src: "icons/api.svg", alt: "" }
                                 h3 { { t!("how-step1-title") } }
                                 p { { t!("how-step1-desc") } }
                             }
                             div { class: "how-step", "data-motion": "card",
-                                img { class: "how-step-icon-img", src: "/icons/cli.svg", alt: "" }
+                                img { class: "how-step-icon-img", src: "icons/cli.svg", alt: "" }
                                 h3 { { t!("how-step2-title") } }
                                 p { { t!("how-step2-desc") } }
                             }
                             div { class: "how-step", "data-motion": "card",
-                                img { class: "how-step-icon-img", src: "/icons/flow.svg", alt: "" }
+                                img { class: "how-step-icon-img", src: "icons/flow.svg", alt: "" }
                                 h3 { { t!("how-step3-title") } }
                                 p { { t!("how-step3-desc") } }
                             }
@@ -285,22 +285,22 @@ fn Landing(#[props(into)] locale: String) -> Element {
                     p { class: "setup-desc", { t!("setup-desc") } }
                     div { class: "setup-grid",
                         div { class: "setup-card", "data-motion": "card",
-                            img { class: "setup-card-icon-img", src: "/icons/plan.svg", alt: "" }
+                            img { class: "setup-card-icon-img", src: "icons/plan.svg", alt: "" }
                             h3 { { t!("setup-card1-title") } }
                             p { { t!("setup-card1-desc") } }
                         }
                         div { class: "setup-card", "data-motion": "card",
-                            img { class: "setup-card-icon-img", src: "/icons/cli.svg", alt: "" }
+                            img { class: "setup-card-icon-img", src: "icons/cli.svg", alt: "" }
                             h3 { { t!("setup-card2-title") } }
                             p { { t!("setup-card2-desc") } }
                         }
                         div { class: "setup-card", "data-motion": "card",
-                            img { class: "setup-card-icon-img", src: "/icons/integrations.svg", alt: "" }
+                            img { class: "setup-card-icon-img", src: "icons/integrations.svg", alt: "" }
                             h3 { { t!("setup-card3-title") } }
                             p { { t!("setup-card3-desc") } }
                         }
                         div { class: "setup-card", "data-motion": "card",
-                            img { class: "setup-card-icon-img", src: "/icons/flow.svg", alt: "" }
+                            img { class: "setup-card-icon-img", src: "icons/flow.svg", alt: "" }
                             h3 { { t!("setup-card4-title") } }
                             p { { t!("setup-card4-desc") } }
                         }
@@ -496,7 +496,7 @@ fn Landing(#[props(into)] locale: String) -> Element {
                     },
                     img {
                         class: "sound-fab-icon",
-                        src: if hero_video_muted() { "/icons/sound-off.svg" } else { "/icons/sound-on.svg" },
+                        src: if hero_video_muted() { "icons/sound-off.svg" } else { "icons/sound-on.svg" },
                         alt: ""
                     }
                 }

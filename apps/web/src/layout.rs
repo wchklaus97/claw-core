@@ -31,7 +31,7 @@ pub fn LandingHeader(#[props(into)] locale: String, page_kind: PageKind) -> Elem
                 div { class: "nav-left",
                     Link { to: route_for_locale(locale.as_str()),
                         img {
-                            src: "/icon-192.png",
+                            src: "icon-192.png",
                             alt: "",
                             class: "brand-mark-img",
                             width: "48",
@@ -95,7 +95,7 @@ pub fn LandingFooter(#[props(into)] locale: String) -> Element {
             div { class: "landing-footer-inner",
                 div { class: "footer-grid",
                     div { class: "footer-brand",
-                        img { src: "/icon-192.png", alt: "", class: "brand-mark-img", width: "48", height: "48" }
+                        img { src: "icon-192.png", alt: "", class: "brand-mark-img", width: "48", height: "48" }
                         div {
                             p { class: "footer-brand-title", { t!("brand-title") } }
                             p { class: "footer-brand-desc", { t!("brand-tagline") } }
