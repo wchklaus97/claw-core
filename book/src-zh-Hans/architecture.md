@@ -59,18 +59,18 @@ TRL 是**执行舱（execution pod）**：它拥有终端会话，在会话中�
 
 - 用 `std::process::Command` 启动子进程
 - 将 stdout/stderr 回传给调用方
-- 支持**同步模式**（等待退出）和**流式模式**（实时输出）
+- 支持**同步模式**（等待退出）；流式模式计划中
 - 强制超时（可按命令或会话配置）
 
 ### 3. 输出处理器
 
-- **缓冲模式**：收集全部输出，在进程退出后返回
-- **流式模式**：输出到达即分块推送
+- **缓冲模式**：收集全部输出，在进程退出后返回（已实现）
+- **流式模式**：输出到达即分块推送（计划中）
 - 始终包含：stdout、stderr、exit code、duration
 
 ### 4. API 服务
 
-- **传输**：Unix Socket（本地）、HTTP（远程/Docker）、stdin/stdout（CLI）
+- **传输**：Unix Socket（已实现）；HTTP 与 stdin/stdout（计划中）
 - **协议**：JSON 请求/响应
 - **认证**：HTTP 用 Token；Unix Socket 用文件权限
 

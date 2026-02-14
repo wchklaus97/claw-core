@@ -59,18 +59,18 @@ Receives execution requests and runs them inside a session:
 
 - Spawns child process via `std::process::Command`
 - Pipes stdout/stderr back to caller
-- Supports **synchronous** (wait for exit) and **streaming** (real-time output) modes
+- Supports **synchronous** (wait for exit) mode; streaming mode planned
 - Enforces timeouts (configurable per-command or per-session)
 
 ### 3. Output Handler
 
-- **Buffered mode** — collect all output, return on process exit
-- **Streaming mode** — push output chunks as they arrive
+- **Buffered mode** — collect all output, return on process exit *(implemented)*
+- **Streaming mode** — push output chunks as they arrive *(planned)*
 - Always includes: stdout, stderr, exit code, duration
 
 ### 4. API Server
 
-- **Transport:** Unix domain socket (local), HTTP (remote/Docker), stdin/stdout (CLI)
+- **Transport:** Unix domain socket (implemented); HTTP and stdin/stdout (planned)
 - **Protocol:** JSON request/response
 - **Authentication:** Token-based for HTTP; file permissions for Unix socket
 

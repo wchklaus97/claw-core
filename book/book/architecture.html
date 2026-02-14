@@ -34,7 +34,7 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-3a1e89ec.js";
+            window.path_to_searchindex_js = "searchindex-917b6e83.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-876e0338.js"></script>
@@ -225,18 +225,18 @@
 <ul>
 <li>Spawns child process via <code>std::process::Command</code></li>
 <li>Pipes stdout/stderr back to caller</li>
-<li>Supports <strong>synchronous</strong> (wait for exit) and <strong>streaming</strong> (real-time output) modes</li>
+<li>Supports <strong>synchronous</strong> (wait for exit) mode; streaming mode planned</li>
 <li>Enforces timeouts (configurable per-command or per-session)</li>
 </ul>
 <h3 id="3-output-handler"><a class="header" href="#3-output-handler">3. Output Handler</a></h3>
 <ul>
-<li><strong>Buffered mode</strong> — collect all output, return on process exit</li>
-<li><strong>Streaming mode</strong> — push output chunks as they arrive</li>
+<li><strong>Buffered mode</strong> — collect all output, return on process exit <em>(implemented)</em></li>
+<li><strong>Streaming mode</strong> — push output chunks as they arrive <em>(planned)</em></li>
 <li>Always includes: stdout, stderr, exit code, duration</li>
 </ul>
 <h3 id="4-api-server"><a class="header" href="#4-api-server">4. API Server</a></h3>
 <ul>
-<li><strong>Transport:</strong> Unix domain socket (local), HTTP (remote/Docker), stdin/stdout (CLI)</li>
+<li><strong>Transport:</strong> Unix domain socket (implemented); HTTP and stdin/stdout (planned)</li>
 <li><strong>Protocol:</strong> JSON request/response</li>
 <li><strong>Authentication:</strong> Token-based for HTTP; file permissions for Unix socket</li>
 </ul>

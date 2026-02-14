@@ -6,9 +6,9 @@
 
 | 模式 | 适用场景 | 说明 |
 |------|------------|---------|
-| **Unix Socket** | 本地、同机 | 默认。快且安全（文件权限）。路径：`/tmp/trl-<instance>.sock` |
-| **HTTP** | 远程、Docker、多主机 | 绑定 `127.0.0.1:<port>`。必须启用 Token 认证。 |
-| **Stdin/Stdout** | CLI 测试、管道调用 | 一次性模式。从 stdin 读 JSON，向 stdout 写 JSON。 |
+| **Unix Socket** | 本地、同机 | **已实现。** 默认路径：`/tmp/trl.sock`（或 `TRL_SOCKET_PATH`）。快且安全（文件权限）。 |
+| **HTTP** | 远程、Docker、多主机 | *计划中。* 将绑定 `127.0.0.1:<port>`，需 Token 认证。 |
+| **Stdin/Stdout** | CLI 测试、管道调用 | *计划中。* 一次性模式，从 stdin 读 JSON，向 stdout 写 JSON。 |
 
 ## 协议
 
@@ -106,15 +106,15 @@
 
 ---
 
-#### `exec.stream`
+#### `exec.stream` *（计划中）*
 
-以实时流输出执行命令。先返回 `stream_id`，然后持续推送输出块。
+以实时流输出执行命令。将先返回 `stream_id`，然后持续推送输出块。尚未实现。
 
 ---
 
-#### `exec.cancel`
+#### `exec.cancel` *（计划中）*
 
-取消正在运行的命令。**参数：** `session_id`、`signal`（可选）。
+取消正在运行的命令。**参数：** `session_id`、`signal`（可选）。尚未实现。
 
 ---
 

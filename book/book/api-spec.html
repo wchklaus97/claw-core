@@ -34,7 +34,7 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-3a1e89ec.js";
+            window.path_to_searchindex_js = "searchindex-917b6e83.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-876e0338.js"></script>
@@ -179,9 +179,9 @@
 <tr><th>Mode</th><th>When to Use</th><th>Details</th></tr>
 </thead>
 <tbody>
-<tr><td><strong>Unix socket</strong></td><td>Local, same machine</td><td>Default. Fast, secure (file perms). Path: <code>/tmp/trl-&lt;instance&gt;.sock</code></td></tr>
-<tr><td><strong>HTTP</strong></td><td>Remote, Docker, multi-host</td><td>Binds to <code>127.0.0.1:&lt;port&gt;</code>. Token auth required.</td></tr>
-<tr><td><strong>Stdin/Stdout</strong></td><td>CLI testing, piping</td><td>One-shot mode. Read JSON from stdin, write JSON to stdout.</td></tr>
+<tr><td><strong>Unix socket</strong></td><td>Local, same machine</td><td><strong>Implemented.</strong> Default path: <code>/tmp/trl.sock</code> (or <code>TRL_SOCKET_PATH</code>). Fast, secure (file perms).</td></tr>
+<tr><td><strong>HTTP</strong></td><td>Remote, Docker, multi-host</td><td><em>Planned.</em> Would bind to <code>127.0.0.1:&lt;port&gt;</code> with token auth.</td></tr>
+<tr><td><strong>Stdin/Stdout</strong></td><td>CLI testing, piping</td><td><em>Planned.</em> One-shot mode. Read JSON from stdin, write JSON to stdout.</td></tr>
 </tbody>
 </table>
 </div>
@@ -254,11 +254,11 @@
 <p><strong>Params:</strong> <code>session_id</code>, <code>command</code>, <code>timeout_s</code>, <code>stdin</code>, <code>env</code></p>
 <p><strong>Response data:</strong> <code>stdout</code>, <code>stderr</code>, <code>exit_code</code>, <code>duration_ms</code>, <code>timed_out</code></p>
 <hr>
-<h4 id="execstream"><a class="header" href="#execstream"><code>exec.stream</code></a></h4>
-<p>Execute with real-time output streaming. Returns <code>stream_id</code>, then pushes chunks.</p>
+<h4 id="execstream-planned"><a class="header" href="#execstream-planned"><code>exec.stream</code> <em>(planned)</em></a></h4>
+<p>Execute with real-time output streaming. Would return <code>stream_id</code>, then push chunks. Not yet implemented.</p>
 <hr>
-<h4 id="execcancel"><a class="header" href="#execcancel"><code>exec.cancel</code></a></h4>
-<p>Cancel a running command. <strong>Params:</strong> <code>session_id</code>, <code>signal</code> (optional).</p>
+<h4 id="execcancel-planned"><a class="header" href="#execcancel-planned"><code>exec.cancel</code> <em>(planned)</em></a></h4>
+<p>Cancel a running command. <strong>Params:</strong> <code>session_id</code>, <code>signal</code> (optional). Not yet implemented.</p>
 <hr>
 <h3 id="system"><a class="header" href="#system">System</a></h3>
 <h4 id="systemping"><a class="header" href="#systemping"><code>system.ping</code></a></h4>

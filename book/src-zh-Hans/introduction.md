@@ -9,9 +9,9 @@
 与其让代理直接在主机上调用 `exec`（脆弱、不可控、难扩展），不如让代理通过 **Claw Core** 这个轻量 Runtime 来执行：
 
 - **管理会话**：创建、列出、查看、销毁终端会话
-- **执行命令**：支持缓冲模式或流式模式，并强制超时
+- **执行命令**：缓冲模式并强制超时（流式计划中）
 - **处理密钥**：将环境变量传给进程，但不落盘
-- **提供清晰 API**：通过 Unix Socket、HTTP 或 stdin/stdout 传输 JSON
+- **提供清晰 API**：通过 Unix Socket 传输 JSON（HTTP 与 stdin/stdout 计划中）
 
 ```
 Agent（CLI commands） ──JSON──> Claw Core（packing core） ──fork/exec──> OS processes
@@ -19,22 +19,31 @@ Agent（CLI commands） ──JSON──> Claw Core（packing core） ──fork
 
 ## 快速开始
 
-### 安装（无需 Rust）
+### OpenClaw 用户（推荐）
 
-从 [GitHub Releases](https://github.com/wchklaus97/claw-core/releases) 下载预编译二进制，或者：
+一条命令安装，daemon 首次启动时自动下载 binary。详见 [OpenClaw 集成](openclaw-integration.md)。
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/your-org/claw/main/scripts/install-from-release.sh | bash -s v0.1.0
+openclaw plugins install @wchklaus97hk/claw-core
+openclaw clawcore start   # 首次运行时 daemon 自动下载 binary
 ```
 
-### 运行 Runtime
+### 独立运行（无 OpenClaw）
+
+**安装（无需 Rust）**：从 [GitHub Releases](https://github.com/wchklaus97/claw-core/releases) 下载预编译二进制，或者：
+
+```bash
+curl -sSL https://raw.githubusercontent.com/wchklaus97/claw-core/main/scripts/install-from-release.sh | bash -s v0.1.0
+```
+
+**运行 Runtime：**
 
 ```bash
 cargo run -- --socket-path /tmp/trl.sock
 # Or: claw_core --socket-path /tmp/trl.sock
 ```
 
-### 探测 Runtime
+**探测 Runtime**（需安装 `socat`）：
 
 ```bash
 echo '{"id":"1","method":"system.ping","params":{}}' | socat - UNIX-CONNECT:/tmp/trl.sock
@@ -43,7 +52,7 @@ echo '{"id":"1","method":"system.ping","params":{}}' | socat - UNIX-CONNECT:/tmp
 ## 设计原则
 
 1. **单一二进制，零运行时依赖**：只需 Rust
-2. **Agent 是大脑，TRL 是双手**：TRL 不决定执行什么
+2. **Agent 是大脑，Claw Core 是双手**：Claw Core 只负责执行，不决定执行什么
 3. **快速失败，安全失败**：结构化错误、强制超时、僵尸进程清理
 4. **密钥只透传，不持久化**：环境变量流转但不写盘
 5. **先 MVP 再扩展**：Unix Socket + 缓冲执行 + 会话 CRUD = 可交付
