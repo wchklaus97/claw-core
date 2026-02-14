@@ -112,7 +112,8 @@ cargo build --release
 
 - Linux `x86_64` / `aarch64`
 - macOS `x86_64` / `aarch64`
-- Windows `x86_64`
+
+**說明：** 暫不支援 Windows（claw_core 使用 Unix domain socket、rlimit 等 Unix 專屬 API）。
 
 ---
 

@@ -42,7 +42,8 @@ detect_artifact() {
       esac
       ;;
     MINGW*|MSYS*|CYGWIN*)
-      echo "claw_core-x86_64-pc-windows-msvc.zip"
+      # Windows not supported yet (claw_core uses Unix domain sockets, rlimit, etc.)
+      return 1
       ;;
     *)
       return 1
@@ -59,7 +60,10 @@ fi
 
 ARTIFACT=$(detect_artifact) || true
 if [ -z "$ARTIFACT" ]; then
-  echo "claw_core: unsupported platform ($(uname -s) $(uname -m)), skip binary download"
+  case "$(uname -s)" in
+    MINGW*|MSYS*|CYGWIN*) echo "claw_core: Windows is not yet supported, skip binary download" ;;
+    *) echo "claw_core: unsupported platform ($(uname -s) $(uname -m)), skip binary download" ;;
+  esac
   exit 0
 fi
 

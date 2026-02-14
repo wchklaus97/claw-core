@@ -18,6 +18,8 @@ Restart the OpenClaw gateway after installing.
 
 ## Prerequisites
 
+**Platform:** Linux and macOS only. Windows is not supported (claw_core uses Unix domain sockets and Unix-only APIs).
+
 1. **claw_core binary** — one of:
    - **Download prebuilt** (no Rust needed): [GitHub Releases](https://github.com/wchklaus97/claw-core/releases) — extract and add to PATH or set `binaryPath` (replace `your-org/claw` with your repo)
    - `cargo install claw_core` (requires Rust, if on crates.io)

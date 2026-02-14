@@ -1,8 +1,9 @@
 {
   "name": "@wchklaus97hk/claw-core",
   "version": "0.1.0",
-  "description": "OpenClaw plugin: Terminal Runtime Layer (claw_core) — session-managed command execution for AI agents",
+  "description": "OpenClaw plugin: Terminal Runtime Layer (claw_core) — session-managed command execution for AI agents. Linux and macOS only.",
   "main": "index.ts",
+  "os": ["darwin", "linux"],
   "openclaw": {
     "extensions": [
       "./index.ts"
@@ -28,7 +29,10 @@
     "exec",
     "agent",
     "cursor",
-    "ai"
+    "ai",
+    "linux",
+    "macos",
+    "unix"
   ],
   "author": "wchklaus97hk",
   "license": "MIT",

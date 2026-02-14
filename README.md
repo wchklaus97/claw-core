@@ -116,7 +116,8 @@ Artifacts:
 
 - Linux: `x86_64`, `aarch64`
 - macOS: `x86_64`, `aarch64`
-- Windows: `x86_64`
+
+**Note:** Windows is not supported (claw_core uses Unix domain sockets, `rlimit`, and other Unix-only APIs).
 
 ---
 
