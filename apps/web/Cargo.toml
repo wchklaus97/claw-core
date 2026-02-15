@@ -11,12 +11,6 @@ unic-langid = { version = "0.9", features = ["macros"] }
 dioxus-web = "0.7"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-web-sys = { version = "0.3", features = ["Window", "Document", "Element", "HtmlElement", "HtmlMediaElement", "HtmlVideoElement", "Storage", "Location", "History", "Request", "RequestInit", "Headers"] }
+web-sys = { version = "0.3", features = ["Window", "Document", "Element", "HtmlElement", "HtmlMediaElement", "HtmlVideoElement", "Storage", "Location", "History", "Request", "RequestInit", "Headers", "Navigator", "Clipboard"] }
 wasm-bindgen = "0.2"
-
-[profile.release]
-opt-level = "z"
-lto = true
-codegen-units = 1
-panic = "abort"
-strip = true
+wasm-bindgen-futures = "0.4"

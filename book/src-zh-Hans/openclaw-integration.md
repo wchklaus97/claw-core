@@ -77,25 +77,28 @@
 **方案：** daemon 脚本（`claw_core_daemon.sh`）在 `start` 被调用且插件 binary 缺失时，补全缺失的安装步骤。在 `start()` 中：
 
 1. **条件：** 未设置 `CLAW_CORE_BINARY` 和 `CLAW_CORE_SOURCE`，且 `$PLUGIN_ROOT/bin/claw_core` 不存在。
-2. **动作：** 依次执行 `postinstall-download-binary.sh`（从 GitHub Releases 下载 binary）、`postinstall-config-openclaw.js`（在 `openclaw.json` 中设置 `binaryPath`）、`install-skills-to-openclaw.sh`（将 skills 复制到 `~/.openclaw/skills/`）。
+2. **动作：** 依次执行 `postinstall-download-binary.sh`（从 GitHub Releases 下载 binary）、`postinstall-config-openclaw.js`（在 `openclaw.json` 中设置 `binaryPath`）、`install-skills-to-openclaw.sh`（将 skills 复制到 `~/.openclaw/skills/`）、`setup-cursor-integration.js`（在 `openclaw.json` 中配置 Cursor 集成）。
 3. **之后：** 调用 `find_binary()` 并启动 daemon。
 
 这样可实现一步安装：`openclaw plugins install @wchklaus97hk/claw-core` 后再执行 `openclaw clawcore start`，即可完成安装，无需额外手动操作。
 
 ### OpenClaw Skills
 
-插件包含 8 个 skills（规范列表：`scripts/claw-core-skills.list`）：
+插件包含 11 个 skills（规范列表：`scripts/claw-core-skills.list`）：
 
 | Skill | 用途 |
 |-------|---------|
 | **claw-core-runtime** | 通过 claw_core 执行命令（封装 `claw_core_exec.py`） |
 | **claw-core-sessions** | 列出并管理 claw_core 会话 |
 | **claw-core-daemon** | 从 Agent 侧启动/停止/查看 daemon |
+| **claw-core-install** | 完整安装或补充安装（plugins install、daemon start、Cursor 设置） |
+| **claw-core-remove** | 完整卸载（停止 daemon、清理配置、移除 skills 与插件） |
 | **cron-helper** | 定时任务调度辅助 |
 | **cursor-agent** | Cursor 代理协调 |
 | **cursor-cron-bridge** | Cursor 与定时任务的桥接 |
 | **plans-mode** | 规划模式工作流 |
 | **status-dashboard** | 状态面板监控 |
+| **cursor-setup** | 在 `openclaw.json` 中配置 Cursor CLI 集成 |
 
 ### 安装 / 卸载
 
@@ -115,7 +118,7 @@ openclaw clawcore start   # 首次运行 daemon 自动下载 binary
 # 重新安装
 ./scripts/install-claw-core-openclaw.sh --force
 
-# 卸载
+# 卸载（同时清理 openclaw.json 中的 Cursor 集成）
 ./scripts/remove-claw-core-openclaw.sh
 
 # 验证
@@ -123,6 +126,80 @@ openclaw clawcore start   # 首次运行 daemon 自动下载 binary
 ```
 
 安装后请重启 OpenClaw gateway。
+
+## Cursor CLI 集成
+
+插件可以配置 OpenClaw 将任务委派给 Cursor CLI，包括：
+
+- **cliBackends**：`cursor-cli`、`cursor-plan`、`cursor-ask`（Agent、Plan、Ask 模式）
+- **cursor-dev agent**：使用 `cursor-cli/auto` 作为模型
+- **subagents.allowAgents**：允许主 Agent 将任务派给 cursor-dev
+
+**为何需要：** OpenClaw 安装插件时只解压 npm 包，不执行 `npm install`，因此 postinstall 不会运行。daemon 脚本会在首次启动时执行 `setup-cursor-integration.js` 补全配置。若自动设置被跳过或需重新配置，请使用下方手动步骤。
+
+### 分步设置
+
+1. **安装插件：** `openclaw plugins install @wchklaus97hk/claw-core`
+2. **启动 daemon（自动配置）：** `openclaw clawcore start` — 首次运行会下载 binary 并在 `openclaw.json` 中配置 Cursor
+3. **可选手动设置：** 若 Cursor 集成缺失或需指定其他 workspace：`openclaw clawcore setup-cursor`（或 `--workspace /path/to/project`）
+4. **重启 gateway：** `openclaw gateway restart`
+
+### 依赖
+
+- **Cursor CLI** 在 PATH 中（`cursor` 命令）
+- **Cursor 登录：** 执行 `cursor agent login` 或设置 `CURSOR_API_KEY`
+
+### 自动设置（首次启动）
+
+`openclaw clawcore start` 首次执行下载 binary 时，会自动执行 `setup-cursor-integration.js`。
+
+### 手动设置
+
+```bash
+# 一行命令：配置 Cursor 并重启 gateway
+openclaw clawcore setup-cursor && openclaw gateway restart
+
+# 使用默认 workspace
+openclaw clawcore setup-cursor
+
+# 指定 workspace
+openclaw clawcore setup-cursor --workspace /path/to/project
+
+# 重启 gateway
+openclaw gateway restart
+```
+
+### 通过 Agent 聊天
+
+告诉 Agent："设置 Cursor 集成" 或 "set up Cursor integration"。Agent 会使用 `cursor-setup` skill。
+
+### 会写入 openclaw.json 的配置
+
+```json
+{
+  "agents": {
+    "defaults": {
+      "workspace": "~/.openclaw/workspace",
+      "cliBackends": {
+        "cursor-cli": {
+          "command": "cursor",
+          "args": ["agent", "--print", "--workspace", "..."]
+        }
+      }
+    },
+    "list": [
+      { "id": "main", "default": true, "subagents": { "allowAgents": ["*"] } },
+      { "id": "cursor-dev", "model": { "primary": "cursor-cli/auto" } }
+    ]
+  }
+}
+```
+
+### 故障排查
+
+- **`agentId is not allowed for sessions_spawn`**：执行 `openclaw clawcore setup-cursor`，然后执行 `openclaw gateway restart`
+- **找不到 `cursor` 命令**：安装 Cursor CLI 并确认 `cursor` 在 PATH 中
+- **配置 schema 错误**：先执行 `openclaw doctor --fix`，再重新执行 `openclaw clawcore setup-cursor`
 
 ## 快速参考
 
@@ -132,4 +209,5 @@ openclaw clawcore start   # 首次运行 daemon 自动下载 binary
 - **验证：** `./scripts/verify_integration.sh`
 - **启动 Runtime：** `openclaw clawcore start` 或 daemon 脚本
 - **查看状态：** `openclaw clawcore status`
+- **设置 Cursor：** `openclaw clawcore setup-cursor`
 - **RPC：** 从 gateway 调用 `clawcore.status`
