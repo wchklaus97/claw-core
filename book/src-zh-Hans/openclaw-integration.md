@@ -146,8 +146,8 @@ openclaw clawcore start   # 首次运行 daemon 自动下载 binary
 
 ### 依赖
 
-- **Cursor CLI** 在 PATH 中（`cursor` 命令）
-- **Cursor 登录：** 执行 `cursor agent login` 或设置 `CURSOR_API_KEY`
+- **Cursor CLI** 在 PATH 中（`agent` 或 `cursor` — 有 `agent` 时优先使用）
+- **Cursor 登录：** 执行 `agent login` 或 `cursor agent login` 或设置 `CURSOR_API_KEY`
 
 ### 自动设置（首次启动）
 
@@ -182,8 +182,8 @@ openclaw gateway restart
       "workspace": "~/.openclaw/workspace",
       "cliBackends": {
         "cursor-cli": {
-          "command": "cursor",
-          "args": ["agent", "--print", "--workspace", "..."]
+          "command": "agent",
+          "args": ["--print", "--output-format", "stream-json", "--workspace", "..."]
         }
       }
     },
@@ -198,7 +198,7 @@ openclaw gateway restart
 ### 故障排查
 
 - **`agentId is not allowed for sessions_spawn`**：执行 `openclaw clawcore setup-cursor`，然后执行 `openclaw gateway restart`
-- **找不到 `cursor` 命令**：安装 Cursor CLI 并确认 `cursor` 在 PATH 中
+- **找不到 `agent` / `cursor` 命令**：安装 Cursor CLI 并确认 `agent` 或 `cursor` 在 PATH 中
 - **配置 schema 错误**：先执行 `openclaw doctor --fix`，再重新执行 `openclaw clawcore setup-cursor`
 
 ## 快速参考

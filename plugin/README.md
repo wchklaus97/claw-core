@@ -1,6 +1,10 @@
 # OpenClaw Claw Core Plugin
 
+[简体中文](README-zh-Hans.md) | [繁體中文](README-zh-Hant.md)
+
 OpenClaw plugin for the **Claw Core** Terminal Runtime Layer. When installed, claw_core is auto-started with OpenClaw, and agents can use it for session-managed command execution.
+
+**Compatibility:** See [Compatibility](#compatibility) for OpenClaw and Cursor CLI versions.
 
 ## Install
 
@@ -19,6 +23,15 @@ Restart the OpenClaw gateway after installing.
 ### One-command install (binary auto-download)
 
 OpenClaw extracts npm packages without running `npm install`, so postinstall scripts do not run. The **daemon script** (`claw_core_daemon.sh`) compensates: on first `openclaw clawcore start` (or boot hook), if the plugin binary is missing, it auto-downloads from GitHub Releases, configures `openclaw.json`, and installs skills. No manual binary setup needed.
+
+## Compatibility
+
+| Dependency | Tested version |
+|------------|----------------|
+| **OpenClaw** | 2026.2.13 (use `openclaw update` for latest) |
+| **Cursor CLI** | Cursor IDE 2.5.11 — includes `agent` and `cursor agent` |
+
+Cursor integration prefers `agent` when on PATH, otherwise `cursor agent`. Both require `--output-format stream-json` for non-interactive use.
 
 ## Prerequisites
 
@@ -105,7 +118,7 @@ Or ask the agent in chat: "Set up Cursor integration".
 ## Troubleshooting
 
 - `agentId is not allowed for sessions_spawn`: run `openclaw clawcore setup-cursor`, then `openclaw gateway restart`.
-- `cursor` command not found: install Cursor CLI and ensure it is on PATH.
+- `agent` / `cursor` not found: install Cursor CLI and ensure `agent` or `cursor` is on PATH.
 - Config validation errors: run `openclaw doctor --fix`, then rerun `openclaw clawcore setup-cursor`.
 
 ## Manual Control

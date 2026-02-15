@@ -282,9 +282,22 @@ fn resolve_timeout_s(
 
 fn looks_like_cursor_agent(command: &str) -> bool {
     let normalized = command.trim_start();
-    normalized.starts_with("cursor agent ")
+    // cursor agent (cursor agent "..." or cursor agent subcommand)
+    if normalized.starts_with("cursor agent ")
         || normalized == "cursor agent"
         || normalized.starts_with("cursor-agent ")
+    {
+        return true;
+    }
+    // Standalone agent (Cursor CLI when agent is on PATH)
+    if normalized.starts_with("agent \"")
+        || normalized.starts_with("agent '")
+        || normalized.starts_with("agent --print")
+        || normalized.starts_with("agent --workspace")
+    {
+        return true;
+    }
+    false
 }
 
 fn err_code(err: &SessionPoolError) -> &'static str {
@@ -315,6 +328,10 @@ mod tests {
     fn defaults_cursor_agent_to_longer_timeout() {
         assert_eq!(
             resolve_timeout_s(None, 60, "cursor agent \"fix this\" --print"),
+            600
+        );
+        assert_eq!(
+            resolve_timeout_s(None, 60, "agent \"fix this\" --print"),
             600
         );
     }

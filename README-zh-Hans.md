@@ -8,7 +8,7 @@
 
 Agent CLI 执行运行时：稳定、可控、可观测的命令执行核心。
 
-完全支持 OpenClaw，并提供用于 OpenClaw 工作流的 Cursor 插件集成（`plugin/`）。
+完全支持 OpenClaw，并提供用于 OpenClaw 工作流的 Cursor 插件集成（`plugin/`）。测试版本：OpenClaw 2026.2.13、Cursor IDE 2.5.11，详见 [插件说明](plugin/README-zh-Hans.md#兼容性)。
 
 ---
 
@@ -90,7 +90,7 @@ cargo test
 ./scripts/pre-push-test.sh --openclaw
 ```
 
-参见 [verify_integration.sh](scripts/verify_integration.sh) 与 [插件说明](plugin/README.md) 完成 OpenClaw 配置。一步安装：`openclaw plugins install @wchklaus97hk/claw-core`，首次执行 `openclaw clawcore start` 时 daemon 会自动下载 binary（OpenClaw 不运行 npm postinstall）。
+参见 [verify_integration.sh](scripts/verify_integration.sh) 与 [插件说明](plugin/README-zh-Hans.md) 完成 OpenClaw 配置。一步安装：`openclaw plugins install @wchklaus97hk/claw-core`，首次执行 `openclaw clawcore start` 时 daemon 会自动下载 binary（OpenClaw 不运行 npm postinstall）。
 
 ---
 
@@ -151,7 +151,7 @@ claw/
 
 ## 参考
 
-- [插件说明](plugin/README.md)
+- [插件说明](plugin/README-zh-Hans.md)
 - [Pre-push 测试](scripts/pre-push-test.sh)
 - [集成验证](scripts/verify_integration.sh)
 - [安装脚本](scripts/install-from-release.sh)

@@ -34,7 +34,7 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-5f74006c.js";
+            window.path_to_searchindex_js = "searchindex-44812603.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-876e0338.js"></script>
@@ -293,8 +293,8 @@ openclaw clawcore start   # daemon auto-downloads binary on first run
 </ol>
 <h3 id="dependencies"><a class="header" href="#dependencies">Dependencies</a></h3>
 <ul>
-<li><strong>Cursor CLI</strong> on PATH (<code>cursor</code> command)</li>
-<li><strong>Cursor login:</strong> <code>cursor agent login</code> or set <code>CURSOR_API_KEY</code></li>
+<li><strong>Cursor CLI</strong> on PATH (<code>agent</code> or <code>cursor</code> — setup prefers <code>agent</code> when available)</li>
+<li><strong>Cursor login:</strong> <code>agent login</code> or <code>cursor agent login</code> or set <code>CURSOR_API_KEY</code></li>
 </ul>
 <h3 id="automatic-setup-first-start"><a class="header" href="#automatic-setup-first-start">Automatic Setup (first start)</a></h3>
 <p>When <code>openclaw clawcore start</code> runs the first-time setup (binary download), it also runs <code>setup-cursor-integration.js</code> automatically.</p>
@@ -320,8 +320,8 @@ openclaw gateway restart
       "workspace": "~/.openclaw/workspace",
       "cliBackends": {
         "cursor-cli": {
-          "command": "cursor",
-          "args": ["agent", "--print", "--workspace", "..."]
+          "command": "agent",
+          "args": ["--print", "--output-format", "stream-json", "--workspace", "..."]
         }
       }
     },
@@ -335,7 +335,7 @@ openclaw gateway restart
 <h3 id="troubleshooting"><a class="header" href="#troubleshooting">Troubleshooting</a></h3>
 <ul>
 <li><strong><code>agentId is not allowed for sessions_spawn</code></strong>: run <code>openclaw clawcore setup-cursor</code>, then <code>openclaw gateway restart</code></li>
-<li><strong><code>cursor</code> not found</strong>: install Cursor CLI and ensure <code>cursor</code> is on PATH</li>
+<li><strong><code>agent</code> / <code>cursor</code> not found</strong>: install Cursor CLI and ensure <code>agent</code> or <code>cursor</code> is on PATH</li>
 <li><strong>Config schema errors</strong>: run <code>openclaw doctor --fix</code>, then rerun <code>openclaw clawcore setup-cursor</code></li>
 </ul>
 <h2 id="quick-reference"><a class="header" href="#quick-reference">Quick Reference</a></h2>
