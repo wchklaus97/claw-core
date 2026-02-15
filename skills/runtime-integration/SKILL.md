@@ -179,21 +179,23 @@ for chunk in read_stream(stream_id):
 
 ## Cursor CLI & TRL
 
-TRL can run any shell command, including `cursor agent "..."`. When TRL runs `cursor agent`, that process is a **child of the TRL session**. If the session is destroyed or times out, the child (Cursor agent) is killed.
+TRL can run any shell command, including `cursor agent "..."` or `agent "..."`. When TRL runs Cursor agent, that process is a **child of the TRL session**. If the session is destroyed or times out, the child (Cursor agent) is killed.
+
+**Preferred path:** If using OpenClaw, delegate via `sessions_spawn` with `agentId: "cursor-dev"` instead of exec'ing `agent` or `cursor agent` — direct exec in headless mode can hang unless `--output-format stream-json` is used.
 
 ### Guidelines
 
 | Scenario | Recommendation |
 |----------|----------------|
-| **Long-running Cursor agent** | Do **not** use TRL. Use direct `exec` or a standalone session instead, to avoid TRL timeout / session lifecycle killing the process. |
-| **Short Cursor agent via TRL** | If you must run `cursor agent` through TRL, set `timeout_s` high (e.g. 600), or set `timeout_s: 0` for no timeout, and **do not** destroy the session until the task completes. |
-| **Cursor IDE chat vs terminal `cursor agent`** | These are different processes. Cursor IDE chat and a terminal `cursor agent` run do not usually interfere. If Cursor enforces a single agent instance, behavior may differ. |
+| **Long-running Cursor agent** | Do **not** use TRL. Use OpenClaw `sessions_spawn` (cursor-dev), or direct `exec` / standalone session, to avoid TRL timeout / session lifecycle killing the process. |
+| **Short Cursor agent via TRL** | If you must run `agent` or `cursor agent` through TRL, set `timeout_s` high (e.g. 600), or `timeout_s: 0` for no timeout, and **do not** destroy the session until the task completes. |
+| **Cursor IDE chat vs terminal agent** | These are different processes. Cursor IDE chat and a terminal `agent` / `cursor agent` run do not usually interfere. If Cursor enforces a single agent instance, behavior may differ. |
 
 ### Why
 
-TRL owns its session process tree. On `session.destroy`, timeout, or daemon shutdown, child processes (including `cursor agent`) are terminated. This is by design. In current v1 behavior:
+TRL owns its session process tree. On `session.destroy`, timeout, or daemon shutdown, child processes (including Cursor agent) are terminated. This is by design. In current v1 behavior:
 
-- If `exec.run` command looks like `cursor agent ...` and no `timeout_s` is provided, TRL applies a safer default timeout of at least 600s.
+- If `exec.run` command looks like `cursor agent ...` or `agent "..."` / `agent --print` and no `timeout_s` is provided, TRL applies a safer default timeout of at least 600s.
 - If `timeout_s` is explicitly set to `0`, timeout is disabled for that command.
 - `session.destroy` supports `force`; destroying a running session without `force: true` returns `SESSION_BUSY`.
 

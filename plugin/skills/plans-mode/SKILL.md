@@ -17,7 +17,7 @@ Use when the user asks to **plan and execute** a complex, multi-step task.
 ## Step types
 
 - **[shell]** — exec (or claw_core wrapper)
-- **[cursor]** — `cursor agent "<prompt>" --print`
+- **[cursor]** — sessions_spawn with agentId cursor-dev (do NOT exec agent/cursor agent — hangs in headless)
 - **[claw-session:NAME]** — claw_core session
 - **[cron]** — OpenClaw cron tool
 - **[manual]** — user action

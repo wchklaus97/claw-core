@@ -146,8 +146,8 @@ The plugin can configure OpenClaw to delegate tasks to Cursor CLI. This adds:
 
 ### Dependencies
 
-- **Cursor CLI** on PATH (`cursor` command)
-- **Cursor login:** `cursor agent login` or set `CURSOR_API_KEY`
+- **Cursor CLI** on PATH (`agent` or `cursor` — setup prefers `agent` when available)
+- **Cursor login:** `agent login` or `cursor agent login` or set `CURSOR_API_KEY`
 
 ### Automatic Setup (first start)
 
@@ -182,8 +182,8 @@ Ask the agent: "Set up Cursor integration" or "設定 Cursor 整合". The agent 
       "workspace": "~/.openclaw/workspace",
       "cliBackends": {
         "cursor-cli": {
-          "command": "cursor",
-          "args": ["agent", "--print", "--workspace", "..."]
+          "command": "agent",
+          "args": ["--print", "--output-format", "stream-json", "--workspace", "..."]
         }
       }
     },
@@ -198,7 +198,7 @@ Ask the agent: "Set up Cursor integration" or "設定 Cursor 整合". The agent 
 ### Troubleshooting
 
 - **`agentId is not allowed for sessions_spawn`**: run `openclaw clawcore setup-cursor`, then `openclaw gateway restart`
-- **`cursor` not found**: install Cursor CLI and ensure `cursor` is on PATH
+- **`agent` / `cursor` not found**: install Cursor CLI and ensure `agent` or `cursor` is on PATH
 - **Config schema errors**: run `openclaw doctor --fix`, then rerun `openclaw clawcore setup-cursor`
 
 ## Quick Reference

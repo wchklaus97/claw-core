@@ -30,37 +30,59 @@ function getWorkspace() {
   return path.join(os.homedir(), '.openclaw', 'workspace');
 }
 
-function hasCursorCli() {
+/** Detect Cursor CLI: prefer standalone `agent`, fallback to `cursor agent` */
+function getCursorCliConfig() {
+  const { execSync } = require('child_process');
   try {
-    const { execSync } = require('child_process');
-    execSync('command -v cursor', { stdio: 'ignore' });
-    return true;
+    execSync('command -v agent', { stdio: 'ignore' });
+    return { command: 'agent', argsAgent: [], argsPlan: ['--mode', 'plan'], argsAsk: ['--mode', 'ask'] };
   } catch {
-    return false;
+    try {
+      execSync('command -v cursor', { stdio: 'ignore' });
+      return {
+        command: 'cursor',
+        argsAgent: ['agent'],
+        argsPlan: ['agent', '--mode', 'plan'],
+        argsAsk: ['agent', '--mode', 'ask'],
+      };
+    } catch {
+      return null;
+    }
   }
 }
 
+function hasCursorCli() {
+  return getCursorCliConfig() !== null;
+}
+
 function buildCliBackends(workspace) {
+  const cli = getCursorCliConfig();
+  const cmd = cli ? cli.command : 'cursor';
+  const a = cli ? cli.argsAgent : ['agent'];
+  const p = cli ? cli.argsPlan : ['agent', '--mode', 'plan'];
+  const k = cli ? cli.argsAsk : ['agent', '--mode', 'ask'];
+  // stream-json avoids hang that text format causes in headless mode
+  const printArgs = ['--print', '--output-format', 'stream-json', '--workspace', workspace];
   return {
     'cursor-cli': {
-      command: 'cursor',
-      args: ['agent', '--print', '--workspace', workspace],
+      command: cmd,
+      args: [...a, ...printArgs],
       output: 'text',
       input: 'arg',
       modelArg: '--model',
       serialize: true,
     },
     'cursor-plan': {
-      command: 'cursor',
-      args: ['agent', '--print', '--mode', 'plan', '--workspace', workspace],
+      command: cmd,
+      args: [...p, ...printArgs],
       output: 'text',
       input: 'arg',
       modelArg: '--model',
       serialize: true,
     },
     'cursor-ask': {
-      command: 'cursor',
-      args: ['agent', '--print', '--mode', 'ask', '--workspace', workspace],
+      command: cmd,
+      args: [...k, ...printArgs],
       output: 'text',
       input: 'arg',
       modelArg: '--model',
@@ -82,11 +104,14 @@ function main() {
   const agents = cfg.agents = cfg.agents || {};
   const defaults = agents.defaults = agents.defaults || {};
 
-  // 1. Add cliBackends if not present or incomplete
-  if (!defaults.cliBackends || !defaults.cliBackends['cursor-cli']) {
-    defaults.cliBackends = Object.assign(defaults.cliBackends || {}, buildCliBackends(workspace));
+  // 1. Add or sync cliBackends (use detected command: agent vs cursor)
+  const newBackends = buildCliBackends(workspace);
+  const currentCmd = defaults.cliBackends?.['cursor-cli']?.command;
+  const targetCmd = newBackends['cursor-cli'].command;
+  if (!defaults.cliBackends || !defaults.cliBackends['cursor-cli'] || currentCmd !== targetCmd) {
+    defaults.cliBackends = Object.assign(defaults.cliBackends || {}, newBackends);
     changed = true;
-    console.log('claw_core: added cliBackends (cursor-cli, cursor-plan, cursor-ask)');
+    console.log('claw_core: ' + (currentCmd ? 'updated' : 'added') + ' cliBackends (cursor-cli, cursor-plan, cursor-ask) using command: ' + targetCmd);
   }
 
   // 2. Set workspace if not set
@@ -126,7 +151,7 @@ function main() {
     fs.writeFileSync(OPENCLAW_CONFIG, JSON.stringify(cfg, null, 2) + '\n', 'utf8');
     console.log('claw_core: Cursor integration configured in openclaw.json');
     if (!hasCursorCli()) {
-      console.log('⚠  cursor CLI not found in PATH — install Cursor and ensure "cursor" is on PATH');
+      console.log('⚠  Cursor CLI not found in PATH — install Cursor and ensure "agent" or "cursor" is on PATH');
     }
     console.log('Restart the gateway: openclaw gateway restart');
   } else {

@@ -48,4 +48,4 @@ openclaw clawcore setup-cursor
 
 - Safe to run multiple times (idempotent)
 - Does not overwrite existing cliBackends or agents.list entries
-- Requires `cursor` CLI on PATH for actual Cursor usage
+- Requires `agent` or `cursor` CLI on PATH (setup prefers `agent` when available)

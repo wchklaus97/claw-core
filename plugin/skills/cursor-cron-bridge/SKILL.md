@@ -1,7 +1,7 @@
 ---
 name: cursor-cron-bridge
 description: Schedule Cursor agent tasks via OpenClaw cron, monitor execution via Cursor's terminal/transcript files, and report results to Telegram or other channels.
-metadata: {"openclaw":{"requires":{"bins":["cursor"]},"emoji":"🔗"}}
+metadata: {"openclaw":{"requires":{"bins":["agent","cursor"]},"emoji":"🔗"}}
 ---
 
 # Cursor-Cron Bridge
@@ -10,7 +10,7 @@ Schedule Cursor agent tasks via cron, monitor long-running sessions, coordinate 
 
 ## Prerequisites
 
-- Cursor CLI: `cursor --version`
+- Cursor CLI: `agent --help` or `cursor agent --help` (prefer `agent` when on PATH)
 - `cursor-cli` registered in `~/.openclaw/openclaw.json` (see `.cursor/docs/examples/openclaw-cursor-cli-config.json`)
 
 ## Schedule Cursor via Cron

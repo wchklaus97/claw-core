@@ -10,7 +10,7 @@
 
 Agent CLI execution runtime for stable, controlled, and observable command automation.
 
-Fully supports OpenClaw and provides a Cursor plugin integration (`plugin/`) for OpenClaw workflows.
+Fully supports OpenClaw and provides a Cursor plugin integration (`plugin/`) for OpenClaw workflows. Tested with OpenClaw 2026.2.13 and Cursor IDE 2.5.11 — see [plugin README](plugin/README.md#compatibility) for details.
 
 ---
 
