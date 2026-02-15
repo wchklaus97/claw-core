@@ -1,8 +1,8 @@
 {
   "id": "claw-core",
   "name": "Claw Core",
-  "description": "Terminal Runtime Layer with multi-bot Telegram setup, PicoClaw integration, and direct Cursor Agent invocation. Provides session-managed command execution, image generation via Cursor, Q&A via PicoClaw, and a one-command 3-bot setup (artist, assistant, developer). Linux and macOS only.",
-  "version": "0.2.0",
+  "description": "Terminal Runtime Layer with multi-bot Telegram setup, Agent Teams, PicoClaw integration, and direct Cursor Agent invocation. Provides session-managed command execution, image generation via Cursor, Q&A via PicoClaw, multi-agent team collaboration with shared task boards, and a one-command 3-bot setup (artist, assistant, developer). Linux and macOS only.",
+  "version": "0.3.0",
   "configSchema": {
     "type": "object",
     "additionalProperties": false,
@@ -51,6 +51,15 @@
         "type": "boolean",
         "description": "Enable direct Cursor Agent tool (cursor_agent_direct)",
         "default": true
+      },
+      "teamWorkspaceDir": {
+        "type": "string",
+        "description": "Base directory for team session data (default: ~/.openclaw/teams/)"
+      },
+      "defaultTeamLead": {
+        "type": "string",
+        "description": "Default lead agent for team sessions (default: developer)",
+        "default": "developer"
       }
     }
   },
@@ -91,6 +100,14 @@
     },
     "enableCursorDirect": {
       "label": "Enable direct Cursor Agent"
+    },
+    "teamWorkspaceDir": {
+      "label": "Team workspace directory",
+      "placeholder": "~/.openclaw/teams/"
+    },
+    "defaultTeamLead": {
+      "label": "Default team lead agent",
+      "placeholder": "developer"
     }
   },
   "skills": [
@@ -106,6 +123,9 @@
     "./skills/picoclaw-bridge",
     "./skills/picoclaw-config",
     "./skills/multi-backend-router",
-    "./skills/telegram-power-user"
+    "./skills/telegram-power-user",
+    "./skills/team-lead",
+    "./skills/team-member",
+    "./skills/team-telegram-group"
   ]
 }
