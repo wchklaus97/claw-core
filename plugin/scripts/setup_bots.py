@@ -309,6 +309,8 @@ Examples:
         default=[],
         help="Link a repo to an agent workspace (e.g., --link-repo developer /path/to/project)",
     )
+    ap.add_argument("--team-group", default="", help="Telegram group ID for team collaboration (configures broadcast group)")
+    ap.add_argument("--team-name", default="", help="Team name for team session (default: auto-generated)")
     ap.add_argument("--dry-run", action="store_true", help="Show what would be done without making changes")
     args = ap.parse_args()
 
@@ -374,6 +376,30 @@ Examples:
         os.system(f"bash '{install_skills_sh}'")
     else:
         print(f"\n⚠ Skills installer not found: {install_skills_sh}")
+
+    # Step 6: Team setup (if --team-group provided)
+    if args.team_group:
+        print("\n🤝 Setting up agent team...")
+        team_session_py = PLUGIN_ROOT / "scripts" / "team_session.py"
+        team_setup_py = PLUGIN_ROOT / "scripts" / "team_setup_telegram.py"
+        team_name = args.team_name or "default-team"
+
+        # Find a shared repo from any of the provided repos
+        shared_repo = args.dev_repo or args.image_repo or args.qa_repo or ""
+
+        if team_session_py.exists():
+            # Create team session
+            team_cmd = f"python3 '{team_session_py}' create --name '{team_name}' --group-id '{args.team_group}'"
+            if shared_repo:
+                team_cmd += f" --repo '{shared_repo}'"
+            os.system(team_cmd)
+
+            # Configure Telegram group
+            if team_setup_py.exists():
+                tg_cmd = f"python3 '{team_setup_py}' --name '{team_name}' --group-id '{args.team_group}'"
+                os.system(tg_cmd)
+        else:
+            print(f"  ⚠ team_session.py not found: {team_session_py}")
 
     # Summary
     print_summary(tokens)
