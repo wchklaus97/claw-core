@@ -3,8 +3,9 @@
  *
  * Features:
  * - Auto-starts claw_core daemon, provides skills and CLI
- * - Agent tools: cursor_agent_direct, picoclaw_chat, picoclaw_config
+ * - Agent tools: cursor_agent_direct, picoclaw_chat, picoclaw_config, team_coordinate
  * - Multi-bot setup: 3 specialized Telegram bots (artist, assistant, developer)
+ * - Agent Teams: multi-agent collaboration with shared task board
  * - PicoClaw bridge: chat, config, status
  */
 import { spawn, execSync } from "child_process";
@@ -42,6 +43,14 @@ function getPicoClawScript(): string {
 
 function getSetupBotsScript(): string {
   return join(PLUGIN_ROOT, "scripts", "setup_bots.py");
+}
+
+function getTeamSessionScript(): string {
+  return join(PLUGIN_ROOT, "scripts", "team_session.py");
+}
+
+function getTeamSetupTelegramScript(): string {
+  return join(PLUGIN_ROOT, "scripts", "team_setup_telegram.py");
 }
 
 /** Run a Python script and return parsed JSON output */
@@ -154,6 +163,8 @@ export default function register(api: PluginApi) {
   const cursorScript = getCursorAgentScript();
   const picoScript = getPicoClawScript();
   const setupScript = getSetupBotsScript();
+  const teamScript = getTeamSessionScript();
+  const teamTelegramScript = getTeamSetupTelegramScript();
 
   // ---------------------------------------------------------------
   // CLI: openclaw clawcore start|stop|restart|status|setup-bots
@@ -163,7 +174,7 @@ export default function register(api: PluginApi) {
       const cmd = program
         .command("clawcore <action>")
         .description(
-          "Manage claw_core daemon and multi-bot setup (start|stop|restart|status|setup-bots)",
+          "Manage claw_core daemon, multi-bot setup, and agent teams (start|stop|restart|status|setup-bots|team)",
         );
 
       cmd.action((action?: string) => {
@@ -176,6 +187,38 @@ export default function register(api: PluginApi) {
             process.exit(1);
           }
           const child = spawn("python3", [setupScript, ...process.argv.slice(4)], {
+            env: { ...process.env, CLAW_CORE_PLUGIN_ROOT: PLUGIN_ROOT },
+            stdio: "inherit",
+          });
+          child.on("close", (code) => process.exit(code ?? 0));
+          return;
+        }
+
+        // team delegates to team_session.py or team_setup_telegram.py
+        if (act === "team") {
+          const teamArgs = process.argv.slice(4); // everything after "clawcore team"
+          const teamSubcmd = teamArgs[0] || "list";
+
+          // "team setup-telegram" routes to team_setup_telegram.py
+          if (teamSubcmd === "setup-telegram") {
+            if (!existsSync(teamTelegramScript)) {
+              console.error("team_setup_telegram.py not found:", teamTelegramScript);
+              process.exit(1);
+            }
+            const child = spawn("python3", [teamTelegramScript, ...teamArgs.slice(1)], {
+              env: { ...process.env, CLAW_CORE_PLUGIN_ROOT: PLUGIN_ROOT },
+              stdio: "inherit",
+            });
+            child.on("close", (code) => process.exit(code ?? 0));
+            return;
+          }
+
+          // All other team subcommands route to team_session.py
+          if (!existsSync(teamScript)) {
+            console.error("team_session.py not found:", teamScript);
+            process.exit(1);
+          }
+          const child = spawn("python3", [teamScript, ...teamArgs], {
             env: { ...process.env, CLAW_CORE_PLUGIN_ROOT: PLUGIN_ROOT },
             stdio: "inherit",
           });
@@ -234,6 +277,69 @@ export default function register(api: PluginApi) {
     },
     { commands: ["picoclaw"] },
   );
+
+  // ---------------------------------------------------------------
+  // CLI: openclaw clawcore team create|status|list|close|setup-telegram
+  // (handled within clawcore CLI — "team" is a sub-action)
+  // ---------------------------------------------------------------
+
+  // ---------------------------------------------------------------
+  // Gateway RPC: clawcore.team-create
+  // ---------------------------------------------------------------
+  api.registerGatewayMethod("clawcore.team-create", ({ params, respond }) => {
+    if (!existsSync(teamScript)) {
+      respond(false, { error: "team_session.py not found" });
+      return;
+    }
+    const name = (params?.name as string) || "";
+    const groupId = (params?.groupId as string) || "";
+    if (!name) {
+      respond(false, { error: "name parameter is required" });
+      return;
+    }
+    const args = ["create", "--name", name];
+    if (groupId) args.push("--group-id", groupId);
+    if (params?.repo) args.push("--repo", params.repo as string);
+    if (params?.agents) args.push("--agents", params.agents as string);
+    if (params?.lead) args.push("--lead", params.lead as string);
+    runPythonScript(teamScript, args).then(({ ok, data, raw }) => {
+      respond(ok || true, { output: raw, data });
+    });
+  });
+
+  // ---------------------------------------------------------------
+  // Gateway RPC: clawcore.team-status
+  // ---------------------------------------------------------------
+  api.registerGatewayMethod("clawcore.team-status", ({ params, respond }) => {
+    if (!existsSync(teamScript)) {
+      respond(false, { error: "team_session.py not found" });
+      return;
+    }
+    const name = (params?.name as string) || "";
+    if (!name) {
+      respond(false, { error: "name parameter is required" });
+      return;
+    }
+    runPythonScript(teamScript, ["status", "--name", name, "--json"]).then(
+      ({ ok, data }) => {
+        respond(ok, data);
+      },
+    );
+  });
+
+  // ---------------------------------------------------------------
+  // Gateway RPC: clawcore.team-list
+  // ---------------------------------------------------------------
+  api.registerGatewayMethod("clawcore.team-list", ({ respond }) => {
+    if (!existsSync(teamScript)) {
+      respond(false, { error: "team_session.py not found" });
+      return;
+    }
+    // team_session.py list outputs text, not JSON — run and capture
+    runPythonScript(teamScript, ["list"]).then(({ raw }) => {
+      respond(true, { output: raw });
+    });
+  });
 
   // ---------------------------------------------------------------
   // Gateway RPC: clawcore.status
@@ -540,6 +646,175 @@ export default function register(api: PluginApi) {
       skippedTools.push(
         `picoclaw_chat, picoclaw_config (${!enablePicoClaw ? "disabled" : "script not found"})`,
       );
+    }
+
+    // Tool: team_coordinate
+    if (existsSync(teamScript)) {
+      api.registerTool(
+        {
+          name: "team_coordinate",
+          description:
+            "Manage agent team sessions — create/claim/update tasks on a shared task board, " +
+            "send messages to teammates, and check team status. " +
+            "Used for multi-agent collaboration in Telegram group chats.",
+          parameters: {
+            type: "object",
+            properties: {
+              action: {
+                type: "string",
+                enum: [
+                  "create_task",
+                  "claim_task",
+                  "update_task",
+                  "get_tasks",
+                  "message_teammate",
+                  "get_messages",
+                  "team_status",
+                ],
+                description: "The team coordination action to perform.",
+              },
+              team: {
+                type: "string",
+                description: "Team name (e.g., 'project-alpha').",
+              },
+              title: {
+                type: "string",
+                description: "Task title (for create_task).",
+              },
+              assign_to: {
+                type: "string",
+                description:
+                  "Agent to assign the task to (for create_task). E.g., 'artist', 'assistant', 'developer'.",
+              },
+              task_id: {
+                type: "string",
+                description: "Task ID (for claim_task, update_task). E.g., 'T001'.",
+              },
+              status: {
+                type: "string",
+                enum: ["todo", "in_progress", "done", "blocked", "cancelled"],
+                description: "New task status (for update_task).",
+              },
+              notes: {
+                type: "string",
+                description: "Notes to add to the task (for update_task).",
+              },
+              to: {
+                type: "string",
+                description:
+                  "Recipient agent ID (for message_teammate). E.g., 'artist'.",
+              },
+              body: {
+                type: "string",
+                description: "Message body (for message_teammate).",
+              },
+              agent: {
+                type: "string",
+                description:
+                  "Your agent ID — who you are (for claim_task, message_teammate).",
+              },
+            },
+            required: ["action", "team"],
+          },
+          async execute(
+            _id: string,
+            params: Record<string, unknown>,
+          ) {
+            const action = params.action as string;
+            const team = params.team as string;
+            let args: string[] = [];
+
+            switch (action) {
+              case "create_task":
+                args = [
+                  "task-add",
+                  "--name",
+                  team,
+                  "--title",
+                  (params.title as string) || "Untitled task",
+                ];
+                if (params.assign_to)
+                  args.push("--assign-to", params.assign_to as string);
+                break;
+
+              case "claim_task":
+                args = [
+                  "task-claim",
+                  "--name",
+                  team,
+                  "--task-id",
+                  (params.task_id as string) || "",
+                  "--agent",
+                  (params.agent as string) || "unknown",
+                ];
+                break;
+
+              case "update_task":
+                args = [
+                  "task-update",
+                  "--name",
+                  team,
+                  "--task-id",
+                  (params.task_id as string) || "",
+                ];
+                if (params.status)
+                  args.push("--status", params.status as string);
+                if (params.notes)
+                  args.push("--notes", params.notes as string);
+                break;
+
+              case "get_tasks":
+                args = ["task-list", "--name", team, "--json"];
+                break;
+
+              case "message_teammate":
+                args = [
+                  "message",
+                  "--name",
+                  team,
+                  "--from",
+                  (params.agent as string) || "unknown",
+                  "--to",
+                  (params.to as string) || "unknown",
+                  "--body",
+                  (params.body as string) || "",
+                ];
+                break;
+
+              case "get_messages":
+                args = ["messages", "--name", team, "--json"];
+                break;
+
+              case "team_status":
+                args = ["status", "--name", team, "--json"];
+                break;
+
+              default:
+                return {
+                  content: [
+                    {
+                      type: "text",
+                      text: `Unknown action: ${action}`,
+                    },
+                  ],
+                };
+            }
+
+            const result = await runPythonScript(teamScript, args);
+            const text =
+              typeof result.data === "string"
+                ? result.data
+                : JSON.stringify(result.data, null, 2);
+            return {
+              content: [{ type: "text", text: result.raw || text }],
+            };
+          },
+        },
+        { optional: false },
+      );
+      registeredTools.push("team_coordinate");
+    } else {
+      skippedTools.push("team_coordinate (script not found)");
     }
 
     if (registeredTools.length > 0) {
