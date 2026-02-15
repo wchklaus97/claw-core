@@ -66,6 +66,8 @@ start() {
       [ -f "$CONFIG_JS" ] && node "$CONFIG_JS" 2>/dev/null || true
       INSTALL_SKILLS="$PLUGIN_ROOT/scripts/install-skills-to-openclaw.sh"
       [ -f "$INSTALL_SKILLS" ] && bash "$INSTALL_SKILLS" 2>/dev/null || true
+      CURSOR_SETUP="$PLUGIN_ROOT/scripts/setup-cursor-integration.js"
+      [ -f "$CURSOR_SETUP" ] && node "$CURSOR_SETUP" 2>/dev/null || true
     fi
   fi
 

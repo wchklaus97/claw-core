@@ -43,19 +43,69 @@ export default function register(api: {
   const daemonScript = getDaemonScript();
   const execScript = getExecScript();
 
-  // CLI: openclaw clawcore start|stop|restart|status
+  // CLI: openclaw clawcore start|stop|restart|status|setup-cursor|teardown
   api.registerCli(
     ({ program }) => {
       const cmd = program
         .command("clawcore <action>")
-        .description("Manage claw_core daemon (start|stop|restart|status)");
+        .description("Manage claw_core daemon (start|stop|restart|status|setup-cursor|teardown)");
 
       cmd.action((action?: string) => {
+        const act = action ?? "status";
+
+        // teardown: stop daemon + clean openclaw.json and skills (run before rm plugin dir)
+        if (act === "teardown") {
+          const teardownScript = join(PLUGIN_ROOT, "scripts", "teardown-openclaw-config.js");
+          if (!existsSync(teardownScript)) {
+            console.error("Teardown script not found:", teardownScript);
+            process.exit(1);
+          }
+          const daemonScript = getDaemonScript();
+          if (existsSync(daemonScript)) {
+            const stopChild = spawn("bash", [daemonScript, "stop"], {
+              env: { ...process.env, CLAW_CORE_PLUGIN_ROOT: PLUGIN_ROOT },
+              stdio: "inherit",
+            });
+            stopChild.on("close", () => {
+              const teardownChild = spawn("node", [teardownScript], {
+                env: { ...process.env, PLUGIN_ROOT, CLAW_CORE_PLUGIN_ROOT: PLUGIN_ROOT },
+                stdio: "inherit",
+              });
+              teardownChild.on("close", (code) => process.exit(code ?? 0));
+            });
+          } else {
+            const teardownChild = spawn("node", [teardownScript], {
+              env: { ...process.env, PLUGIN_ROOT, CLAW_CORE_PLUGIN_ROOT: PLUGIN_ROOT },
+              stdio: "inherit",
+            });
+            teardownChild.on("close", (code) => process.exit(code ?? 0));
+          }
+          return;
+        }
+
+        // setup-cursor: run the Cursor integration setup script
+        if (act === "setup-cursor") {
+          const setupScript = join(PLUGIN_ROOT, "scripts", "setup-cursor-integration.js");
+          if (!existsSync(setupScript)) {
+            console.error("Cursor setup script not found:", setupScript);
+            process.exit(1);
+          }
+          const env = { ...process.env } as Record<string, string>;
+          // Forward --workspace arg if present
+          const wsIdx = process.argv.indexOf("--workspace");
+          const args = ["node", setupScript];
+          if (wsIdx !== -1 && process.argv[wsIdx + 1]) {
+            args.push("--workspace", process.argv[wsIdx + 1]);
+          }
+          const child = spawn(args[0], args.slice(1), { env, stdio: "inherit" });
+          child.on("close", (code) => process.exit(code ?? 0));
+          return;
+        }
+
         if (!existsSync(daemonScript)) {
           console.error("claw_core daemon script not found:", daemonScript);
           process.exit(1);
         }
-        const act = action ?? "status";
         const env: Record<string, string> = { ...process.env, CLAW_CORE_PLUGIN_ROOT: PLUGIN_ROOT };
         const cfg = (api as { config?: { plugins?: { entries?: Record<string, { config?: Record<string, string> }> } } }).config?.plugins?.entries?.["claw-core"]?.config ?? {};
         if (cfg.binaryPath) env.CLAW_CORE_BINARY = cfg.binaryPath;

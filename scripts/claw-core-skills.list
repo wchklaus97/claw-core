@@ -9,3 +9,6 @@ cursor-agent
 cursor-cron-bridge
 plans-mode
 status-dashboard
+cursor-setup
+claw-core-install
+claw-core-remove

@@ -1098,14 +1098,55 @@
 .quickstart-code {
   margin: 0;
   padding: 8px 20px 18px;
-  white-space: pre-wrap;
-  word-break: break-word;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.quickstart-code code {
+.quickstart-code-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   font-size: 1.05rem;
   color: #f4f8ff;
+  text-align: left;
+}
+
+.quickstart-code-line code {
+  flex: 1;
+  white-space: pre;
+  overflow-x: auto;
+  word-break: break-all;
+}
+
+.quickstart-copy-btn {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  border: 1px solid rgba(154, 192, 255, 0.4);
+  border-radius: 8px;
+  background: rgba(26, 37, 79, 0.6);
+  color: #b9c7f2;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.quickstart-copy-btn:hover {
+  background: rgba(139, 224, 200, 0.2);
+  border-color: rgba(139, 224, 200, 0.5);
+  color: #b7ffe8;
+}
+
+.quickstart-copy-btn.copied {
+  background: rgba(44, 216, 160, 0.2);
+  border-color: rgba(44, 216, 160, 0.5);
+  color: #b7ffe8;
 }
 
 .quickstart-note {
@@ -1114,6 +1155,36 @@
   color: var(--text-secondary);
   font-size: 0.95rem;
   line-height: 1.6;
+}
+
+.quickstart-note a,
+.quickstart-cursor-note a {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  transition: opacity 0.2s ease;
+}
+
+.quickstart-note a:hover,
+.quickstart-cursor-note a:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.quickstart-cursor-note {
+  max-width: 880px;
+  margin: 10px auto 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.quickstart-cursor-note code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.9em;
+  padding: 0.12em 0.4em;
+  border-radius: 4px;
+  background: rgba(100, 120, 200, 0.2);
 }
 
 /* Pricing */

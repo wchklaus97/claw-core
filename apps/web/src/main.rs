@@ -4,12 +4,13 @@
 mod layout;
 mod routes;
 use dioxus::prelude::*;
+use wasm_bindgen::JsCast;
+use wasm_bindgen_futures::JsFuture;
 
 use dioxus_i18n::prelude::{i18n, use_init_i18n, I18nConfig};
 use dioxus_i18n::t;
 use routes::Route;
 use unic_langid::langid;
-use wasm_bindgen::JsCast;
 
 pub(crate) fn locale_label(loc: &str) -> &'static str {
     match loc {
@@ -105,6 +106,7 @@ fn Landing(#[props(into)] locale: String) -> Element {
     let mut hero_video_failed = use_signal(|| false);
     let mut sound_toast_text = use_signal(|| String::new());
     let mut sound_toast_seq = use_signal(|| 0_u32);
+    let quickstart_copied_line = use_signal(|| None::<usize>);
     i18n().set_language(locale_to_langid(locale.as_str()));
 
     rsx! {
@@ -321,11 +323,46 @@ fn Landing(#[props(into)] locale: String) -> Element {
                             span { class: "quickstart-os", { t!("quickstart-os") } }
                         }
                         p { class: "quickstart-comment", { t!("quickstart-comment") } }
-                        pre { class: "quickstart-code",
-                            code {
-                                { t!("quickstart-command") }
-                                "\n"
-                                { t!("quickstart-command-2") }
+                        div { class: "quickstart-code",
+                            div { class: "quickstart-code-line",
+                                code { { t!("quickstart-command") } }
+                                button {
+                                    r#type: "button",
+                                    class: if quickstart_copied_line() == Some(0) { "quickstart-copy-btn copied" } else { "quickstart-copy-btn" },
+                                    onclick: move |_| {
+                                        let cmd = t!("quickstart-command").to_string();
+                                        let mut copied = quickstart_copied_line;
+                                        spawn(async move {
+                                            if let Some(window) = web_sys::window() {
+                                                let clipboard = window.navigator().clipboard();
+                                                let future = JsFuture::from(clipboard.write_text(&cmd));
+                                                let _ = future.await;
+                                                copied.set(Some(0));
+                                            }
+                                        });
+                                    },
+                                    if quickstart_copied_line() == Some(0) { "Copied!" } else { "Copy" }
+                                }
+                            }
+                            div { class: "quickstart-code-line",
+                                code { { t!("quickstart-command-2") } }
+                                button {
+                                    r#type: "button",
+                                    class: if quickstart_copied_line() == Some(1) { "quickstart-copy-btn copied" } else { "quickstart-copy-btn" },
+                                    onclick: move |_| {
+                                        let cmd = t!("quickstart-command-2").to_string();
+                                        let mut copied = quickstart_copied_line;
+                                        spawn(async move {
+                                            if let Some(window) = web_sys::window() {
+                                                let clipboard = window.navigator().clipboard();
+                                                let future = JsFuture::from(clipboard.write_text(&cmd));
+                                                let _ = future.await;
+                                                copied.set(Some(1));
+                                            }
+                                        });
+                                    },
+                                    if quickstart_copied_line() == Some(1) { "Copied!" } else { "Copy" }
+                                }
                             }
                         }
                     }
@@ -333,6 +370,23 @@ fn Landing(#[props(into)] locale: String) -> Element {
                         { t!("quickstart-note-prefix") }
                         a { href: "https://wchklaus97.github.io/claw-core/en/book/", target: "_blank", rel: "noopener noreferrer", { t!("quickstart-note-docs") } }
                         { t!("quickstart-note-suffix") }
+                    }
+                    p { class: "quickstart-cursor-note",
+                        strong { { t!("quickstart-cursor-label") } }
+                        " "
+                        { t!("quickstart-cursor-text") }
+                        " "
+                        code { { t!("quickstart-cursor-cmd") } }
+                        { t!("quickstart-cursor-then") }
+                        " "
+                        code { { t!("quickstart-cursor-restart") } }
+                        ". "
+                        a {
+                            href: "https://wchklaus97.github.io/claw-core/{locale_to_book_path(locale.as_str())}/book/openclaw-integration.html#cursor-cli-integration",
+                            target: "_blank",
+                            rel: "noopener noreferrer",
+                            { t!("quickstart-cursor-docs") }
+                        }
                     }
                 }
 

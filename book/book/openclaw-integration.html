@@ -34,7 +34,7 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-917b6e83.js";
+            window.path_to_searchindex_js = "searchindex-5f74006c.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-876e0338.js"></script>
@@ -58,11 +58,11 @@
                 let theme = localStorage.getItem('mdbook-theme');
                 let sidebar = localStorage.getItem('mdbook-sidebar');
 
-                if (theme.startsWith('"') && theme.endsWith('"')) {
+                if (theme && theme.startsWith('"') && theme.endsWith('"')) {
                     localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
                 }
 
-                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                if (sidebar && sidebar.startsWith('"') && sidebar.endsWith('"')) {
                     localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
                 }
             } catch (e) { }
@@ -231,12 +231,12 @@
 <p><strong>Solution:</strong> The daemon script (<code>claw_core_daemon.sh</code>) runs the missing setup when <code>start</code> is invoked and the plugin binary is absent. In <code>start()</code>:</p>
 <ol>
 <li><strong>Condition:</strong> <code>CLAW_CORE_BINARY</code> and <code>CLAW_CORE_SOURCE</code> are unset, and <code>$PLUGIN_ROOT/bin/claw_core</code> does not exist.</li>
-<li><strong>Action:</strong> Run <code>postinstall-download-binary.sh</code> (download binary from GitHub Releases), <code>postinstall-config-openclaw.js</code> (set <code>binaryPath</code> in <code>openclaw.json</code>), and <code>install-skills-to-openclaw.sh</code> (copy skills to <code>~/.openclaw/skills/</code>).</li>
+<li><strong>Action:</strong> Run <code>postinstall-download-binary.sh</code> (download binary from GitHub Releases), <code>postinstall-config-openclaw.js</code> (set <code>binaryPath</code> in <code>openclaw.json</code>), <code>install-skills-to-openclaw.sh</code> (copy skills to <code>~/.openclaw/skills/</code>), and <code>setup-cursor-integration.js</code> (configure Cursor integration in <code>openclaw.json</code>).</li>
 <li><strong>Then:</strong> Proceed with <code>find_binary()</code> and start the daemon.</li>
 </ol>
 <p>This ensures a one-command install works: <code>openclaw plugins install @wchklaus97hk/claw-core</code> followed by <code>openclaw clawcore start</code> completes setup without manual steps.</p>
 <h3 id="openclaw-skills"><a class="header" href="#openclaw-skills">OpenClaw Skills</a></h3>
-<p>The plugin ships 8 skills (canonical list: <code>scripts/claw-core-skills.list</code>):</p>
+<p>The plugin ships 11 skills (canonical list: <code>scripts/claw-core-skills.list</code>):</p>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -246,11 +246,14 @@
 <tr><td><strong>claw-core-runtime</strong></td><td>Execute commands through claw_core (wrapper around <code>claw_core_exec.py</code>)</td></tr>
 <tr><td><strong>claw-core-sessions</strong></td><td>List and manage claw_core sessions</td></tr>
 <tr><td><strong>claw-core-daemon</strong></td><td>Start/stop/status the daemon from the agent</td></tr>
+<tr><td><strong>claw-core-install</strong></td><td>Run full install or setup completion (plugins install, daemon start, Cursor setup)</td></tr>
+<tr><td><strong>claw-core-remove</strong></td><td>Run full removal (stop daemon, clean config, remove skills and plugin)</td></tr>
 <tr><td><strong>cron-helper</strong></td><td>Cron job scheduling helpers</td></tr>
 <tr><td><strong>cursor-agent</strong></td><td>Cursor agent coordination</td></tr>
 <tr><td><strong>cursor-cron-bridge</strong></td><td>Bridge between Cursor and cron</td></tr>
 <tr><td><strong>plans-mode</strong></td><td>Planning mode workflow</td></tr>
 <tr><td><strong>status-dashboard</strong></td><td>Status dashboard for monitoring</td></tr>
+<tr><td><strong>cursor-setup</strong></td><td>Configure Cursor CLI integration in <code>openclaw.json</code></td></tr>
 </tbody>
 </table>
 </div>
@@ -266,13 +269,75 @@ openclaw clawcore start   # daemon auto-downloads binary on first run
 # Reinstall
 ./scripts/install-claw-core-openclaw.sh --force
 
-# Remove
+# Remove (also cleans Cursor integration from openclaw.json)
 ./scripts/remove-claw-core-openclaw.sh
 
 # Verify
 ./scripts/verify_integration.sh
 </code></pre>
 <p>Restart the OpenClaw gateway after installing.</p>
+<h2 id="cursor-cli-integration"><a class="header" href="#cursor-cli-integration">Cursor CLI Integration</a></h2>
+<p>The plugin can configure OpenClaw to delegate tasks to Cursor CLI. This adds:</p>
+<ul>
+<li><strong>cliBackends</strong>: <code>cursor-cli</code>, <code>cursor-plan</code>, <code>cursor-ask</code> (Agent, Plan, Ask modes)</li>
+<li><strong>cursor-dev agent</strong>: Uses <code>cursor-cli/auto</code> as model</li>
+<li><strong>subagents.allowAgents</strong>: Allows main agent to spawn sub-agents under cursor-dev</li>
+</ul>
+<p><strong>Why this is needed:</strong> OpenClaw installs plugins by extracting the npm tarball without running <code>npm install</code>, so postinstall never runs. The daemon script runs <code>setup-cursor-integration.js</code> on first start to compensate. If auto-setup was skipped or you need to reconfigure, use the manual steps below.</p>
+<h3 id="step-by-step-setup"><a class="header" href="#step-by-step-setup">Step-by-step setup</a></h3>
+<ol>
+<li><strong>Install the plugin:</strong> <code>openclaw plugins install @wchklaus97hk/claw-core</code></li>
+<li><strong>Start daemon (auto-setup):</strong> <code>openclaw clawcore start</code> — on first run this downloads the binary and configures Cursor in <code>openclaw.json</code></li>
+<li><strong>Optional manual setup:</strong> If Cursor integration is missing or needs a different workspace: <code>openclaw clawcore setup-cursor</code> (or <code>--workspace /path/to/project</code>)</li>
+<li><strong>Restart gateway:</strong> <code>openclaw gateway restart</code></li>
+</ol>
+<h3 id="dependencies"><a class="header" href="#dependencies">Dependencies</a></h3>
+<ul>
+<li><strong>Cursor CLI</strong> on PATH (<code>cursor</code> command)</li>
+<li><strong>Cursor login:</strong> <code>cursor agent login</code> or set <code>CURSOR_API_KEY</code></li>
+</ul>
+<h3 id="automatic-setup-first-start"><a class="header" href="#automatic-setup-first-start">Automatic Setup (first start)</a></h3>
+<p>When <code>openclaw clawcore start</code> runs the first-time setup (binary download), it also runs <code>setup-cursor-integration.js</code> automatically.</p>
+<h3 id="manual-setup"><a class="header" href="#manual-setup">Manual Setup</a></h3>
+<pre><code class="language-bash"># One-liner: setup Cursor and restart gateway
+openclaw clawcore setup-cursor &amp;&amp; openclaw gateway restart
+
+# Setup with default workspace
+openclaw clawcore setup-cursor
+
+# Setup with custom workspace
+openclaw clawcore setup-cursor --workspace /path/to/project
+
+# Then restart gateway
+openclaw gateway restart
+</code></pre>
+<h3 id="via-agent-chat"><a class="header" href="#via-agent-chat">Via Agent Chat</a></h3>
+<p>Ask the agent: “Set up Cursor integration” or “設定 Cursor 整合”. The agent uses the <code>cursor-setup</code> skill.</p>
+<h3 id="what-gets-added-to-openclawjson"><a class="header" href="#what-gets-added-to-openclawjson">What Gets Added to openclaw.json</a></h3>
+<pre><code class="language-json">{
+  "agents": {
+    "defaults": {
+      "workspace": "~/.openclaw/workspace",
+      "cliBackends": {
+        "cursor-cli": {
+          "command": "cursor",
+          "args": ["agent", "--print", "--workspace", "..."]
+        }
+      }
+    },
+    "list": [
+      { "id": "main", "default": true, "subagents": { "allowAgents": ["*"] } },
+      { "id": "cursor-dev", "model": { "primary": "cursor-cli/auto" } }
+    ]
+  }
+}
+</code></pre>
+<h3 id="troubleshooting"><a class="header" href="#troubleshooting">Troubleshooting</a></h3>
+<ul>
+<li><strong><code>agentId is not allowed for sessions_spawn</code></strong>: run <code>openclaw clawcore setup-cursor</code>, then <code>openclaw gateway restart</code></li>
+<li><strong><code>cursor</code> not found</strong>: install Cursor CLI and ensure <code>cursor</code> is on PATH</li>
+<li><strong>Config schema errors</strong>: run <code>openclaw doctor --fix</code>, then rerun <code>openclaw clawcore setup-cursor</code></li>
+</ul>
 <h2 id="quick-reference"><a class="header" href="#quick-reference">Quick Reference</a></h2>
 <ul>
 <li><strong>One-command install:</strong> <code>openclaw plugins install @wchklaus97hk/claw-core</code> then <code>openclaw clawcore start</code></li>
@@ -281,6 +346,7 @@ openclaw clawcore start   # daemon auto-downloads binary on first run
 <li><strong>Verify:</strong> <code>./scripts/verify_integration.sh</code></li>
 <li><strong>Start runtime:</strong> <code>openclaw clawcore start</code> or daemon script</li>
 <li><strong>Status:</strong> <code>openclaw clawcore status</code></li>
+<li><strong>Setup Cursor:</strong> <code>openclaw clawcore setup-cursor</code></li>
 <li><strong>RPC:</strong> <code>clawcore.status</code> from the gateway</li>
 </ul>
 

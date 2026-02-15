@@ -174,6 +174,27 @@ for name in skill_names:
         del skill_entries[name]
         changed = True
 
+# --- Remove Cursor integration (added by setup-cursor-integration.js) ---
+agents = cfg.get("agents", {})
+defaults = agents.get("defaults", {})
+cli_backends = defaults.get("cliBackends")
+if cli_backends is not None:
+    for name in ["cursor-cli", "cursor-plan", "cursor-ask"]:
+        if name in cli_backends:
+            del cli_backends[name]
+            changed = True
+            print("   ✓ Removed agents.defaults.cliBackends." + name)
+    if not cli_backends:
+        del defaults["cliBackends"]
+        changed = True
+
+agent_list = agents.get("list") or []
+new_list = [a for a in agent_list if a.get("id") != "cursor-dev"]
+if len(new_list) != len(agent_list):
+    cfg["agents"]["list"] = new_list
+    changed = True
+    print("   ✓ Removed cursor-dev agent")
+
 if changed and skill_names:
     print("   ✓ Removed skill entries from config")
 

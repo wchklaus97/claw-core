@@ -123,6 +123,23 @@ if os.path.isfile(skills_list):
             if name in se:
                 del se[name]
                 changed = True
+# Remove Cursor integration (added by setup-cursor-integration.js)
+agents = cfg.get("agents", {})
+defaults = agents.get("defaults", {})
+cli_backends = defaults.get("cliBackends")
+if cli_backends is not None:
+    for name in ["cursor-cli", "cursor-plan", "cursor-ask"]:
+        if name in cli_backends:
+            del cli_backends[name]
+            changed = True
+    if not cli_backends:
+        del defaults["cliBackends"]
+        changed = True
+agent_list = agents.get("list") or []
+new_list = [a for a in agent_list if a.get("id") != "cursor-dev"]
+if len(new_list) != len(agent_list):
+    cfg["agents"]["list"] = new_list
+    changed = True
 if changed:
     with open(config_path, "w") as f:
         json.dump(cfg, f, indent=2, ensure_ascii=False)
