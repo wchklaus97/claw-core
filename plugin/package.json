@@ -1,7 +1,7 @@
 {
   "name": "@wchklaus97hk/claw-core",
-  "version": "0.2.0",
-  "description": "OpenClaw plugin: Terminal Runtime Layer (claw_core) with multi-bot Telegram setup, PicoClaw integration, direct Cursor Agent invocation, image generation, and Cursor agent workspace. Supports 3 specialized bots (artist, assistant, developer) with per-agent workspaces, shared_memory, shared_skills, and tool profiles. Linux and macOS only.",
+  "version": "0.3.0",
+  "description": "OpenClaw plugin: Terminal Runtime Layer (claw_core) with Agent Teams, multi-bot Telegram setup, PicoClaw integration, direct Cursor Agent invocation, image generation, and Cursor agent workspace. Supports 3 specialized bots (artist, assistant, developer) with multi-agent team collaboration, shared task boards, Telegram group coordination, shared_memory, shared_skills, and per-agent workspaces. Linux and macOS only.",
   "main": "index.ts",
   "os": ["darwin", "linux"],
   "openclaw": {
@@ -33,6 +33,9 @@
     "picoclaw",
     "telegram",
     "multi-bot",
+    "agent-teams",
+    "multi-agent",
+    "task-board",
     "image-generation",
     "ai",
     "linux",

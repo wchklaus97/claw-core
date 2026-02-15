@@ -13,7 +13,8 @@ OpenClaw plugin for the **Claw Core** Terminal Runtime Layer. Provides session-m
 | 🐾 **PicoClaw Bridge** | Chat with PicoClaw for quick Q&A and web search |
 | 🎨 **Image Generation** | Generate images via Cursor's built-in auto model |
 | 🤖 **3-Bot Setup** | One-command setup for artist, assistant, developer bots |
-| 📊 **Status Dashboard** | Full-stack status: backends, agents, sessions, cron |
+| 🤝 **Agent Teams** | Multi-agent collaboration with shared task boards |
+| 📊 **Status Dashboard** | Full-stack status: backends, agents, teams, cron |
 | 📁 **Agent Workspace** | shared_memory + shared_skills at ~/Documents/claw_core |
 
 **Compatibility:** See [Compatibility](#compatibility) for OpenClaw and Cursor CLI versions.
@@ -82,6 +83,78 @@ openclaw gateway restart
 | **Cursor CLI** | Cursor IDE 2.5.11 — includes `agent` and `cursor agent` |
 
 Cursor integration prefers `agent` when on PATH, otherwise `cursor agent`. Both require `--output-format stream-json` for non-interactive use.
+
+## Agent Teams — Multi-Agent Collaboration
+
+Inspired by Claude Code Agent Teams — your 3 bots collaborate in a **Telegram group chat** with a shared task board.
+
+### Quick Start: Team Session
+
+```bash
+# 1. Create a team
+openclaw clawcore team create --name "project-alpha" --group-id -100123456 --repo /path/to/project
+
+# 2. Configure Telegram group (broadcast mode + optional forum topics)
+openclaw clawcore team setup-telegram --name "project-alpha" --group-id -100123456
+
+# 3. Or do it all at once during bot setup
+openclaw clawcore setup-bots \
+  --image-token X --qa-token Y --dev-token Z \
+  --team-group -100123456 --team-name "project-alpha"
+```
+
+### How It Works
+
+```
+Group: "Project Alpha Team"
+  Human:      "@ClawDevBot build the landing page"
+  Developer:  "On it! Creating tasks...
+               📋 T001: Hero image → @ClawArtistBot
+               📋 T002: CSS research → @ClawAssistantBot
+               📋 T003: Implementation → me"
+  Artist:     "✅ T001 done! assets/hero-banner.png"
+  Assistant:  "✅ T002 done! Recommend Tailwind v4"
+  Developer:  "✅ T003 done! PR #42 ready."
+```
+
+### Team Tool
+
+Agents use `team_coordinate` to manage the shared task board:
+
+```
+team_coordinate(action: "create_task", team: "project-alpha",
+                title: "Design hero banner", assign_to: "artist")
+
+team_coordinate(action: "get_tasks", team: "project-alpha")
+
+team_coordinate(action: "message_teammate", team: "project-alpha",
+                agent: "developer", to: "artist", body: "Need hero image")
+```
+
+### Telegram Group Structure
+
+| Topic | Primary Agent | Purpose |
+|---|---|---|
+| 📋 General | All (broadcast) | Coordination, status updates |
+| 🎨 Design | artist | Visual tasks |
+| 💬 Research | assistant | Q&A, web search |
+| 🛠️ Code | developer | Coding, builds |
+
+Configure with forum topics for best organization, or use a simple group with @mentions.
+
+### Team CLI
+
+```bash
+openclaw clawcore team create --name X --group-id Y --repo Z
+openclaw clawcore team status --name X
+openclaw clawcore team list
+openclaw clawcore team close --name X
+openclaw clawcore team task-add --name X --title "Task" --assign-to developer
+openclaw clawcore team task-list --name X
+openclaw clawcore team setup-telegram --name X --group-id Y
+```
+
+---
 
 ## The Three Bots
 
@@ -157,6 +230,18 @@ picoclaw_config(action: "view")
 picoclaw_config(action: "set", key: "model", value: "deepseek-chat")
 ```
 
+### `team_coordinate`
+
+Manage agent team sessions — shared task board and inter-agent messaging.
+
+```
+team_coordinate(action: "create_task", team: "my-team", title: "Build feature", assign_to: "developer")
+team_coordinate(action: "get_tasks", team: "my-team")
+team_coordinate(action: "message_teammate", team: "my-team", agent: "developer", to: "artist", body: "Need icon")
+```
+
+Actions: `create_task`, `claim_task`, `update_task`, `get_tasks`, `message_teammate`, `get_messages`, `team_status`
+
 ## CLI Commands
 
 ```bash
@@ -182,6 +267,15 @@ openclaw clawcore setup-bots --dry-run
 openclaw picoclaw status
 openclaw picoclaw config
 openclaw picoclaw chat "What is Rust?"
+
+# Agent Teams
+openclaw clawcore team create --name my-team --group-id -100123456 --repo /path/to/project
+openclaw clawcore team status --name my-team
+openclaw clawcore team list
+openclaw clawcore team close --name my-team
+openclaw clawcore team task-add --name my-team --title "Build feature" --assign-to developer
+openclaw clawcore team task-list --name my-team
+openclaw clawcore team setup-telegram --name my-team --group-id -100123456
 ```
 
 ## Cursor CLI Integration
@@ -211,31 +305,33 @@ Or ask the agent in chat: "Set up Cursor integration".
 | `picoclaw.status` | PicoClaw installation status |
 | `picoclaw.chat` | Send message to PicoClaw |
 | `clawcore.bots-status` | All backends and agents status |
+| `clawcore.team-create` | Create a new team session |
+| `clawcore.team-status` | Get team status with task board |
+| `clawcore.team-list` | List all teams |
 
 ## What the Plugin Provides
 
-1. **Boot hook** — starts claw_core on `gateway:startup` when `autoStart` is true
-2. **Skills** — on install, copies all skills to `~/.openclaw/skills/`:
-   - claw-core-runtime, claw-core-sessions, claw-core-daemon
-   - claw-core-install, claw-core-remove (full install/remove flows via agent)
-   - cron-helper, cursor-agent, cursor-cron-bridge, plans-mode, status-dashboard, cursor-setup
-   - image-via-cursor, picoclaw-bridge, picoclaw-config, multi-backend-router, telegram-power-user
-3. **CLI** — `openclaw clawcore start|stop|restart|status|setup-cursor|init-workspace|reset-workspace|teardown|setup-bots`
-4. **Gateway RPC** — `clawcore.status`, `picoclaw.status`, `picoclaw.chat`, `clawcore.bots-status`
-5. **Cursor CLI integration** — auto-configures `openclaw.json` with cliBackends, cursor-dev agent, and subagents allowlist
-6. **Agent tools** — `cursor_agent_direct`, `picoclaw_chat`, `picoclaw_config`
-7. **Scripts** (included in plugin, used by skills):
-   - `scripts/claw_core_daemon.sh` — start/stop/restart/status; auto-downloads binary on first start if missing
-   - `scripts/claw_core_exec.py` — one-shot exec wrapper
-   - `scripts/cron_helper.py` — simple cron job creation
-   - `scripts/status_dashboard.py` — display sessions, cron jobs, activity
-   - `scripts/install-skills-to-openclaw.sh` — copies skills to `~/.openclaw/skills/`
-   - `scripts/setup-cursor-integration.js` — configure Cursor CLI integration in openclaw.json
-   - `scripts/init-workspace.js` — create/reset claw_core workspace
-   - `scripts/teardown-openclaw-config.js` — clean openclaw.json and skills
-   - `scripts/cursor_agent_direct.py` — Cursor Agent invocation wrapper
-   - `scripts/picoclaw_client.py` — PicoClaw bridge client
-   - `scripts/setup_bots.py` — multi-bot Telegram setup
+The plugin provides 17 skills:
+
+| Skill | Description |
+|---|---|
+| `claw-core-runtime` | Session-managed command execution |
+| `claw-core-sessions` | Session list/inspect/destroy |
+| `claw-core-daemon` | Daemon start/stop/restart/status |
+| `cron-helper` | Simple cron job creation |
+| `cursor-agent` | Cursor Agent invocation (direct tool + exec fallback) |
+| `cursor-cron-bridge` | Schedule Cursor tasks via cron |
+| `cursor-setup` | Configure Cursor CLI integration in openclaw.json |
+| `plans-mode` | Multi-step planning & execution |
+| `status-dashboard` | Full-stack status display |
+| `image-via-cursor` | Image generation via Cursor's auto model |
+| `picoclaw-bridge` | PicoClaw chat and web search |
+| `picoclaw-config` | PicoClaw configuration management |
+| `multi-backend-router` | Smart routing between backends |
+| `telegram-power-user` | Rich Telegram interaction patterns |
+| `team-lead` | Coordinate agent team sessions |
+| `team-member` | Participate in team sessions |
+| `team-telegram-group` | Telegram group team communication |
 
 Skills reference `$PLUGIN_ROOT` for script paths (plugin install dir, e.g. `~/.openclaw/extensions/claw-core`).
 
