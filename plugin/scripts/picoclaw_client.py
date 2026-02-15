@@ -46,8 +46,6 @@ def find_picoclaw_binary() -> str | None:
         return custom
     if shutil.which("picoclaw"):
         return "picoclaw"
-    if shutil.which("pico"):
-        return "pico"
     # Common install locations
     for candidate in [
         os.path.expanduser("~/go/bin/picoclaw"),
