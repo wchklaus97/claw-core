@@ -303,6 +303,52 @@ def main() -> int:
         print(f"\n[Recent Activity]")
         print("  (no session history found)")
 
+    # ---------------------------------------------------------------
+    # Team Sessions
+    # ---------------------------------------------------------------
+    teams_dir = Path(os.environ.get("OPENCLAW_TEAMS_DIR", Path.home() / ".openclaw" / "teams"))
+    if teams_dir.exists():
+        teams = []
+        for d in sorted(teams_dir.iterdir()):
+            team_file = d / "team.json"
+            tasks_file = d / "tasks.json"
+            if team_file.exists():
+                try:
+                    with open(team_file, "r") as f:
+                        team = json.load(f)
+                    task_counts = {"todo": 0, "in_progress": 0, "done": 0, "blocked": 0}
+                    if tasks_file.exists():
+                        with open(tasks_file, "r") as f:
+                            tasks = json.load(f).get("tasks", [])
+                        for t in tasks:
+                            s = t.get("status", "todo")
+                            if s in task_counts:
+                                task_counts[s] += 1
+                    team["_task_counts"] = task_counts
+                    team["_total_tasks"] = sum(task_counts.values())
+                    teams.append(team)
+                except Exception:
+                    pass
+
+        if teams:
+            active = [t for t in teams if t.get("status") == "active"]
+            closed = [t for t in teams if t.get("status") == "closed"]
+            print(f"\n[Team Sessions] ({len(active)} active, {len(closed)} closed)")
+            for t in active:
+                tc = t["_task_counts"]
+                total = t["_total_tasks"]
+                agents = ", ".join(t.get("agents", []))
+                group = t.get("telegram_group_id", "-")[:15] or "-"
+                print(f"  🤝 {t['name']:<16} [{t.get('lead', '?')} lead]  group: {group}")
+                print(f"     Agents: {agents}")
+                print(f"     Tasks: {total} total (✅{tc['done']} 🔄{tc['in_progress']} 📋{tc['todo']} 🚫{tc['blocked']})")
+        else:
+            print(f"\n[Team Sessions]")
+            print("  (no teams)")
+    else:
+        print(f"\n[Team Sessions]")
+        print("  (no teams)")
+
     print("\n" + "=" * 60)
     return 0
 
