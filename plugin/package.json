@@ -1,7 +1,7 @@
 {
   "name": "@wchklaus97hk/claw-core",
-  "version": "0.1.5",
-  "description": "OpenClaw plugin: Terminal Runtime Layer (claw_core) — session-managed command execution for AI agents. Compatible with latest OpenClaw and Cursor CLI (agent/cursor, stream-json). Linux and macOS only. Daemon auto-downloads binary on first start (OpenClaw does not run postinstall).",
+  "version": "0.2.0",
+  "description": "OpenClaw plugin: Terminal Runtime Layer (claw_core) with multi-bot Telegram setup, PicoClaw integration, direct Cursor Agent invocation, image generation, and Cursor agent workspace. Supports 3 specialized bots (artist, assistant, developer) with per-agent workspaces, shared_memory, shared_skills, and tool profiles. Linux and macOS only.",
   "main": "index.ts",
   "os": ["darwin", "linux"],
   "openclaw": {
@@ -30,6 +30,10 @@
     "exec",
     "agent",
     "cursor",
+    "picoclaw",
+    "telegram",
+    "multi-bot",
+    "image-generation",
     "ai",
     "linux",
     "macos",

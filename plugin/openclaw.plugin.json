@@ -1,1 +1,112 @@
-{"id":"claw-core","name":"Claw Core","description":"Terminal Runtime Layer \u2014 session-managed command execution for AI agents. Compatible with latest OpenClaw and Cursor CLI (agent/cursor, stream-json). Auto-starts claw_core daemon, provides exec wrapper and skills. Linux and macOS only (Windows not supported). Daemon auto-downloads binary and installs skills on first start when OpenClaw does not run postinstall.","version":"0.1.4","configSchema":{"type":"object","additionalProperties":false,"properties":{"binaryPath":{"type":"string","description":"Path to claw_core binary. If unset, uses claw_core from PATH or ~/.cargo/bin/claw_core."},"socketPath":{"type":"string","description":"Unix socket path for claw_core","default":"/tmp/trl.sock"},"sourcePath":{"type":"string","description":"Path to claw repo (to build from source). If set, daemon uses cargo run from this dir."},"autoStart":{"type":"boolean","description":"Auto-start claw_core when OpenClaw gateway starts","default":true}}},"uiHints":{"binaryPath":{"label":"Binary path","placeholder":"claw_core or /path/to/claw_core"},"socketPath":{"label":"Socket path","placeholder":"/tmp/trl.sock"},"sourcePath":{"label":"Source path (to build)","placeholder":"/path/to/claw"},"autoStart":{"label":"Auto-start on gateway boot"}},"skills":["./skills/claw-core-runtime","./skills/claw-core-sessions","./skills/claw-core-daemon","./skills/cron-helper","./skills/cursor-agent","./skills/cursor-cron-bridge","./skills/plans-mode","./skills/status-dashboard","./skills/cursor-setup"]}
+{
+  "id": "claw-core",
+  "name": "Claw Core",
+  "description": "Terminal Runtime Layer with multi-bot Telegram setup, PicoClaw integration, direct Cursor Agent invocation, and Cursor agent workspace. Provides session-managed command execution, image generation via Cursor, Q&A via PicoClaw, shared_memory/shared_skills workspace, and a one-command 3-bot setup (artist, assistant, developer). Linux and macOS only.",
+  "version": "0.2.0",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "binaryPath": {
+        "type": "string",
+        "description": "Path to claw_core binary. If unset, uses claw_core from PATH or ~/.cargo/bin/claw_core."
+      },
+      "socketPath": {
+        "type": "string",
+        "description": "Unix socket path for claw_core",
+        "default": "/tmp/trl.sock"
+      },
+      "sourcePath": {
+        "type": "string",
+        "description": "Path to claw repo (to build from source). If set, daemon uses cargo run from this dir."
+      },
+      "autoStart": {
+        "type": "boolean",
+        "description": "Auto-start claw_core when OpenClaw gateway starts",
+        "default": true
+      },
+      "picoClawPath": {
+        "type": "string",
+        "description": "Path to PicoClaw binary. If unset, uses picoclaw from PATH."
+      },
+      "cursorPath": {
+        "type": "string",
+        "description": "Path to Cursor CLI binary. If unset, uses cursor from PATH."
+      },
+      "cursorTimeout": {
+        "type": "string",
+        "description": "Default timeout for Cursor Agent in seconds",
+        "default": "600"
+      },
+      "defaultWorkspace": {
+        "type": "string",
+        "description": "Default workspace path for Cursor and exec operations."
+      },
+      "enablePicoClaw": {
+        "type": "boolean",
+        "description": "Enable PicoClaw integration (picoclaw_chat and picoclaw_config tools)",
+        "default": true
+      },
+      "enableCursorDirect": {
+        "type": "boolean",
+        "description": "Enable direct Cursor Agent tool (cursor_agent_direct)",
+        "default": true
+      }
+    }
+  },
+  "uiHints": {
+    "binaryPath": {
+      "label": "Binary path",
+      "placeholder": "claw_core or /path/to/claw_core"
+    },
+    "socketPath": {
+      "label": "Socket path",
+      "placeholder": "/tmp/trl.sock"
+    },
+    "sourcePath": {
+      "label": "Source path (to build)",
+      "placeholder": "/path/to/claw"
+    },
+    "autoStart": {
+      "label": "Auto-start on gateway boot"
+    },
+    "picoClawPath": {
+      "label": "PicoClaw binary path",
+      "placeholder": "picoclaw or /path/to/picoclaw"
+    },
+    "cursorPath": {
+      "label": "Cursor CLI path",
+      "placeholder": "cursor or /path/to/cursor"
+    },
+    "cursorTimeout": {
+      "label": "Cursor timeout (seconds)",
+      "placeholder": "600"
+    },
+    "defaultWorkspace": {
+      "label": "Default workspace",
+      "placeholder": "/path/to/your/project"
+    },
+    "enablePicoClaw": {
+      "label": "Enable PicoClaw integration"
+    },
+    "enableCursorDirect": {
+      "label": "Enable direct Cursor Agent"
+    }
+  },
+  "skills": [
+    "./skills/claw-core-runtime",
+    "./skills/claw-core-sessions",
+    "./skills/claw-core-daemon",
+    "./skills/cron-helper",
+    "./skills/cursor-agent",
+    "./skills/cursor-cron-bridge",
+    "./skills/plans-mode",
+    "./skills/status-dashboard",
+    "./skills/cursor-setup",
+    "./skills/image-via-cursor",
+    "./skills/picoclaw-bridge",
+    "./skills/picoclaw-config",
+    "./skills/multi-backend-router",
+    "./skills/telegram-power-user"
+  ]
+}
