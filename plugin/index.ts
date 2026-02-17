@@ -43,15 +43,34 @@ export default function register(api: {
   const daemonScript = getDaemonScript();
   const execScript = getExecScript();
 
-  // CLI: openclaw clawcore start|stop|restart|status|setup-cursor|teardown
+  // CLI: openclaw clawcore start|stop|restart|status|setup-cursor|init-workspace|reset-workspace|teardown
   api.registerCli(
     ({ program }) => {
       const cmd = program
         .command("clawcore <action>")
-        .description("Manage claw_core daemon (start|stop|restart|status|setup-cursor|teardown)");
+        .description("Manage claw_core daemon and workspace (start|stop|restart|status|setup-cursor|init-workspace|reset-workspace|teardown)");
 
       cmd.action((action?: string) => {
         const act = action ?? "status";
+
+        // init-workspace / reset-workspace: create or reset the claw_core workspace
+        if (act === "init-workspace" || act === "reset-workspace") {
+          const initScript = join(PLUGIN_ROOT, "scripts", "init-workspace.js");
+          if (!existsSync(initScript)) {
+            console.error("Workspace init script not found:", initScript);
+            process.exit(1);
+          }
+          const wsAction = act === "reset-workspace" ? "reset" : "init";
+          const env = { ...process.env } as Record<string, string>;
+          const args = ["node", initScript, wsAction];
+          const wsIdx = process.argv.indexOf("--workspace");
+          if (wsIdx !== -1 && process.argv[wsIdx + 1]) {
+            args.push("--workspace", process.argv[wsIdx + 1]);
+          }
+          const child = spawn(args[0], args.slice(1), { env, stdio: "inherit" });
+          child.on("close", (code) => process.exit(code ?? 0));
+          return;
+        }
 
         // teardown: stop daemon + clean openclaw.json and skills (run before rm plugin dir)
         if (act === "teardown") {

@@ -1,6 +1,6 @@
 {
   "name": "@wchklaus97hk/claw-core",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "OpenClaw plugin: Terminal Runtime Layer (claw_core) — session-managed command execution for AI agents. Compatible with latest OpenClaw and Cursor CLI (agent/cursor, stream-json). Linux and macOS only. Daemon auto-downloads binary on first start (OpenClaw does not run postinstall).",
   "main": "index.ts",
   "os": ["darwin", "linux"],
@@ -15,7 +15,8 @@
     "README.md",
     "hooks/",
     "scripts/",
-    "skills/"
+    "skills/",
+    "templates/"
   ],
   "scripts": {
     "postinstall": "chmod +x scripts/claw_core_daemon.sh scripts/postinstall-download-binary.sh 2>/dev/null || true; bash scripts/postinstall-download-binary.sh 2>/dev/null || true; node scripts/postinstall-config-openclaw.js 2>/dev/null || true; bash scripts/install-skills-to-openclaw.sh 2>/dev/null || true"

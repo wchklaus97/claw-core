@@ -84,7 +84,7 @@
 
 ### OpenClaw Skills
 
-插件包含 11 个 skills（规范列表：`scripts/claw-core-skills.list`）：
+插件包含 12+ 个 skills（规范列表：`scripts/claw-core-skills.list`）：
 
 | Skill | 用途 |
 |-------|---------|
@@ -99,6 +99,7 @@
 | **plans-mode** | 规划模式工作流 |
 | **status-dashboard** | 状态面板监控 |
 | **cursor-setup** | 在 `openclaw.json` 中配置 Cursor CLI 集成 |
+| **claw-core-workspace** | 如何在 claw_core 工作区内工作（阅读 WORKSPACE.md，使用 shared_memory、shared_skills） |
 
 ### 安装 / 卸载
 
@@ -144,6 +145,18 @@ openclaw clawcore start   # 首次运行 daemon 自动下载 binary
 3. **可选手动设置：** 若 Cursor 集成缺失或需指定其他 workspace：`openclaw clawcore setup-cursor`（或 `--workspace /path/to/project`）
 4. **重启 gateway：** `openclaw gateway restart`
 
+### 工作区结构
+
+运行 `openclaw clawcore setup-cursor` 时，会创建并配置 Cursor 代理的工作目录（**工作区**）。默认路径为 `~/Documents/claw_core`。
+
+| 路径 | 用途 |
+|------|------|
+| `shared_memory/` | 每日日志（`YYYY-MM-DD.md`）、长期笔记、主题文件 — 跨会话持久化上下文 |
+| `shared_skills/` | 所有代理可用的技能（superpowers 工作流、claw-core-workspace、model-selection-agent 等） |
+| `projects/` | 外部仓库的符号链接或克隆 — 在 `projects/repo-name/` 内工作，保持在工作区内 |
+
+`setup-cursor` 会调用 `init-workspace.js`，后者会复制 `WORKSPACE.md` 与 `.gitignore`，并从 `default-skills.json` 安装默认技能到 `shared_skills/`。高级用户可运行 `node $PLUGIN_ROOT/scripts/init-workspace.js init`（或 `reset`）来重新初始化或重置工作区。
+
 ### 依赖
 
 - **Cursor CLI** 在 PATH 中（`agent` 或 `cursor` — 有 `agent` 时优先使用）
@@ -179,7 +192,7 @@ openclaw gateway restart
 {
   "agents": {
     "defaults": {
-      "workspace": "~/.openclaw/workspace",
+      "workspace": "~/Documents/claw_core",
       "cliBackends": {
         "cursor-cli": {
           "command": "agent",

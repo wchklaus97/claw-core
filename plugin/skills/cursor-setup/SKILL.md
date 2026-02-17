@@ -1,6 +1,6 @@
 ---
 name: cursor-setup
-description: Set up Cursor CLI integration in openclaw.json. Adds cliBackends, cursor-dev agent, and subagents.allowAgents. Use when user asks to "set up Cursor", "configure Cursor integration", or "enable Cursor".
+description: Set up Cursor CLI integration in openclaw.json. Adds cliBackends, cursor-dev agent, and subagents.allowAgents. Default workspace is ~/Documents/claw_core with shared_memory and shared_skills.
 metadata: {"openclaw":{"requires":{"bins":["node"]},"emoji":"🔧"}}
 ---
 
@@ -8,29 +8,45 @@ metadata: {"openclaw":{"requires":{"bins":["node"]},"emoji":"🔧"}}
 
 Configures `~/.openclaw/openclaw.json` so OpenClaw can delegate tasks to Cursor CLI.
 
+## Default Workspace
+
+The Cursor agent is sandboxed to a **root workspace** directory:
+
+```
+~/Documents/claw_core/
+├── shared_memory/   # Memory shared across sessions and agents
+├── shared_skills/   # Skills shared across sessions and agents
+└── ...              # User files, project symlinks, etc.
+```
+
+- **Default path:** `~/Documents/claw_core`
+- **Created automatically** on first setup (including `shared_memory/` and `shared_skills/`)
+- Cursor agent can only work inside this directory
+- User can set `--workspace` to point at a different project, but the root workspace is always the default
+
 ## When to use
 
 - User asks to "set up Cursor integration" / "設定 Cursor" / "enable Cursor"
+- User asks to "change Cursor working directory" / "切換 Cursor 工作目錄"
 - User sees `agentId is not allowed for sessions_spawn`
 - User wants to use `cursor-dev` agent or `cursor-cli` backend
 
 ## What it does
 
-1. Adds `agents.defaults.cliBackends` (cursor-cli, cursor-plan, cursor-ask)
-2. Adds `agents.list` with main agent (`subagents.allowAgents: ["*"]`) and `cursor-dev` agent
-3. Sets `agents.defaults.workspace` if not set
+1. Creates workspace directory + `shared_memory/` + `shared_skills/`
+2. Adds `agents.defaults.cliBackends` (cursor-cli, cursor-plan, cursor-ask)
+3. Adds `agents.list` with main agent (`subagents.allowAgents: ["*"]`) and `cursor-dev` agent
+4. Sets `agents.defaults.workspace`
 
 ## How to run
 
 ```bash
-# Default workspace (~/.openclaw/workspace)
-node $PLUGIN_ROOT/scripts/setup-cursor-integration.js
+# Default workspace (~/Documents/claw_core)
+openclaw clawcore setup-cursor
 
 # Custom workspace
-node $PLUGIN_ROOT/scripts/setup-cursor-integration.js --workspace /path/to/project
+openclaw clawcore setup-cursor --workspace /path/to/project
 ```
-
-`$PLUGIN_ROOT` = plugin install dir (e.g. `~/.openclaw/extensions/claw-core`).
 
 After running, restart the gateway:
 
@@ -38,14 +54,26 @@ After running, restart the gateway:
 openclaw gateway restart
 ```
 
-## CLI shortcut
+## Changing the workspace
+
+The **workspace** is the working directory the Cursor agent (cursor-dev) runs in. To change it:
 
 ```bash
-openclaw clawcore setup-cursor
+openclaw clawcore setup-cursor --workspace /path/to/new/project
+openclaw gateway restart
 ```
+
+This updates:
+- `agents.defaults.workspace`
+- `agents.defaults.cliBackends.*.args` (the `--workspace` value passed to Cursor CLI)
+- `cursor-dev.workspace`
+- Creates `shared_memory/` and `shared_skills/` in the new workspace if missing
+
+When the user asks Cursor agent to do something, the root working directory is always the configured workspace — regardless of what project paths the task references.
 
 ## Notes
 
-- Safe to run multiple times (idempotent)
-- Does not overwrite existing cliBackends or agents.list entries
+- Safe to run multiple times (idempotent); re-running with `--workspace` updates the workspace
 - Requires `agent` or `cursor` CLI on PATH (setup prefers `agent` when available)
+- `shared_memory/` persists across sessions — use for context that should survive restarts
+- `shared_skills/` holds skills available to all agents working in this workspace

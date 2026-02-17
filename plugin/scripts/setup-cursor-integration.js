@@ -6,8 +6,13 @@
  *   - agents.defaults.cliBackends (cursor-cli, cursor-plan, cursor-ask)
  *   - agents.list with main (subagents.allowAgents: ["*"]) and cursor-dev
  *
+ * Default workspace: ~/Documents/claw_core
+ *   - Cursor agent is sandboxed to this directory
+ *   - Contains shared_memory/ and shared_skills/ for cross-session state
+ *   - User can set --workspace for a different project, but the root stays the default
+ *
  * Skips if openclaw.json does not exist.
- * Safe to run multiple times (idempotent).
+ * Safe to run multiple times (idempotent); re-running with --workspace updates all paths.
  *
  * Usage:
  *   node setup-cursor-integration.js [--workspace /path/to/project]
@@ -19,6 +24,7 @@ const path = require('path');
 const os = require('os');
 
 const OPENCLAW_CONFIG = path.join(os.homedir(), '.openclaw', 'openclaw.json');
+const DEFAULT_WORKSPACE = path.join(os.homedir(), 'Documents', 'claw_core');
 
 function getWorkspace() {
   // CLI arg: --workspace /path
@@ -26,8 +32,26 @@ function getWorkspace() {
   if (idx !== -1 && process.argv[idx + 1]) return process.argv[idx + 1];
   // Env var
   if (process.env.CURSOR_WORKSPACE) return process.env.CURSOR_WORKSPACE;
-  // Default: ~/.openclaw/workspace
-  return path.join(os.homedir(), '.openclaw', 'workspace');
+  // Default: ~/Documents/claw_core
+  return DEFAULT_WORKSPACE;
+}
+
+/**
+ * Ensure workspace directory and structure exist.
+ * Delegates to init-workspace.js for actual creation.
+ */
+function ensureWorkspaceDirs(workspace) {
+  const initScript = path.join(__dirname, 'init-workspace.js');
+  if (fs.existsSync(initScript)) {
+    const { execSync } = require('child_process');
+    execSync('node ' + JSON.stringify(initScript) + ' init --workspace ' + JSON.stringify(workspace), { stdio: 'inherit' });
+  } else {
+    // Fallback: create dirs directly
+    const dirs = [workspace, path.join(workspace, 'shared_memory'), path.join(workspace, 'shared_skills'), path.join(workspace, 'projects')];
+    for (const dir of dirs) {
+      if (!fs.existsSync(dir)) { fs.mkdirSync(dir, { recursive: true }); console.log('claw_core: created ' + dir); }
+    }
+  }
 }
 
 /** Detect Cursor CLI: prefer standalone `agent`, fallback to `cursor agent` */
@@ -101,6 +125,10 @@ function main() {
   let changed = false;
 
   const workspace = getWorkspace();
+
+  // 0. Ensure workspace directory and shared subdirs exist
+  ensureWorkspaceDirs(workspace);
+
   const agents = cfg.agents = cfg.agents || {};
   const defaults = agents.defaults = agents.defaults || {};
 
@@ -108,14 +136,19 @@ function main() {
   const newBackends = buildCliBackends(workspace);
   const currentCmd = defaults.cliBackends?.['cursor-cli']?.command;
   const targetCmd = newBackends['cursor-cli'].command;
-  if (!defaults.cliBackends || !defaults.cliBackends['cursor-cli'] || currentCmd !== targetCmd) {
+  const curArgs = defaults.cliBackends?.['cursor-cli']?.args || [];
+  const wsIdx = curArgs.indexOf('--workspace');
+  const currentWorkspaceArg = wsIdx >= 0 ? curArgs[wsIdx + 1] : undefined;
+  const needsBackendUpdate = !defaults.cliBackends || !defaults.cliBackends['cursor-cli'] ||
+    currentCmd !== targetCmd || currentWorkspaceArg !== workspace;
+  if (needsBackendUpdate) {
     defaults.cliBackends = Object.assign(defaults.cliBackends || {}, newBackends);
     changed = true;
     console.log('claw_core: ' + (currentCmd ? 'updated' : 'added') + ' cliBackends (cursor-cli, cursor-plan, cursor-ask) using command: ' + targetCmd);
   }
 
-  // 2. Set workspace if not set
-  if (!defaults.workspace) {
+  // 2. Set or update workspace
+  if (defaults.workspace !== workspace) {
     defaults.workspace = workspace;
     changed = true;
     console.log('claw_core: set agents.defaults.workspace = ' + workspace);
@@ -143,6 +176,10 @@ function main() {
     list.push(cursorAgent);
     changed = true;
     console.log('claw_core: added cursor-dev agent (cursor-cli/auto)');
+  } else if (cursorAgent.workspace !== workspace) {
+    cursorAgent.workspace = workspace;
+    changed = true;
+    console.log('claw_core: updated cursor-dev.workspace = ' + workspace);
   }
 
   agents.list = list;
