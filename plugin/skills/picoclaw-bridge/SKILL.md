@@ -19,7 +19,7 @@ metadata: {"openclaw":{"requires":{"bins":["picoclaw"]},"emoji":"🐾"}}
 ## When NOT to Use (Use Other Tools Instead)
 
 - Complex coding tasks → use `cursor_agent_direct`
-- Image generation → use `cursor_agent_direct`
+- Design / code-based assets → use `cursor_agent_direct` (Cursor CLI does not support image generation)
 - Shell commands → use Claw Core `exec`
 - Tasks needing workspace file access → use `cursor_agent_direct` or `read`/`write`
 
@@ -48,5 +48,5 @@ If the tool returns an error about PicoClaw not being found:
 ## Cross-Bot Referrals
 
 When acting as the assistant agent:
-- Image requests → "For images, try @ClawArtistBot! 🎨"
+- Image/design requests → "For design and assets, try @ClawArtistBot! 🎨 (No image generation via Cursor.)"
 - Coding/dev tasks → "That's a dev task — @ClawDevBot can help! 🛠️"

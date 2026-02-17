@@ -4,11 +4,11 @@
  * Run BEFORE removing the plugin directory. Safe to run multiple times.
  *
  * Usage:
- *   node teardown-openclaw-config.js
- *   PLUGIN_ROOT=/path node teardown-openclaw-config.js
+ *   node teardown-openclaw-config.cjs
+ *   PLUGIN_ROOT=/path node teardown-openclaw-config.cjs
  *
  * Typically run as:
- *   openclaw clawcore stop && node $PLUGIN_ROOT/scripts/teardown-openclaw-config.js
+ *   openclaw clawcore stop && node $PLUGIN_ROOT/scripts/teardown-openclaw-config.cjs
  */
 
 const fs = require('fs');

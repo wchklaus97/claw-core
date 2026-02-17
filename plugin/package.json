@@ -1,8 +1,8 @@
 {
   "name": "@wchklaus97hk/claw-core",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "type": "module",
-  "description": "OpenClaw plugin: Terminal Runtime Layer (claw_core) with Agent Teams, multi-bot Telegram setup, PicoClaw integration, direct Cursor Agent invocation, image generation, and Cursor agent workspace. Supports 3 specialized bots (artist, assistant, developer) with multi-agent team collaboration, shared task boards, Telegram group coordination, shared_memory, shared_skills, and per-agent workspaces. Linux and macOS only.",
+  "description": "OpenClaw plugin: Terminal Runtime Layer (claw_core) with Agent Teams, multi-bot Telegram setup, PicoClaw integration, direct Cursor Agent invocation, and Cursor agent workspace. Supports 3 specialized bots (artist, assistant, developer) with multi-agent team collaboration, shared task boards, Telegram group coordination, shared_memory, shared_skills, and per-agent workspaces. Linux and macOS only.",
   "main": "index.ts",
   "os": ["darwin", "linux"],
   "openclaw": {
@@ -20,7 +20,7 @@
     "templates/"
   ],
   "scripts": {
-    "postinstall": "chmod +x scripts/claw_core_daemon.sh scripts/postinstall-download-binary.sh 2>/dev/null || true; bash scripts/postinstall-download-binary.sh 2>/dev/null || true; node scripts/postinstall-config-openclaw.js 2>/dev/null || true; bash scripts/install-skills-to-openclaw.sh 2>/dev/null || true"
+    "postinstall": "chmod +x scripts/claw_core_daemon.sh scripts/postinstall-download-binary.sh 2>/dev/null || true; bash scripts/postinstall-download-binary.sh 2>/dev/null || true; node scripts/postinstall-config-openclaw.cjs 2>/dev/null || true; bash scripts/install-skills-to-openclaw.sh 2>/dev/null || true"
   },
   "keywords": [
     "openclaw",
@@ -37,7 +37,6 @@
     "agent-teams",
     "multi-agent",
     "task-board",
-    "image-generation",
     "ai",
     "linux",
     "macos",

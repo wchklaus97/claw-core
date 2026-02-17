@@ -41,6 +41,10 @@ function getPicoClawScript(): string {
   return join(PLUGIN_ROOT, "scripts", "picoclaw_client.py");
 }
 
+function getSessionsScript(): string {
+  return join(PLUGIN_ROOT, "scripts", "claw_core_sessions.py");
+}
+
 function getSetupBotsScript(): string {
   return join(PLUGIN_ROOT, "scripts", "setup_bots.py");
 }
@@ -226,6 +230,7 @@ export default function register(api: PluginApi) {
   const execScript = getExecScript();
   const cursorScript = getCursorAgentScript();
   const picoScript = getPicoClawScript();
+  const sessionsScript = getSessionsScript();
   const setupScript = getSetupBotsScript();
   const teamScript = getTeamSessionScript();
   const teamTelegramScript = getTeamSetupTelegramScript();
@@ -246,7 +251,7 @@ export default function register(api: PluginApi) {
 
         // init-workspace / reset-workspace: create or reset the claw_core workspace
         if (act === "init-workspace" || act === "reset-workspace") {
-          const initScript = join(PLUGIN_ROOT, "scripts", "init-workspace.js");
+          const initScript = join(PLUGIN_ROOT, "scripts", "init-workspace.cjs");
           if (!existsSync(initScript)) {
             console.error("Workspace init script not found:", initScript);
             process.exit(1);
@@ -265,7 +270,7 @@ export default function register(api: PluginApi) {
 
         // teardown: stop daemon + clean openclaw.json and skills (run before rm plugin dir)
         if (act === "teardown") {
-          const teardownScript = join(PLUGIN_ROOT, "scripts", "teardown-openclaw-config.js");
+          const teardownScript = join(PLUGIN_ROOT, "scripts", "teardown-openclaw-config.cjs");
           if (!existsSync(teardownScript)) {
             console.error("Teardown script not found:", teardownScript);
             process.exit(1);
@@ -295,7 +300,7 @@ export default function register(api: PluginApi) {
 
         // setup-cursor: run the Cursor integration setup script
         if (act === "setup-cursor") {
-          const setupCursorScript = join(PLUGIN_ROOT, "scripts", "setup-cursor-integration.js");
+          const setupCursorScript = join(PLUGIN_ROOT, "scripts", "setup-cursor-integration.cjs");
           if (!existsSync(setupCursorScript)) {
             console.error("Cursor setup script not found:", setupCursorScript);
             process.exit(1);
@@ -576,9 +581,8 @@ export default function register(api: PluginApi) {
         {
           name: "cursor_agent_direct",
           description:
-            "Invoke Cursor Agent directly for coding tasks, image generation, complex multi-file operations. " +
-            "Cursor auto-selects the best model (including image generation via auto model). " +
-            "Use for: coding, refactoring, image creation, design tasks, complex analysis.",
+            "Invoke Cursor Agent directly for coding and complex multi-file operations. " +
+            "Use for: coding, refactoring, analysis. Cursor CLI does not support image generation.",
           parameters: {
             type: "object",
             properties: {
@@ -597,6 +601,12 @@ export default function register(api: PluginApi) {
                 description:
                   'Model to use (optional, default "auto" lets Cursor pick the best model).',
               },
+              mode: {
+                type: "string",
+                enum: ["agent", "plan", "ask"],
+                description:
+                  "Cursor CLI mode: agent (execute), plan (plan first), ask (read-only). Default: agent.",
+              },
             },
             required: ["prompt"],
           },
@@ -610,7 +620,9 @@ export default function register(api: PluginApi) {
             const workspace = resolveWorkspace(_id, params, pluginConfig);
             
             const model = (params.model as string) || "auto";
+            const mode = params.mode as string | undefined;
             const args = ["--prompt", prompt, "--model", model];
+            if (mode && mode !== "agent") args.push("--mode", mode);
             if (workspace) args.push("--workspace", workspace);
             const timeout =
               parseInt(pluginConfig.cursorTimeout || "600", 10) * 1000;
@@ -981,6 +993,8 @@ export default function register(api: PluginApi) {
       cursorScript +
       ", picoclaw: " +
       picoScript +
+      ", sessions: " +
+      sessionsScript +
       ")",
   );
 }

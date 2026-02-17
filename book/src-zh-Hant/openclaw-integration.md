@@ -15,7 +15,7 @@
 3. 透過 skills 管理 **claw_core** 生命週期
 4. 當 **claw_core** 不可用時平滑降級到普通 `exec`
 
-## 外掛功能與說明（v0.1.6）
+## 外掛功能與說明（v0.1.7）
 
 claw-core 外掛提供以下能力。
 
@@ -36,7 +36,7 @@ claw-core 外掛提供以下能力。
 
 | 工具 | 用途 |
 |------|------|
-| `cursor_agent_direct` | 呼叫 Cursor Agent 進行編程與圖片生成；輸出寫入工作區 `generated/images/`，並可回傳至請求端（如 Telegram） |
+| `cursor_agent_direct` | 呼叫 Cursor Agent 進行編程與複雜任務；輸出寫入工作區（Cursor CLI 不支援圖片生成）。支援模式：**agent**（執行）、**plan**（先規劃後執行）、**ask**（唯讀）。測試說明見 [CURSOR_CLI_MODES_TESTING.md](../plugin/docs/CURSOR_CLI_MODES_TESTING.md)。 |
 | `picoclaw_chat` | 向 PicoClaw 發送訊息，用於快速問答與網頁搜尋（選用；尚未測試） |
 | `picoclaw_config` | 檢視或設定 PicoClaw 設定（選用；尚未測試） |
 | `team_coordinate` | 管理團隊任務板與協作 |
@@ -44,9 +44,8 @@ claw-core 外掛提供以下能力。
 ### 工作區與多機器人
 
 - **預設工作區：** `~/Documents/claw_core`（或透過 `defaultWorkspace` 與 `--workspace` 自訂）。
-- **工作區結構：** `shared_memory/`、`shared_skills/`、`projects/`、`generated/images/`、`generated/exports/`。
+- **工作區結構：** `shared_memory/`、`shared_skills/`、`projects/`、`generated/exports/`。
 - **按代理工作區：** Telegram 機器人使用 `~/.openclaw/workspace-{bot_id}/`；工作區可按代理解析或顯式傳給工具。
-- **圖片生成：** Cursor 生成的圖片存放於 `generated/images/`，會自動偵測並回傳至請求端（Telegram、webhook 等）。
 
 ### 代理團隊
 
@@ -116,7 +115,7 @@ claw-core 外掛提供以下能力。
 **方案：** daemon 腳本（`claw_core_daemon.sh`）在 `start` 被呼叫且外掛 binary 缺失時，補齊缺失的安裝步驟。在 `start()` 中：
 
 1. **條件：** 未設定 `CLAW_CORE_BINARY` 和 `CLAW_CORE_SOURCE`，且 `$PLUGIN_ROOT/bin/claw_core` 不存在。
-2. **動作：** 依序執行 `postinstall-download-binary.sh`（從 GitHub Releases 下載 binary）、`postinstall-config-openclaw.js`（在 `openclaw.json` 中設定 `binaryPath`）、`install-skills-to-openclaw.sh`（將 skills 複製到 `~/.openclaw/skills/`）、`setup-cursor-integration.js`（在 `openclaw.json` 中設定 Cursor 整合）。
+2. **動作：** 依序執行 `postinstall-download-binary.sh`（從 GitHub Releases 下載 binary）、`postinstall-config-openclaw.cjs`（在 `openclaw.json` 中設定 `binaryPath`）、`install-skills-to-openclaw.sh`（將 skills 複製到 `~/.openclaw/skills/`）、`setup-cursor-integration.cjs`（在 `openclaw.json` 中設定 Cursor 整合）。
 3. **之後：** 呼叫 `find_binary()` 並啟動 daemon。
 
 這樣可實現一步安裝：`openclaw plugins install @wchklaus97hk/claw-core` 後再執行 `openclaw clawcore start`，即可完成安裝，無需額外手動操作。
@@ -175,7 +174,7 @@ openclaw clawcore start   # 首次執行 daemon 自動下載 binary
 - **cursor-dev agent**：使用 `cursor-cli/auto` 作為模型
 - **subagents.allowAgents**：允許主 Agent 將任務派給 cursor-dev
 
-**為何需要：** OpenClaw 安裝外掛時只解壓 npm 套件，不執行 `npm install`，因此 postinstall 不會執行。daemon 腳本會在首次啟動時執行 `setup-cursor-integration.js` 補齊設定。若自動設定被略過或需重新設定，請使用下方手動步驟。
+**為何需要：** OpenClaw 安裝外掛時只解壓 npm 套件，不執行 `npm install`，因此 postinstall 不會執行。daemon 腳本會在首次啟動時執行 `setup-cursor-integration.cjs` 補齊設定。若自動設定被略過或需重新設定，請使用下方手動步驟。
 
 ### 分步設定
 
@@ -193,10 +192,9 @@ openclaw clawcore start   # 首次執行 daemon 自動下載 binary
 | `shared_memory/` | 每日日誌（`YYYY-MM-DD.md`）、長期筆記、主題檔 — 跨工作階段持久化上下文 |
 | `shared_skills/` | 所有代理可用的技能（superpowers 工作流程、claw-core-workspace、model-selection-agent 等） |
 | `projects/` | 外部倉庫的符號連結或克隆 — 在 `projects/repo-name/` 內工作，保持在工作區內 |
-| `generated/images/` | Cursor 產生的圖片 — 自動偵測並路由回請求來源平台（Telegram、webhook 等） |
-| `generated/exports/` | 其他產生的產物 |
+| `generated/exports/` | 產生產物 |
 
-`setup-cursor` 會呼叫 `init-workspace.js`，後者會複製 `WORKSPACE.md` 與 `.gitignore`，並從 `default-skills.json` 安裝預設技能到 `shared_skills/`。進階使用者可執行 `node $PLUGIN_ROOT/scripts/init-workspace.js init`（或 `reset`）來重新初始化或重置工作區。
+`setup-cursor` 會呼叫 `init-workspace.cjs`，後者會複製 `WORKSPACE.md` 與 `.gitignore`，並從 `default-skills.json` 安裝預設技能到 `shared_skills/`。進階使用者可執行 `node $PLUGIN_ROOT/scripts/init-workspace.cjs init`（或 `reset`）來重新初始化或重置工作區。
 
 ### 依賴
 
@@ -205,7 +203,7 @@ openclaw clawcore start   # 首次執行 daemon 自動下載 binary
 
 ### 自動設定（首次啟動）
 
-`openclaw clawcore start` 首次執行下載 binary 時，會自動執行 `setup-cursor-integration.js`。
+`openclaw clawcore start` 首次執行下載 binary 時，會自動執行 `setup-cursor-integration.cjs`。
 
 ### 手動設定
 
@@ -257,7 +255,7 @@ openclaw gateway restart
 
 ## PicoClaw（選用，尚未測試）
 
-外掛（v0.1.6）可整合 [PicoClaw](https://github.com/sipeed/picoclaw)，用於快速問答與網頁搜尋。
+外掛（v0.1.7）可整合 [PicoClaw](https://github.com/sipeed/picoclaw)，用於快速問答與網頁搜尋。
 
 - **工具：** `picoclaw_chat`（發送訊息）、`picoclaw_config`（檢視/設定模型、提供者、語言）
 - **CLI：** `openclaw picoclaw status | config | chat "<訊息>"`

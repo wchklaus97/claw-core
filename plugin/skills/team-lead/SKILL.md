@@ -41,7 +41,7 @@ team_coordinate(action: "create_task", team: "project-alpha",
 
 | Task Type | Assign To |
 |---|---|
-| Generate image / design / mockup | artist |
+| Design / mockup (SVG, CSS, assets) | artist |
 | Research / search / factual question | assistant |
 | Write code / run commands / deploy | developer |
 | Review / analysis (depends on domain) | most relevant agent |

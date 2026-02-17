@@ -15,7 +15,7 @@ How `claw_core` integrates with OpenClaw for automatic startup and managed comma
 3. **Manage claw_core** lifecycle via skills
 4. **Fall back gracefully** to normal exec if claw_core is unavailable
 
-## Plugin features and functions (v0.1.6)
+## Plugin features and functions (v0.1.7)
 
 The claw-core plugin provides the following.
 
@@ -36,7 +36,7 @@ The claw-core plugin provides the following.
 
 | Tool | Purpose |
 |------|---------|
-| `cursor_agent_direct` | Invoke Cursor Agent for coding and image generation; outputs go to workspace `generated/images/` and can be routed back to the requesting platform (e.g. Telegram) |
+| `cursor_agent_direct` | Invoke Cursor Agent for coding and complex tasks; outputs go to the workspace (Cursor CLI does not support image generation). Supports modes: **agent** (execute), **plan** (plan then execute), **ask** (read-only). See [CURSOR_CLI_MODES_TESTING.md](../plugin/docs/CURSOR_CLI_MODES_TESTING.md) for testing. |
 | `picoclaw_chat` | Send messages to PicoClaw for quick Q&A and web search (optional; not yet tested) |
 | `picoclaw_config` | View or set PicoClaw config (optional; not yet tested) |
 | `team_coordinate` | Manage team task board and coordination |
@@ -44,9 +44,8 @@ The claw-core plugin provides the following.
 ### Workspace and multi-bot
 
 - **Default workspace:** `~/Documents/claw_core` (or custom via `defaultWorkspace` and `--workspace`).
-- **Workspace layout:** `shared_memory/`, `shared_skills/`, `projects/`, `generated/images/`, `generated/exports/`.
+- **Workspace layout:** `shared_memory/`, `shared_skills/`, `projects/`, `generated/exports/`.
 - **Per-agent workspaces:** Telegram bots use `~/.openclaw/workspace-{bot_id}/`; workspace can be resolved per agent or passed explicitly to tools.
-- **Image generation:** Cursor-generated images are stored under `generated/images/` and are auto-detected and routed back to the requesting platform (Telegram, webhook, etc.).
 
 ### Agent teams
 
@@ -116,7 +115,7 @@ Runs on `gateway:startup` and starts claw_core via the daemon script.
 **Solution:** The daemon script (`claw_core_daemon.sh`) runs the missing setup when `start` is invoked and the plugin binary is absent. In `start()`:
 
 1. **Condition:** `CLAW_CORE_BINARY` and `CLAW_CORE_SOURCE` are unset, and `$PLUGIN_ROOT/bin/claw_core` does not exist.
-2. **Action:** Run `postinstall-download-binary.sh` (download binary from GitHub Releases), `postinstall-config-openclaw.js` (set `binaryPath` in `openclaw.json`), `install-skills-to-openclaw.sh` (copy skills to `~/.openclaw/skills/`), and `setup-cursor-integration.js` (configure Cursor integration in `openclaw.json`).
+2. **Action:** Run `postinstall-download-binary.sh` (download binary from GitHub Releases), `postinstall-config-openclaw.cjs` (set `binaryPath` in `openclaw.json`), `install-skills-to-openclaw.sh` (copy skills to `~/.openclaw/skills/`), and `setup-cursor-integration.cjs` (configure Cursor integration in `openclaw.json`).
 3. **Then:** Proceed with `find_binary()` and start the daemon.
 
 This ensures a one-command install works: `openclaw plugins install @wchklaus97hk/claw-core` followed by `openclaw clawcore start` completes setup without manual steps.
@@ -175,7 +174,7 @@ The plugin can configure OpenClaw to delegate tasks to Cursor CLI. This adds:
 - **cursor-dev agent**: Uses `cursor-cli/auto` as model
 - **subagents.allowAgents**: Allows main agent to spawn sub-agents under cursor-dev
 
-**Why this is needed:** OpenClaw installs plugins by extracting the npm tarball without running `npm install`, so postinstall never runs. The daemon script runs `setup-cursor-integration.js` on first start to compensate. If auto-setup was skipped or you need to reconfigure, use the manual steps below.
+**Why this is needed:** OpenClaw installs plugins by extracting the npm tarball without running `npm install`, so postinstall never runs. The daemon script runs `setup-cursor-integration.cjs` on first start to compensate. If auto-setup was skipped or you need to reconfigure, use the manual steps below.
 
 ### Step-by-step setup
 
@@ -193,10 +192,9 @@ When you run `openclaw clawcore setup-cursor`, it creates and configures a **wor
 | `shared_memory/` | Daily logs (`YYYY-MM-DD.md`), long-term notes, topic files — persistent context across sessions |
 | `shared_skills/` | Skills available to all agents (superpowers workflows, claw-core-workspace, model-selection-agent, etc.) |
 | `projects/` | Symlinks or clones of external repos — work inside `projects/repo-name/` while staying in the workspace |
-| `generated/images/` | Cursor-generated images — auto-detected and routed back to the requesting platform (Telegram, webhook, etc.) |
-| `generated/exports/` | Other generated artifacts |
+| `generated/exports/` | Generated artifacts |
 
-`setup-cursor` calls `init-workspace.js`, which copies `WORKSPACE.md` and `.gitignore`, and installs default skills from `default-skills.json` into `shared_skills/`. For power users: run `node $PLUGIN_ROOT/scripts/init-workspace.js init` (or `reset`) to reinitialize or reset the workspace.
+`setup-cursor` calls `init-workspace.cjs`, which copies `WORKSPACE.md` and `.gitignore`, and installs default skills from `default-skills.json` into `shared_skills/`. For power users: run `node $PLUGIN_ROOT/scripts/init-workspace.cjs init` (or `reset`) to reinitialize or reset the workspace.
 
 ### Dependencies
 
@@ -205,7 +203,7 @@ When you run `openclaw clawcore setup-cursor`, it creates and configures a **wor
 
 ### Automatic Setup (first start)
 
-When `openclaw clawcore start` runs the first-time setup (binary download), it also runs `setup-cursor-integration.js` automatically.
+When `openclaw clawcore start` runs the first-time setup (binary download), it also runs `setup-cursor-integration.cjs` automatically.
 
 ### Manual Setup
 
@@ -257,7 +255,7 @@ Ask the agent: "Set up Cursor integration" or "設定 Cursor 整合". The agent 
 
 ## PicoClaw (optional, not yet tested)
 
-The plugin (v0.1.6) can integrate with [PicoClaw](https://github.com/sipeed/picoclaw), an ultra-lightweight AI assistant, for quick Q&A and web search.
+The plugin (v0.1.7) can integrate with [PicoClaw](https://github.com/sipeed/picoclaw), an ultra-lightweight AI assistant, for quick Q&A and web search.
 
 - **Tools:** `picoclaw_chat` (send messages), `picoclaw_config` (view/set model, provider, language)
 - **CLI:** `openclaw picoclaw status | config | chat "<message>"`

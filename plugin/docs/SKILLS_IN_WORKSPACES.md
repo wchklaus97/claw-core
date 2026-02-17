@@ -124,7 +124,7 @@
 }
 ```
 
-**Skills 處理**: 使用 `init-workspace.js` 安裝一次到 `~/Documents/claw_core/shared_skills/`
+**Skills 處理**: 使用 `init-workspace.cjs` 安裝一次到 `~/Documents/claw_core/shared_skills/`
 
 ---
 
@@ -203,19 +203,19 @@ ln -s ~/.openclaw/shared_skills $WORKSPACE/shared_skills
 echo "✓ Created workspace with symlinked skills"
 ```
 
-### 方式 C: 更新 init-workspace.js（未來）
+### 方式 C: 更新 init-workspace.cjs（未來）
 
-在 `init-workspace.js` 中添加 `--skills-strategy` 選項：
+在 `init-workspace.cjs` 中添加 `--skills-strategy` 選項：
 
 ```bash
 # Symlink 策略
-node init-workspace.js init --workspace /path --skills-strategy symlink
+node init-workspace.cjs init --workspace /path --skills-strategy symlink
 
 # Copy 策略
-node init-workspace.js init --workspace /path --skills-strategy copy
+node init-workspace.cjs init --workspace /path --skills-strategy copy
 
 # 空目錄
-node init-workspace.js init --workspace /path --skills-strategy none
+node init-workspace.cjs init --workspace /path --skills-strategy none
 ```
 
 ---
@@ -346,7 +346,7 @@ chmod -R 755 ~/.openclaw/shared_skills
 ## 下一步
 
 1. ✅ 更新 `examples/workspace-isolation-example.js` 支援 skills 策略
-2. 📝 在 `init-workspace.js` 中添加 `--skills-strategy` 選項（未來）
+2. 📝 在 `init-workspace.cjs` 中添加 `--skills-strategy` 選項（未來）
 3. 🔧 在 `plugin/index.ts` 的 `resolveWorkspace()` 中集成 skills 策略（未來）
 4. 📚 更新 `WORKSPACE_USAGE.md` 包含 skills 管理說明
 

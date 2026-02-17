@@ -2,16 +2,15 @@
 
 [简体中文](README-zh-Hans.md) | [繁體中文](README-zh-Hant.md)
 
-OpenClaw plugin for the **Claw Core** Terminal Runtime Layer. Provides session-managed command execution, **multi-bot Telegram setup**, **PicoClaw integration**, **direct Cursor Agent invocation**, **image generation via Cursor**, and a **Cursor agent workspace** with shared_memory and shared_skills.
+OpenClaw plugin for the **Claw Core** Terminal Runtime Layer. Provides session-managed command execution, **multi-bot Telegram setup**, **PicoClaw integration**, **direct Cursor Agent invocation**, and a **Cursor agent workspace** with shared_memory and shared_skills.
 
 ## Features
 
 | Feature | Description |
 |---|---|
 | 🦀 **Claw Core Runtime** | Session-managed shell execution with timeouts |
-| ⌘ **Cursor Agent Direct** | Invoke Cursor for coding + image gen from Telegram |
+| ⌘ **Cursor Agent Direct** | Invoke Cursor for coding and complex tasks from Telegram |
 | 🐾 **PicoClaw Bridge** | Chat with PicoClaw for quick Q&A and web search |
-| 🎨 **Image Generation** | Generate images via Cursor's built-in auto model |
 | 🤖 **3-Bot Setup** | One-command setup for artist, assistant, developer bots |
 | 🤝 **Agent Teams** | Multi-agent collaboration with shared task boards |
 | 📊 **Status Dashboard** | Full-stack status: backends, agents, teams, cron |
@@ -44,7 +43,7 @@ Create 3 specialized Telegram bots, each with its own personality and tools:
 ### Step 1: Create Bots in @BotFather
 
 Open [@BotFather](https://t.me/BotFather) in Telegram and create 3 bots:
-1. **Image Bot** (e.g., `@YourArtistBot`) — image generation & design
+1. **Artist Bot** (e.g., `@YourArtistBot`) — design & visual tasks
 2. **Q&A Bot** (e.g., `@YourAssistantBot`) — questions & web search
 3. **Dev Bot** (e.g., `@YourDevBot`) — coding & DevOps
 
@@ -164,11 +163,11 @@ openclaw clawcore team setup-telegram --name X --group-id Y
 |---|---|
 | Agent ID | `artist` |
 | Tool Profile | `minimal` |
-| Tools | `cursor_agent_direct`, `image`, `read`, `write` |
-| Backend | Cursor Agent (auto model → image generation) |
+| Tools | `cursor_agent_direct`, `read`, `write` |
+| Backend | Cursor Agent |
 | Personality | Creative, enthusiastic, detail-oriented |
 
-The artist uses Cursor's built-in image generation — no third-party API keys needed.
+The artist uses Cursor Agent for design and visual tasks (Cursor CLI does not support image generation).
 
 ### 💬 Assistant Bot
 
@@ -192,7 +191,7 @@ Requires [PicoClaw](https://github.com/sipeed/picoclaw) installed.
 | Backend | Cursor Agent + Claw Core + PicoClaw |
 | Personality | Methodical, precise, pragmatic |
 
-The most versatile bot — can code, exec, generate images, search, and schedule.
+The most versatile bot — can code, exec, search, and schedule.
 
 ## Agent Tools
 
@@ -200,13 +199,12 @@ The plugin registers these agent tools (via `api.registerTool()`):
 
 ### `cursor_agent_direct`
 
-Invoke Cursor Agent directly for coding, image generation, and complex tasks.
+Invoke Cursor Agent directly for coding and complex tasks. Cursor CLI does not support image generation.
 
 ```
 cursor_agent_direct(prompt: "Add error handling to the login function", workspace: "/my/project")
 ```
 
-- Auto model selection (including image generation)
 - Structured JSON output with file detection
 - Timeout: 600s default (configurable)
 
@@ -324,7 +322,6 @@ The plugin provides 17 skills:
 | `cursor-setup` | Configure Cursor CLI integration in openclaw.json |
 | `plans-mode` | Multi-step planning & execution |
 | `status-dashboard` | Full-stack status display |
-| `image-via-cursor` | Image generation via Cursor's auto model |
 | `picoclaw-bridge` | PicoClaw chat and web search |
 | `picoclaw-config` | PicoClaw configuration management |
 | `multi-backend-router` | Smart routing between backends |
