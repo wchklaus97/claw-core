@@ -15,6 +15,45 @@
 3. 通过 skills 管理 **claw_core** 生命周期
 4. 当 **claw_core** 不可用时平滑降级到普通 `exec`
 
+## 插件功能与说明（v0.1.6）
+
+claw-core 插件提供以下能力。
+
+### CLI 命令
+
+| 命令 | 用途 |
+|------|------|
+| `openclaw clawcore start \| stop \| restart \| status` | 守护进程生命周期 |
+| `openclaw clawcore setup-cursor` | 配置 Cursor CLI 并创建工作区 |
+| `openclaw clawcore init-workspace` | 创建含 shared_memory、shared_skills、generated/ 的工作区 |
+| `openclaw clawcore reset-workspace` | 重置工作区（会备份 shared_memory） |
+| `openclaw clawcore setup-bots` | 一键配置 3 个 Telegram 机器人（artist、assistant、developer） |
+| `openclaw clawcore team` | 代理团队：创建、setup-telegram、列表 |
+| `openclaw clawcore teardown` | 停止守护进程并清理 |
+| `openclaw picoclaw status \| config \| chat "<消息>"` | PicoClaw（可选） |
+
+### 代理工具
+
+| 工具 | 用途 |
+|------|------|
+| `cursor_agent_direct` | 调用 Cursor Agent 进行编程与图片生成；输出写入工作区 `generated/images/`，并可回传到请求端（如 Telegram） |
+| `picoclaw_chat` | 向 PicoClaw 发送消息，用于快速问答与网页搜索（可选；尚未测试） |
+| `picoclaw_config` | 查看或设置 PicoClaw 配置（可选；尚未测试） |
+| `team_coordinate` | 管理团队任务板与协作 |
+
+### 工作区与多机器人
+
+- **默认工作区：** `~/Documents/claw_core`（或通过 `defaultWorkspace` 与 `--workspace` 自定义）。
+- **工作区结构：** `shared_memory/`、`shared_skills/`、`projects/`、`generated/images/`、`generated/exports/`。
+- **按代理工作区：** Telegram 机器人使用 `~/.openclaw/workspace-{bot_id}/`；工作区可按代理解析或显式传给工具。
+- **图片生成：** Cursor 生成的图片存放在 `generated/images/`，会自动检测并回传到请求端（Telegram、webhook 等）。
+
+### 代理团队
+
+- 多代理协作与共享任务板。
+- 通过 `openclaw clawcore team setup-telegram` 配置 Telegram 群组。
+- 工具与技能：`team_coordinate`，team-lead、team-member、team-telegram-group。
+
 ## 架构
 
 ```
@@ -154,6 +193,8 @@ openclaw clawcore start   # 首次运行 daemon 自动下载 binary
 | `shared_memory/` | 每日日志（`YYYY-MM-DD.md`）、长期笔记、主题文件 — 跨会话持久化上下文 |
 | `shared_skills/` | 所有代理可用的技能（superpowers 工作流、claw-core-workspace、model-selection-agent 等） |
 | `projects/` | 外部仓库的符号链接或克隆 — 在 `projects/repo-name/` 内工作，保持在工作区内 |
+| `generated/images/` | Cursor 生成的图片 — 自动检测并路由回请求来源平台（Telegram、webhook 等） |
+| `generated/exports/` | 其他生成的产物 |
 
 `setup-cursor` 会调用 `init-workspace.js`，后者会复制 `WORKSPACE.md` 与 `.gitignore`，并从 `default-skills.json` 安装默认技能到 `shared_skills/`。高级用户可运行 `node $PLUGIN_ROOT/scripts/init-workspace.js init`（或 `reset`）来重新初始化或重置工作区。
 
@@ -213,6 +254,16 @@ openclaw gateway restart
 - **`agentId is not allowed for sessions_spawn`**：执行 `openclaw clawcore setup-cursor`，然后执行 `openclaw gateway restart`
 - **找不到 `agent` / `cursor` 命令**：安装 Cursor CLI 并确认 `agent` 或 `cursor` 在 PATH 中
 - **配置 schema 错误**：先执行 `openclaw doctor --fix`，再重新执行 `openclaw clawcore setup-cursor`
+
+## PicoClaw（可选，尚未测试）
+
+插件（v0.1.6）可集成 [PicoClaw](https://github.com/sipeed/picoclaw)，用于快速问答与网页搜索。
+
+- **工具：** `picoclaw_chat`（发送消息）、`picoclaw_config`（查看/设置模型、提供商、语言）
+- **CLI：** `openclaw picoclaw status | config | chat "<消息>"`
+- **配置：** 若已安装 PicoClaw，可在插件配置中设置 `picoClawPath` 和 `enablePicoClaw: true`。
+
+**说明：** PicoClaw 集成**尚未经过测试**，仅作为可选功能提供。如需尝试，请从 https://github.com/sipeed/picoclaw 安装 PicoClaw。
 
 ## 快速参考
 

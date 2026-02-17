@@ -6,12 +6,12 @@ metadata: {"openclaw":{"requires":{"bins":[]},"emoji":"🏠"}}
 
 # Claw Core Workspace
 
-This skill defines how the Cursor agent operates within the **claw_core workspace** (`~/Documents/claw_core/` by default). Read this before doing any work.
+This skill defines how the Cursor agent operates within the **claw_core workspace**. The workspace location varies by agent - see Workspace Location below. Read this before doing any work.
 
 ## Workspace Layout
 
 ```
-~/Documents/claw_core/
+$WORKSPACE/                # Path varies by agent (see below)
 ├── WORKSPACE.md           # Workspace root doc — read this first every session
 ├── shared_memory/         # Persistent memory across sessions and agents
 │   ├── YYYY-MM-DD.md      # Daily logs (raw notes, what happened)
@@ -106,8 +106,16 @@ shared_skills/
 
 The Cursor agent is **sandboxed to this workspace directory**:
 
-- **Can read/write**: anything inside `~/Documents/claw_core/`
+- **Can read/write**: anything inside `$WORKSPACE`
 - **Cannot modify**: files outside the workspace (unless explicitly allowed)
+
+### Workspace Location by Agent
+
+| Agent | Workspace Path |
+|-------|----------------|
+| `cursor-dev` (main) | `~/Documents/claw_core/` (or custom `defaultWorkspace`) |
+| Telegram bots | `~/.openclaw/workspace-{bot_id}/` |
+| Custom agents | Defined in agent config |
 - **Projects**: use the `projects/` directory for symlinks to external repos
 
 ### Working with external projects

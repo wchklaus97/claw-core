@@ -15,6 +15,45 @@ How `claw_core` integrates with OpenClaw for automatic startup and managed comma
 3. **Manage claw_core** lifecycle via skills
 4. **Fall back gracefully** to normal exec if claw_core is unavailable
 
+## Plugin features and functions (v0.1.6)
+
+The claw-core plugin provides the following.
+
+### CLI commands
+
+| Command | Purpose |
+|---------|---------|
+| `openclaw clawcore start \| stop \| restart \| status` | Daemon lifecycle |
+| `openclaw clawcore setup-cursor` | Configure Cursor CLI and create workspace |
+| `openclaw clawcore init-workspace` | Create workspace with shared_memory, shared_skills, generated/ |
+| `openclaw clawcore reset-workspace` | Reset workspace (backs up shared_memory) |
+| `openclaw clawcore setup-bots` | One-command setup for 3 Telegram bots (artist, assistant, developer) |
+| `openclaw clawcore team` | Agent teams: create, setup-telegram, list |
+| `openclaw clawcore teardown` | Stop daemon and clean up |
+| `openclaw picoclaw status \| config \| chat "<msg>"` | PicoClaw (optional) |
+
+### Agent tools
+
+| Tool | Purpose |
+|------|---------|
+| `cursor_agent_direct` | Invoke Cursor Agent for coding and image generation; outputs go to workspace `generated/images/` and can be routed back to the requesting platform (e.g. Telegram) |
+| `picoclaw_chat` | Send messages to PicoClaw for quick Q&A and web search (optional; not yet tested) |
+| `picoclaw_config` | View or set PicoClaw config (optional; not yet tested) |
+| `team_coordinate` | Manage team task board and coordination |
+
+### Workspace and multi-bot
+
+- **Default workspace:** `~/Documents/claw_core` (or custom via `defaultWorkspace` and `--workspace`).
+- **Workspace layout:** `shared_memory/`, `shared_skills/`, `projects/`, `generated/images/`, `generated/exports/`.
+- **Per-agent workspaces:** Telegram bots use `~/.openclaw/workspace-{bot_id}/`; workspace can be resolved per agent or passed explicitly to tools.
+- **Image generation:** Cursor-generated images are stored under `generated/images/` and are auto-detected and routed back to the requesting platform (Telegram, webhook, etc.).
+
+### Agent teams
+
+- Multi-agent collaboration with a shared task board.
+- Telegram group setup via `openclaw clawcore team setup-telegram`.
+- Tools and skills: `team_coordinate`, team-lead, team-member, team-telegram-group.
+
 ## Architecture
 
 ```
@@ -154,6 +193,8 @@ When you run `openclaw clawcore setup-cursor`, it creates and configures a **wor
 | `shared_memory/` | Daily logs (`YYYY-MM-DD.md`), long-term notes, topic files — persistent context across sessions |
 | `shared_skills/` | Skills available to all agents (superpowers workflows, claw-core-workspace, model-selection-agent, etc.) |
 | `projects/` | Symlinks or clones of external repos — work inside `projects/repo-name/` while staying in the workspace |
+| `generated/images/` | Cursor-generated images — auto-detected and routed back to the requesting platform (Telegram, webhook, etc.) |
+| `generated/exports/` | Other generated artifacts |
 
 `setup-cursor` calls `init-workspace.js`, which copies `WORKSPACE.md` and `.gitignore`, and installs default skills from `default-skills.json` into `shared_skills/`. For power users: run `node $PLUGIN_ROOT/scripts/init-workspace.js init` (or `reset`) to reinitialize or reset the workspace.
 
@@ -213,6 +254,16 @@ Ask the agent: "Set up Cursor integration" or "設定 Cursor 整合". The agent 
 - **`agentId is not allowed for sessions_spawn`**: run `openclaw clawcore setup-cursor`, then `openclaw gateway restart`
 - **`agent` / `cursor` not found**: install Cursor CLI and ensure `agent` or `cursor` is on PATH
 - **Config schema errors**: run `openclaw doctor --fix`, then rerun `openclaw clawcore setup-cursor`
+
+## PicoClaw (optional, not yet tested)
+
+The plugin (v0.1.6) can integrate with [PicoClaw](https://github.com/sipeed/picoclaw), an ultra-lightweight AI assistant, for quick Q&A and web search.
+
+- **Tools:** `picoclaw_chat` (send messages), `picoclaw_config` (view/set model, provider, language)
+- **CLI:** `openclaw picoclaw status | config | chat "<message>"`
+- **Config:** Set `picoClawPath` and `enablePicoClaw: true` in the plugin config if you install PicoClaw.
+
+**Note:** PicoClaw integration has **not been tested yet**. It is provided as optional functionality. Install PicoClaw from https://github.com/sipeed/picoclaw if you want to try it.
 
 ## Quick Reference
 

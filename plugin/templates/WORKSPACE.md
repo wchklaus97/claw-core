@@ -16,6 +16,9 @@ This is your working directory. Everything you do happens here.
 shared_memory/     Persistent memory across sessions and agents
 shared_skills/     Skills available to all agents here
 projects/          Symlinks or clones of external projects
+generated/         Output from agent work (images, files, exports)
+  images/          Cursor-generated images (auto-detected, sent back to requesting platform)
+  exports/         Other generated artifacts
 ```
 
 ## shared_memory

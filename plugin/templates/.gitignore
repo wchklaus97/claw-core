@@ -6,6 +6,9 @@
 # Projects are symlinks or local clones — don't track
 projects/
 
+# Generated output (images, exports) — ephemeral, not tracked
+generated/
+
 # OS files
 .DS_Store
 Thumbs.db
