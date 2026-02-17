@@ -1,5 +1,6 @@
 # Rust build output
 /target/
+crates/**/target/
 
 # Dioxus + mdBook build output (GitHub Pages)
 /dist/

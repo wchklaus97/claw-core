@@ -546,6 +546,19 @@ fn Landing(#[props(into)] locale: String) -> Element {
                                 }
                                 p { class: "faq-a", { t!("faq10-a") } }
                             }
+                            div {
+                                class: if expanded_faq() == Some(10) { "faq-item expanded" } else { "faq-item" },
+                                "data-motion": "card",
+                                onclick: move |_| {
+                                    let cur = expanded_faq();
+                                    expanded_faq.set(if cur == Some(10) { None } else { Some(10) });
+                                },
+                                div { class: "faq-item-header",
+                                    p { class: "faq-q", { t!("faq11-q") } }
+                                    span { class: "faq-chevron", "▼" }
+                                }
+                                p { class: "faq-a", { t!("faq11-a") } }
+                            }
                         }
                     }
                 }

@@ -265,6 +265,33 @@ The plugin (v0.1.6) can integrate with [PicoClaw](https://github.com/sipeed/pico
 
 **Note:** PicoClaw integration has **not been tested yet**. It is provided as optional functionality. Install PicoClaw from https://github.com/sipeed/picoclaw if you want to try it.
 
+## ZeroClaw Support (experimental, not yet tested)
+
+[ZeroClaw](https://github.com/ArcadeLabsInc/zeroclaw) is a separate, all-Rust AI agent runtime focused on performance, minimal binary size, and security. Unlike OpenClaw (Node.js/npm), ZeroClaw does not use the npm plugin system, so the OpenClaw plugin cannot run inside it directly.
+
+However, the `claw_core` daemon protocol (JSON over a Unix socket) is **runtime-agnostic**. We provide a standalone Rust crate — [`claw-core-protocol`](https://crates.io/crates/claw-core-protocol) — that gives ZeroClaw (or any Rust program) a typed async client to the daemon.
+
+### How it works
+
+1. **Install the crate:** The crate is published to crates.io and also available as a path dependency from `crates/claw-core-protocol/`.
+2. **Feature flag:** ZeroClaw integrates via `cargo install zeroclaw --features claw-core`.
+3. **At runtime:** When the `claw-core` feature is enabled and `claw_core.enabled = true` in ZeroClaw's config, a `ClawCoreExecTool` is registered. It connects to the same daemon socket, creates sessions, and runs commands — just like the OpenClaw plugin.
+
+### Architecture
+
+```
+ZeroClaw (Rust binary)
+  └─ claw-core feature flag
+       └─ claw-core-protocol crate
+            └─ Unix socket ─── claw_core daemon
+```
+
+### Status
+
+> **This integration has not been tested yet.** The `claw-core-protocol` crate compiles and the architecture is in place, but end-to-end testing with a live ZeroClaw + claw_core daemon setup has not been performed. Use at your own risk and report issues on GitHub.
+
+See [`crates/claw-core-protocol/README.md`](https://github.com/wchklaus97/claw-core/tree/main/crates/claw-core-protocol) for crate documentation and usage examples.
+
 ## Quick Reference
 
 - **One-command install:** `openclaw plugins install @wchklaus97hk/claw-core` then `openclaw clawcore start`

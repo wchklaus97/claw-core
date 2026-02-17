@@ -45,6 +45,9 @@ jobs:
       - name: Test
         run: cargo test --locked --all-targets
 
+      - name: Test claw-core-protocol crate
+        run: cargo test --manifest-path crates/claw-core-protocol/Cargo.toml
+
   wasm-check:
     name: WASM build check
     runs-on: ubuntu-latest
