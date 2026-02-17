@@ -1,0 +1,97 @@
+{
+  "_comment": "Default skills for shared_skills/. Only includes superpowers skills that work in Cursor (no parallel dispatch, no plugin-system meta). Sources: superpowers (obra/superpowers), plugin (claw-core), custom (templates/skills/).",
+  "sources": {
+    "superpowers": {
+      "github": "obra/superpowers",
+      "localPath": ".cursor/superpowers/skills",
+      "branch": "main",
+      "remotePath": "skills"
+    }
+  },
+  "skills": [
+    {
+      "name": "brainstorming",
+      "source": "superpowers",
+      "category": "workflow",
+      "description": "Socratic design refinement — use before any creative work"
+    },
+    {
+      "name": "writing-plans",
+      "source": "superpowers",
+      "category": "workflow",
+      "description": "Detailed implementation plans from spec/requirements"
+    },
+    {
+      "name": "executing-plans",
+      "source": "superpowers",
+      "category": "workflow",
+      "description": "Batch execution with review checkpoints"
+    },
+    {
+      "name": "test-driven-development",
+      "source": "superpowers",
+      "category": "testing",
+      "description": "RED-GREEN-REFACTOR cycle"
+    },
+    {
+      "name": "systematic-debugging",
+      "source": "superpowers",
+      "category": "debugging",
+      "description": "4-phase root cause analysis"
+    },
+    {
+      "name": "verification-before-completion",
+      "source": "superpowers",
+      "category": "quality",
+      "description": "Verify work is actually done before claiming complete"
+    },
+    {
+      "name": "requesting-code-review",
+      "source": "superpowers",
+      "category": "collaboration",
+      "description": "Pre-review checklist between tasks"
+    },
+    {
+      "name": "receiving-code-review",
+      "source": "superpowers",
+      "category": "collaboration",
+      "description": "Responding to code review feedback"
+    },
+    {
+      "name": "using-git-worktrees",
+      "source": "superpowers",
+      "category": "workflow",
+      "description": "Isolated branches for feature work"
+    },
+    {
+      "name": "finishing-a-development-branch",
+      "source": "superpowers",
+      "category": "workflow",
+      "description": "Merge/PR decision workflow"
+    },
+    {
+      "name": "writing-skills",
+      "source": "superpowers",
+      "category": "meta",
+      "description": "Create new skills following best practices"
+    },
+    {
+      "name": "claw-core-workspace",
+      "source": "plugin",
+      "category": "workspace",
+      "description": "How to work within the claw_core workspace"
+    },
+    {
+      "name": "model-selection-agent",
+      "source": "plugin",
+      "category": "models",
+      "description": "Select models for agent use — free + tool calling criteria"
+    }
+  ],
+  "_skipped": {
+    "_comment": "Superpowers skills excluded because they don't apply in Cursor",
+    "dispatching-parallel-agents": "Cursor has no parallel agent dispatch — use Task tool or sequential steps instead",
+    "subagent-driven-development": "Cursor does not spawn subagents — agent performs implementer + reviewer steps sequentially (covered by executing-plans)",
+    "using-superpowers": "Meta intro to the superpowers system — redundant when skills are already in shared_skills/"
+  }
+}

@@ -84,7 +84,7 @@ This ensures a one-command install works: `openclaw plugins install @wchklaus97h
 
 ### OpenClaw Skills
 
-The plugin ships 11 skills (canonical list: `scripts/claw-core-skills.list`):
+The plugin ships 12+ skills (canonical list: `scripts/claw-core-skills.list`):
 
 | Skill | Purpose |
 |-------|---------|
@@ -99,6 +99,7 @@ The plugin ships 11 skills (canonical list: `scripts/claw-core-skills.list`):
 | **plans-mode** | Planning mode workflow |
 | **status-dashboard** | Status dashboard for monitoring |
 | **cursor-setup** | Configure Cursor CLI integration in `openclaw.json` |
+| **claw-core-workspace** | How to work within the claw_core workspace (read WORKSPACE.md, use shared_memory, shared_skills) |
 
 ### Install / Remove
 
@@ -144,6 +145,18 @@ The plugin can configure OpenClaw to delegate tasks to Cursor CLI. This adds:
 3. **Optional manual setup:** If Cursor integration is missing or needs a different workspace: `openclaw clawcore setup-cursor` (or `--workspace /path/to/project`)
 4. **Restart gateway:** `openclaw gateway restart`
 
+### Workspace structure
+
+When you run `openclaw clawcore setup-cursor`, it creates and configures a **workspace** where the Cursor agent operates. The default is `~/Documents/claw_core`.
+
+| Path | Purpose |
+|------|---------|
+| `shared_memory/` | Daily logs (`YYYY-MM-DD.md`), long-term notes, topic files — persistent context across sessions |
+| `shared_skills/` | Skills available to all agents (superpowers workflows, claw-core-workspace, model-selection-agent, etc.) |
+| `projects/` | Symlinks or clones of external repos — work inside `projects/repo-name/` while staying in the workspace |
+
+`setup-cursor` calls `init-workspace.js`, which copies `WORKSPACE.md` and `.gitignore`, and installs default skills from `default-skills.json` into `shared_skills/`. For power users: run `node $PLUGIN_ROOT/scripts/init-workspace.js init` (or `reset`) to reinitialize or reset the workspace.
+
 ### Dependencies
 
 - **Cursor CLI** on PATH (`agent` or `cursor` — setup prefers `agent` when available)
@@ -179,7 +192,7 @@ Ask the agent: "Set up Cursor integration" or "設定 Cursor 整合". The agent 
 {
   "agents": {
     "defaults": {
-      "workspace": "~/.openclaw/workspace",
+      "workspace": "~/Documents/claw_core",
       "cliBackends": {
         "cursor-cli": {
           "command": "agent",

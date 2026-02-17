@@ -1,0 +1,15 @@
+# Claw Core Workspace
+
+# Backups from workspace resets
+.backups/
+
+# Projects are symlinks or local clones — don't track
+projects/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
+.env.*
