@@ -1,0 +1,21 @@
+[workspace]
+
+[package]
+name = "claw-core-protocol"
+version = "0.1.0"
+edition = "2021"
+authors = ["theonlyhennygod"]
+license = "MIT"
+description = "Async Rust client and protocol types for the claw_core daemon (JSON-over-Unix-socket). Use standalone or with ZeroClaw via --features claw-core."
+repository = "https://github.com/ArcadeLabsInc/claw"
+readme = "README.md"
+keywords = ["claw", "zeroclaw", "agent", "protocol", "unix-socket"]
+categories = ["api-bindings", "asynchronous"]
+
+[dependencies]
+tokio = { version = "1", default-features = false, features = ["net", "io-util"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+anyhow = "1.0"
+thiserror = "2.0"
+uuid = { version = "1", default-features = false, features = ["v4", "std"] }

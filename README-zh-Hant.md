@@ -10,6 +10,8 @@ Agent CLI 執行運行時：穩定、可控、可觀測的命令執行核心。
 
 完全支援 OpenClaw，並提供用於 OpenClaw 工作流程的 Cursor 外掛整合（`plugin/`）。測試版本：OpenClaw 2026.2.13、Cursor IDE 2.5.11，詳見 [外掛說明](plugin/README-zh-Hant.md#相容性)。
 
+實驗性 ZeroClaw 支援：透過 [`claw-core-protocol`](crates/claw-core-protocol/) Rust crate 提供（尚未測試）。
+
 ---
 
 ## What（是什麼）
@@ -133,6 +135,25 @@ cargo build --release
 
 ---
 
+## ZeroClaw 支援（實驗性，尚未測試）
+
+[ZeroClaw](https://github.com/ArcadeLabsInc/zeroclaw) 是一個全 Rust AI 代理執行環境。OpenClaw 外掛（npm）無法在 ZeroClaw 中執行，但 `claw_core` 守護程序協定（Unix socket 上的 JSON）與執行環境無關。
+
+我們提供了一個獨立的 Rust crate — [`claw-core-protocol`](crates/claw-core-protocol/) — 為 ZeroClaw 提供型別化的非同步客戶端：
+
+```bash
+# ZeroClaw 透過功能旗標整合
+cargo install zeroclaw --features claw-core
+```
+
+當 `claw-core` 功能啟用且 ZeroClaw 設定中 `claw_core.enabled = true` 時，會註冊 `ClawCoreExecTool`，連線到與 OpenClaw 外掛相同的守護程序 socket。
+
+> **狀態：** `claw-core-protocol` crate 可編譯，架構已就緒，但尚未進行與 ZeroClaw + claw_core 守護程序的端對端測試。
+
+詳情請參閱 [`crates/claw-core-protocol/README.md`](crates/claw-core-protocol/README.md)。
+
+---
+
 ## 專案結構（Core）
 
 ```text
@@ -141,6 +162,8 @@ claw/
 ├── tests/                 # 單元/整合測試
 ├── scripts/               # smoke 與輔助腳本
 ├── plugin/                # 用於 OpenClaw 的 Cursor 外掛整合
+├── crates/
+│   └── claw-core-protocol/  # ZeroClaw / 通用守護程序客戶端 Rust crate
 ├── .github/workflows/     # CI 與發布流程
 ├── README.md
 ├── README-zh-Hans.md
@@ -152,6 +175,7 @@ claw/
 ## 參考
 
 - [外掛說明](plugin/README-zh-Hant.md)
+- [claw-core-protocol crate](crates/claw-core-protocol/README.md)
 - [Pre-push 測試](scripts/pre-push-test.sh)
 - [整合驗證](scripts/verify_integration.sh)
 - [安裝腳本](scripts/install-from-release.sh)

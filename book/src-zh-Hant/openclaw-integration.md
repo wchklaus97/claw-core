@@ -265,6 +265,33 @@ openclaw gateway restart
 
 **說明：** PicoClaw 整合**尚未經過測試**，僅作為選用功能提供。如需嘗試，請從 https://github.com/sipeed/picoclaw 安裝 PicoClaw。
 
+## ZeroClaw 支援（實驗性，尚未測試）
+
+[ZeroClaw](https://github.com/ArcadeLabsInc/zeroclaw) 是一個獨立的全 Rust AI 代理執行環境，專注於效能、最小二進位大小與安全性。與 OpenClaw（Node.js/npm）不同，ZeroClaw 不使用 npm 外掛系統，因此 OpenClaw 外掛無法直接在其中執行。
+
+然而，`claw_core` 守護程序協定（Unix socket 上的 JSON）與**執行環境無關**。我們提供了一個獨立的 Rust crate — [`claw-core-protocol`](https://crates.io/crates/claw-core-protocol) — 為 ZeroClaw（或任何 Rust 程式）提供型別化的非同步客戶端來連線守護程序。
+
+### 運作原理
+
+1. **安裝 crate：** 該 crate 已發佈到 crates.io，也可作為路徑依賴從 `crates/claw-core-protocol/` 取得。
+2. **功能旗標：** ZeroClaw 透過 `cargo install zeroclaw --features claw-core` 進行整合。
+3. **執行時：** 當 `claw-core` 功能啟用且 ZeroClaw 設定中 `claw_core.enabled = true` 時，會註冊一個 `ClawCoreExecTool`。它連線到同一個守護程序 socket，建立工作階段並執行命令 — 與 OpenClaw 外掛的方式相同。
+
+### 架構
+
+```
+ZeroClaw（Rust 二進位）
+  └─ claw-core 功能旗標
+       └─ claw-core-protocol crate
+            └─ Unix socket ─── claw_core 守護程序
+```
+
+### 狀態
+
+> **此整合尚未經過測試。** `claw-core-protocol` crate 可以編譯，架構已就緒，但尚未在 ZeroClaw + claw_core 守護程序的完整環境中進行端對端測試。使用風險自負，如有問題請在 GitHub 上回報。
+
+詳情請參閱 [`crates/claw-core-protocol/README.md`](https://github.com/wchklaus97/claw-core/tree/main/crates/claw-core-protocol)。
+
 ## 快速參考
 
 - **一步安裝：** `openclaw plugins install @wchklaus97hk/claw-core`，然後 `openclaw clawcore start`

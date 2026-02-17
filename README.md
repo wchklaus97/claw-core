@@ -12,6 +12,8 @@ Agent CLI execution runtime for stable, controlled, and observable command autom
 
 Fully supports OpenClaw and provides a Cursor plugin integration (`plugin/`) for OpenClaw workflows. Tested with OpenClaw 2026.2.13 and Cursor IDE 2.5.11 — see [plugin README](plugin/README.md#compatibility) for details.
 
+Experimental ZeroClaw support via the [`claw-core-protocol`](crates/claw-core-protocol/) Rust crate (not yet tested).
+
 ---
 
 ## What
@@ -135,6 +137,25 @@ Recommended flow:
 
 ---
 
+## ZeroClaw Support (experimental, not yet tested)
+
+[ZeroClaw](https://github.com/ArcadeLabsInc/zeroclaw) is an all-Rust AI agent runtime. The OpenClaw plugin (npm) cannot run inside ZeroClaw, but the `claw_core` daemon protocol (JSON over Unix socket) is runtime-agnostic.
+
+We provide a standalone Rust crate — [`claw-core-protocol`](crates/claw-core-protocol/) — that gives ZeroClaw a typed async client to the daemon:
+
+```bash
+# ZeroClaw integrates via a feature flag
+cargo install zeroclaw --features claw-core
+```
+
+When the `claw-core` feature is enabled and `claw_core.enabled = true` in ZeroClaw's config, a `ClawCoreExecTool` is registered that connects to the same daemon socket used by the OpenClaw plugin.
+
+> **Status:** The `claw-core-protocol` crate compiles and the architecture is in place, but end-to-end testing with a live ZeroClaw + claw_core daemon has **not been performed yet**.
+
+See [`crates/claw-core-protocol/README.md`](crates/claw-core-protocol/README.md) for crate documentation.
+
+---
+
 ## Project Layout (Core)
 
 ```text
@@ -143,6 +164,8 @@ claw/
 ├── tests/                 # integration/unit tests
 ├── scripts/               # smoke/install/helper scripts
 ├── plugin/                # Cursor plugin integration for OpenClaw
+├── crates/
+│   └── claw-core-protocol/  # Rust crate for ZeroClaw / generic daemon client
 ├── .github/workflows/     # CI and release workflows
 ├── README.md
 ├── README-zh-Hans.md
@@ -154,6 +177,7 @@ claw/
 ## References
 
 - [Plugin README](plugin/README.md)
+- [claw-core-protocol crate](crates/claw-core-protocol/README.md)
 - [Pre-push test](scripts/pre-push-test.sh)
 - [Integration verification](scripts/verify_integration.sh)
 - [Install OpenClaw plugin](scripts/install-claw-core-openclaw.sh)
