@@ -2,7 +2,7 @@
   "id": "claw-core",
   "name": "Claw Core",
   "description": "Terminal Runtime Layer with Agent Teams, multi-bot Telegram setup, PicoClaw integration, direct Cursor Agent invocation, and Cursor agent workspace. Provides session-managed command execution, image generation via Cursor, Q&A via PicoClaw, multi-agent team collaboration with shared task boards, shared_memory/shared_skills workspace, and a one-command 3-bot setup (artist, assistant, developer). Linux and macOS only.",
-  "version": "0.3.0",
+  "version": "0.1.6",
   "configSchema": {
     "type": "object",
     "additionalProperties": false,
@@ -60,6 +60,16 @@
         "type": "string",
         "description": "Default lead agent for team sessions (default: developer)",
         "default": "developer"
+      },
+      "workspaceStrategy": {
+        "type": "string",
+        "enum": ["shared", "per-agent", "per-session"],
+        "description": "Workspace isolation strategy: shared (all use defaultWorkspace), per-agent (each bot has own workspace), per-session (each session isolated)",
+        "default": "per-agent"
+      },
+      "workspaceBase": {
+        "type": "string",
+        "description": "Base directory for per-session workspaces (default: ~/.openclaw/workspaces)"
       }
     }
   },
@@ -108,6 +118,14 @@
     "defaultTeamLead": {
       "label": "Default team lead agent",
       "placeholder": "developer"
+    },
+    "workspaceStrategy": {
+      "label": "Workspace isolation strategy",
+      "placeholder": "per-agent"
+    },
+    "workspaceBase": {
+      "label": "Base directory for session workspaces",
+      "placeholder": "~/.openclaw/workspaces"
     }
   },
   "skills": [

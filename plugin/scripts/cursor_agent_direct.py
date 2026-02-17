@@ -66,11 +66,68 @@ def check_cursor() -> dict:
         return {"installed": True, "binary": binary, "version": "unknown", "warning": str(exc)}
 
 
+def ensure_generated_images_dir(workspace: str) -> str:
+    """Ensure generated/images/ exists in the workspace and return its path."""
+    images_dir = os.path.join(workspace, "generated", "images")
+    os.makedirs(images_dir, exist_ok=True)
+    return images_dir
+
+
+def move_images_to_generated(files: list[str], workspace: str) -> list[str]:
+    """Move image files to generated/images/ if not already there, return updated paths."""
+    import shutil
+    
+    images_dir = ensure_generated_images_dir(workspace)
+    updated_files = []
+    
+    for file_path in files:
+        # Check if it's an image
+        ext = os.path.splitext(file_path)[1].lower()
+        is_image = ext in [".png", ".jpg", ".jpeg", ".webp", ".gif", ".svg"]
+        
+        if not is_image:
+            updated_files.append(file_path)
+            continue
+        
+        # Check if already in generated/images/
+        try:
+            rel_path = os.path.relpath(file_path, images_dir)
+            if not rel_path.startswith(".."):
+                # Already in generated/images/
+                updated_files.append(file_path)
+                continue
+        except ValueError:
+            # Different drives on Windows
+            pass
+        
+        # Move to generated/images/
+        try:
+            dest_name = os.path.basename(file_path)
+            dest_path = os.path.join(images_dir, dest_name)
+            
+            # Handle name collisions
+            counter = 1
+            base_name, ext = os.path.splitext(dest_name)
+            while os.path.exists(dest_path):
+                dest_name = f"{base_name}_{counter}{ext}"
+                dest_path = os.path.join(images_dir, dest_name)
+                counter += 1
+            
+            shutil.move(file_path, dest_path)
+            updated_files.append(dest_path)
+        except Exception as e:
+            # If move fails, keep original path
+            print(f"Warning: Failed to move {file_path} to generated/images/: {e}", file=sys.stderr)
+            updated_files.append(file_path)
+    
+    return updated_files
+
+
 def detect_new_files(workspace: str, before_files: set[str]) -> list[str]:
-    """Detect files created during the Cursor run (especially images in assets/)."""
+    """Detect files created during the Cursor run (images in generated/images/ and assets/)."""
     new_files: list[str] = []
-    # Check common image output locations
     for pattern in [
+        os.path.join(workspace, "generated", "images", "**", "*"),
         os.path.join(workspace, "assets", "**", "*"),
         os.path.join(workspace, "**", "*.png"),
         os.path.join(workspace, "**", "*.jpg"),
@@ -88,6 +145,7 @@ def snapshot_files(workspace: str) -> set[str]:
     """Take a snapshot of image-like files in the workspace."""
     files: set[str] = set()
     for pattern in [
+        os.path.join(workspace, "generated", "images", "**", "*"),
         os.path.join(workspace, "assets", "**", "*"),
         os.path.join(workspace, "**", "*.png"),
         os.path.join(workspace, "**", "*.jpg"),
@@ -130,6 +188,13 @@ def run_cursor_agent(
 
     effective_workspace = workspace or os.getcwd()
 
+    # Ensure generated/images/ dir exists for image output
+    if os.path.isdir(effective_workspace):
+        images_dir = ensure_generated_images_dir(effective_workspace)
+        # Hint Cursor to save images in generated/images/
+        if "image" in prompt.lower() or "generate" in prompt.lower() or "draw" in prompt.lower() or "design" in prompt.lower():
+            prompt = prompt + f"\n\nSave any generated images to: {images_dir}"
+
     # Snapshot files before run to detect new ones
     before_files = snapshot_files(effective_workspace) if os.path.isdir(effective_workspace) else set()
 
@@ -158,6 +223,10 @@ def run_cursor_agent(
 
         # Detect newly created files
         new_files = detect_new_files(effective_workspace, before_files) if os.path.isdir(effective_workspace) else []
+        
+        # Move images to generated/images/ if not already there
+        if new_files and os.path.isdir(effective_workspace):
+            new_files = move_images_to_generated(new_files, effective_workspace)
 
         return {
             "ok": result.returncode == 0,

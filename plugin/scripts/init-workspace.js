@@ -33,7 +33,7 @@ function getAction() {
   return args[0] || 'init';
 }
 
-const WORKSPACE_DIRS = ['', 'shared_memory', 'shared_skills', 'projects'];
+const WORKSPACE_DIRS = ['', 'shared_memory', 'shared_skills', 'projects', 'generated', 'generated/images', 'generated/exports'];
 const TEMPLATE_FILES = [
   { src: 'WORKSPACE.md', dest: 'WORKSPACE.md' },
   { src: '.gitignore', dest: '.gitignore' },

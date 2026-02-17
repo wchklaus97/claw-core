@@ -49,6 +49,70 @@ function getTeamSessionScript(): string {
   return join(PLUGIN_ROOT, "scripts", "team_session.py");
 }
 
+/**
+ * Resolve workspace path with priority order:
+ * 1. Explicit params.workspace (highest priority)
+ * 2. Derive from _id if it contains agent/session info
+ * 3. Agent-specific workspace (for telegram bots, etc.)
+ * 4. pluginConfig.defaultWorkspace (fallback)
+ * 5. Empty string (Cursor uses cwd)
+ *
+ * USAGE: When calling cursor_agent_direct from other systems, pass workspace explicitly:
+ * {
+ *   prompt: "...",
+ *   workspace: deriveWorkspaceForSession(sessionId)  // Your logic here
+ * }
+ *
+ * @param _id Tool invocation ID (may contain agent/session context)
+ * @param params Tool parameters
+ * @param pluginConfig Plugin configuration
+ * @returns Resolved workspace path
+ */
+function resolveWorkspace(
+  _id: string,
+  params: Record<string, unknown>,
+  pluginConfig: Record<string, unknown>,
+): string {
+  // Priority 1: Explicit parameter (highest)
+  if (params.workspace && typeof params.workspace === "string") {
+    return params.workspace;
+  }
+
+  // Priority 2: Try to extract agent/session from _id
+  // OpenClaw may pass context in _id format like "agent:bot-artist:session:abc123"
+  // or "session:abc123" or other formats
+  const agentMatch = _id.match(/agent[:-]([^:]+)/i);
+  const sessionMatch = _id.match(/session[:-]([^:]+)/i);
+
+  if (agentMatch) {
+    const agentId = agentMatch[1];
+    // Skip generic agent names, focus on specific bots
+    if (agentId && agentId !== "main" && agentId !== "cursor-dev" && agentId !== "default") {
+      const agentWorkspace = join(
+        process.env.HOME || "~",
+        ".openclaw",
+        `workspace-${agentId}`,
+      );
+      return agentWorkspace;
+    }
+  }
+
+  if (sessionMatch && pluginConfig.workspaceStrategy === "per-session") {
+    const sessionId = sessionMatch[1];
+    const workspaceBase = (pluginConfig.workspaceBase as string) || 
+      join(process.env.HOME || "~", ".openclaw", "workspaces");
+    return join(workspaceBase, `session-${sessionId}`);
+  }
+
+  // Priority 3: Default workspace from config
+  if (pluginConfig.defaultWorkspace && typeof pluginConfig.defaultWorkspace === "string") {
+    return pluginConfig.defaultWorkspace;
+  }
+
+  // Priority 4: Empty (Cursor will use cwd)
+  return "";
+}
+
 function getTeamSetupTelegramScript(): string {
   return join(PLUGIN_ROOT, "scripts", "team_setup_telegram.py");
 }
@@ -177,8 +241,8 @@ export default function register(api: PluginApi) {
           "Manage claw_core daemon, workspace, multi-bot setup, and agent teams (start|stop|restart|status|setup-cursor|init-workspace|reset-workspace|teardown|setup-bots|team)",
         );
 
-      cmd.action((action?: string) => {
-        const act = action ?? "status";
+      cmd.action((...args: unknown[]) => {
+        const act = (args[0] as string) ?? "status";
 
         // init-workspace / reset-workspace: create or reset the claw_core workspace
         if (act === "init-workspace" || act === "reset-workspace") {
@@ -325,17 +389,19 @@ export default function register(api: PluginApi) {
         .command("picoclaw <action> [message]")
         .description("PicoClaw integration (status|config|chat \"<message>\")");
 
-      cmd.action((action?: string, message?: string) => {
+      cmd.action((...cliArgs: unknown[]) => {
+        const action = cliArgs[0] as string | undefined;
+        const message = cliArgs[1] as string | undefined;
         if (!existsSync(picoScript)) {
           console.error("picoclaw_client.py not found:", picoScript);
           process.exit(1);
         }
         const act = action ?? "status";
-        const args: string[] = [picoScript, act];
+        const spawnArgs: string[] = [picoScript, act];
         if (act === "chat" && message) {
-          args.push("--message", message);
+          spawnArgs.push("--message", message);
         }
-        const child = spawn("python3", args, {
+        const child = spawn("python3", spawnArgs, {
           env: { ...process.env, CLAW_CORE_PLUGIN_ROOT: PLUGIN_ROOT },
           stdio: "inherit",
         });
@@ -539,7 +605,10 @@ export default function register(api: PluginApi) {
             params: Record<string, unknown>,
           ) {
             const prompt = params.prompt as string;
-            const workspace = (params.workspace as string) || "";
+            
+            // Resolve workspace with priority: explicit param > agent context > config default
+            const workspace = resolveWorkspace(_id, params, pluginConfig);
+            
             const model = (params.model as string) || "auto";
             const args = ["--prompt", prompt, "--model", model];
             if (workspace) args.push("--workspace", workspace);
@@ -564,12 +633,15 @@ export default function register(api: PluginApi) {
               content.push({ type: "text", text: result.raw || "No output" });
             }
 
-            // Note any created files
+            // Include created files — OpenClaw gateway auto-detects and routes media files
+            // back to the originating platform (Telegram → photo reply, etc.)
             const files = (data.files_created as string[]) || [];
             if (files.length > 0) {
+              // List file paths - gateway will detect images and attach them
+              const fileList = files.map((f) => `  • ${f}`).join("\n");
               content.push({
                 type: "text",
-                text: `\nFiles created:\n${files.map((f) => `  • ${f}`).join("\n")}`,
+                text: `\n\nGenerated files:\n${fileList}`,
               });
             }
 

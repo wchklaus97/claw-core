@@ -1,6 +1,7 @@
 {
   "name": "@wchklaus97hk/claw-core",
-  "version": "0.3.0",
+  "version": "0.1.6",
+  "type": "module",
   "description": "OpenClaw plugin: Terminal Runtime Layer (claw_core) with Agent Teams, multi-bot Telegram setup, PicoClaw integration, direct Cursor Agent invocation, image generation, and Cursor agent workspace. Supports 3 specialized bots (artist, assistant, developer) with multi-agent team collaboration, shared task boards, Telegram group coordination, shared_memory, shared_skills, and per-agent workspaces. Linux and macOS only.",
   "main": "index.ts",
   "os": ["darwin", "linux"],

@@ -43,9 +43,25 @@ Be specific for best results:
 
 ## Output
 
-- Cursor saves generated images to the workspace `assets/` folder
-- The tool response includes file paths of created images
+- Generated images are automatically moved to `$WORKSPACE/generated/images/`
+  - **Main agent (cursor-dev)**: `~/Documents/claw_core/generated/images/` (or custom `defaultWorkspace`)
+  - **Telegram bots**: `~/.openclaw/workspace-{bot_id}/generated/images/`
+  - **Custom agents**: Agent-specific workspace + `/generated/images/`
+- The tool response includes file paths of created images in `files_created`
+- Images are automatically organized and tracked for platform routing
 - Share the file path and describe what was generated
+
+> **Note**: `$WORKSPACE` is dynamically resolved based on the agent's configured workspace. Skills should never hardcode absolute workspace paths.
+
+## Platform-Aware Response
+
+The response (including generated images) is automatically routed back to the **platform the request came from**:
+
+- **Telegram** → image is sent as a photo/document reply to the user's chat
+- **Webhook** → image path is included in the JSON response payload
+- **Gateway RPC** → file paths returned in the `files_created` field
+
+You do NOT need to handle routing manually. OpenClaw's gateway tracks the originating channel (`_channel`, `_accountId`) and routes the response — including any file attachments — back to the same platform. Just include the file paths in your response and the gateway handles delivery.
 
 ## After Generation
 

@@ -520,6 +520,32 @@ fn Landing(#[props(into)] locale: String) -> Element {
                                 }
                                 p { class: "faq-a", { t!("faq8-a") } }
                             }
+                            div {
+                                class: if expanded_faq() == Some(8) { "faq-item expanded" } else { "faq-item" },
+                                "data-motion": "card",
+                                onclick: move |_| {
+                                    let cur = expanded_faq();
+                                    expanded_faq.set(if cur == Some(8) { None } else { Some(8) });
+                                },
+                                div { class: "faq-item-header",
+                                    p { class: "faq-q", { t!("faq9-q") } }
+                                    span { class: "faq-chevron", "▼" }
+                                }
+                                p { class: "faq-a", { t!("faq9-a") } }
+                            }
+                            div {
+                                class: if expanded_faq() == Some(9) { "faq-item expanded" } else { "faq-item" },
+                                "data-motion": "card",
+                                onclick: move |_| {
+                                    let cur = expanded_faq();
+                                    expanded_faq.set(if cur == Some(9) { None } else { Some(9) });
+                                },
+                                div { class: "faq-item-header",
+                                    p { class: "faq-q", { t!("faq10-q") } }
+                                    span { class: "faq-chevron", "▼" }
+                                }
+                                p { class: "faq-a", { t!("faq10-a") } }
+                            }
                         }
                     }
                 }

@@ -13,16 +13,24 @@ Configures `~/.openclaw/openclaw.json` so OpenClaw can delegate tasks to Cursor 
 The Cursor agent is sandboxed to a **root workspace** directory:
 
 ```
-~/Documents/claw_core/
+$WORKSPACE/          # Path varies by agent (see below)
 ├── shared_memory/   # Memory shared across sessions and agents
 ├── shared_skills/   # Skills shared across sessions and agents
+├── generated/       # Agent-generated output (images, files)
 └── ...              # User files, project symlinks, etc.
 ```
 
-- **Default path:** `~/Documents/claw_core`
-- **Created automatically** on first setup (including `shared_memory/` and `shared_skills/`)
-- Cursor agent can only work inside this directory
-- User can set `--workspace` to point at a different project, but the root workspace is always the default
+### Workspace Location by Agent
+
+| Agent | Workspace Path | When Used |
+|-------|----------------|-----------|
+| `cursor-dev` (main) | `~/Documents/claw_core/` | Default single-user setup |
+| Telegram bots | `~/.openclaw/workspace-{bot_id}/` | Multi-bot telegram setups |
+| Custom agents | Defined in `agents.list[].workspace` | Per-agent isolation |
+
+- **Created automatically** on first setup (including `shared_memory/`, `shared_skills/`, `generated/`)
+- Cursor agent can only work inside its assigned workspace directory
+- User can override with `--workspace` flag on setup or per-tool-call `workspace` parameter
 
 ## When to use
 
