@@ -1,0 +1,494 @@
+<!DOCTYPE HTML>
+<html lang="zh-Hant" class="rust sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>OpenClaw 整合 - Claw Core</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Agent CLI packing core — terminal runtime for AI agents">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-62b496c4.css">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "rust";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-cc1287ab.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-911b62bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme && theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar && sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('rust')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Claw Core</h1>
+
+                    <div class="right-buttons">
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="openclaw-整合"><a class="header" href="#openclaw-整合">OpenClaw 整合</a></h1>
+<p>說明 <code>claw_core</code> 如何與 OpenClaw 整合，實現自動啟動與受管命令執行。</p>
+<p><strong>文件：</strong> <a href="https://wchklaus97.github.io/claw-core/zh-Hant/book/">https://wchklaus97.github.io/claw-core/zh-Hant/book/</a></p>
+<p><strong>路徑佔位符：</strong> <code>$CLAW_ROOT</code> = claw 倉庫，<code>$WORKSPACE</code> = OpenClaw 工作區，<code>$PLUGIN_ROOT</code> = 外掛安裝目錄。</p>
+<h2 id="概覽"><a class="header" href="#概覽">概覽</a></h2>
+<p><strong>claw_core</strong> 是 Rust 實現的終端 Runtime 層，<strong>OpenClaw</strong> 是 AI 代理框架。該整合使 OpenClaw 能夠：</p>
+<ol>
+<li>閘道啟動時自動啟動 <strong>claw_core</strong>（透過 boot hook）</li>
+<li>在可用時優先使用 <strong>claw_core</strong> 執行命令</li>
+<li>透過 skills 管理 <strong>claw_core</strong> 生命週期</li>
+<li>當 <strong>claw_core</strong> 不可用時平滑降級到普通 <code>exec</code></li>
+</ol>
+<h2 id="外掛功能與說明v018"><a class="header" href="#外掛功能與說明v018">外掛功能與說明（v0.1.8）</a></h2>
+<p>claw-core 外掛提供以下能力。</p>
+<h3 id="cli-命令"><a class="header" href="#cli-命令">CLI 命令</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>命令</th><th>用途</th></tr>
+</thead>
+<tbody>
+<tr><td><code>openclaw clawcore start | stop | restart | status</code></td><td>守護進程生命週期</td></tr>
+<tr><td><code>openclaw clawcore setup-cursor</code></td><td>設定 Cursor CLI 並建立工作區</td></tr>
+<tr><td><code>openclaw clawcore init-workspace</code></td><td>建立含 shared_memory、shared_skills、generated/ 的工作區</td></tr>
+<tr><td><code>openclaw clawcore reset-workspace</code></td><td>重置工作區（會備份 shared_memory）</td></tr>
+<tr><td><code>openclaw clawcore setup-bots</code></td><td>一鍵設定 3 個 Telegram 機器人（artist、assistant、developer）</td></tr>
+<tr><td><code>openclaw clawcore team</code></td><td>代理團隊：建立、setup-telegram、列表</td></tr>
+<tr><td><code>openclaw clawcore teardown</code></td><td>停止守護進程並清理</td></tr>
+<tr><td><code>openclaw picoclaw status | config | chat "&lt;訊息&gt;"</code></td><td>PicoClaw（選用）</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="代理工具"><a class="header" href="#代理工具">代理工具</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>工具</th><th>用途</th></tr>
+</thead>
+<tbody>
+<tr><td><code>cursor_agent_direct</code></td><td>呼叫 Cursor Agent 進行編程與複雜任務；輸出寫入工作區（Cursor CLI 不支援圖片生成）。支援模式：<strong>agent</strong>（執行）、<strong>plan</strong>（先規劃後執行）、<strong>ask</strong>（唯讀）。測試說明見 <a href="../plugin/docs/CURSOR_CLI_MODES_TESTING.html">CURSOR_CLI_MODES_TESTING.md</a>。</td></tr>
+<tr><td><code>picoclaw_chat</code></td><td>向 PicoClaw 發送訊息，用於快速問答與網頁搜尋（選用；尚未測試）</td></tr>
+<tr><td><code>picoclaw_config</code></td><td>檢視或設定 PicoClaw 設定（選用；尚未測試）</td></tr>
+<tr><td><code>team_coordinate</code></td><td>管理團隊任務板與協作</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="工作區與多機器人"><a class="header" href="#工作區與多機器人">工作區與多機器人</a></h3>
+<ul>
+<li><strong>預設工作區：</strong> <code>~/Documents/claw_core</code>（或透過 <code>defaultWorkspace</code> 與 <code>--workspace</code> 自訂）。</li>
+<li><strong>工作區結構：</strong> <code>shared_memory/</code>、<code>shared_skills/</code>、<code>projects/</code>、<code>generated/exports/</code>。</li>
+<li><strong>按代理工作區：</strong> Telegram 機器人使用 <code>~/.openclaw/workspace-{bot_id}/</code>；工作區可按代理解析或顯式傳給工具。</li>
+</ul>
+<h3 id="代理團隊"><a class="header" href="#代理團隊">代理團隊</a></h3>
+<ul>
+<li>多代理協作與共享任務板。</li>
+<li>透過 <code>openclaw clawcore team setup-telegram</code> 設定 Telegram 群組。</li>
+<li>工具與技能：<code>team_coordinate</code>，team-lead、team-member、team-telegram-group。</li>
+</ul>
+<h2 id="架構"><a class="header" href="#架構">架構</a></h2>
+<pre><code>┌────────────────────────────────────────┐
+│  OpenClaw Gateway (Node.js)            │
+└────────────┬───────────────────────────┘
+             │ 1. gateway:startup event
+             ↓
+┌────────────────────────────────────────┐
+│  Boot hook (boot-claw-core)            │
+│  - Runs on gateway startup             │
+│  - Starts claw_core daemon             │
+└────────────┬───────────────────────────┘
+             │ 2. start daemon
+             ↓
+┌────────────────────────────────────────┐
+│  claw_core (Rust daemon)               │
+│  - Listens on /tmp/trl.sock            │
+│  - Manages terminal sessions           │
+└────────────┬───────────────────────────┘
+             │ 3. exec commands via socket
+             ↓
+┌────────────────────────────────────────┐
+│  OpenClaw Skills                       │
+│  - claw-core-runtime (exec wrapper)    │
+│  - claw-core-sessions (list/manage)    │
+│  - claw-core-daemon (start/stop)       │
+└────────────────────────────────────────┘
+</code></pre>
+<h2 id="組件"><a class="header" href="#組件">組件</a></h2>
+<h3 id="boot-hook"><a class="header" href="#boot-hook">Boot Hook</a></h3>
+<p><strong>位置：</strong> 外掛 hook <code>boot-claw-core</code>（或 <code>$WORKSPACE/BOOT.md</code>）</p>
+<p>在 <code>gateway:startup</code> 事件觸發時呼叫，並透過 daemon 腳本啟動 claw_core。</p>
+<h3 id="daemon-管理腳本"><a class="header" href="#daemon-管理腳本">Daemon 管理腳本</a></h3>
+<p><strong>位置：</strong> <code>$PLUGIN_ROOT/scripts/claw_core_daemon.sh</code> 或 <code>$CLAW_ROOT/scripts/claw_core_daemon.sh</code></p>
+<pre><code class="language-bash">./claw_core_daemon.sh start   # 啟動
+./claw_core_daemon.sh stop    # 停止
+./claw_core_daemon.sh restart # 重新啟動
+./claw_core_daemon.sh status  # 檢視狀態
+</code></pre>
+<ul>
+<li>PID：<code>/tmp/claw_core.pid</code></li>
+<li>日誌：<code>/tmp/claw_core.log</code></li>
+<li>Socket：<code>/tmp/trl.sock</code>（或 <code>$CLAW_CORE_SOCKET</code>）</li>
+</ul>
+<p><strong>自動下載 binary：</strong> OpenClaw 安裝外掛時只解壓 npm 套件，不執行 <code>npm install</code>，因此 postinstall 不會執行。daemon 腳本會補齊：首次執行 <code>start</code> 時，若外掛 binary 不存在（且未設定 <code>CLAW_CORE_BINARY</code> / <code>CLAW_CORE_SOURCE</code>），會自動從 GitHub Releases 下載 binary、設定 <code>openclaw.json</code> 並安裝 skills。一步安裝：<code>openclaw plugins install @wchklaus97hk/claw-core</code>，然後執行 <code>openclaw clawcore start</code>。</p>
+<h3 id="實現daemon-自動下載"><a class="header" href="#實現daemon-自動下載">實現：Daemon 自動下載</a></h3>
+<p><strong>問題：</strong> OpenClaw 安裝外掛時只解壓 npm 套件，不在解壓目錄中執行 <code>npm install</code>，因此 <code>postinstall</code> 腳本（binary 下載、設定、skills）不會執行。</p>
+<p><strong>方案：</strong> daemon 腳本（<code>claw_core_daemon.sh</code>）在 <code>start</code> 被呼叫且外掛 binary 缺失時，補齊缺失的安裝步驟。在 <code>start()</code> 中：</p>
+<ol>
+<li><strong>條件：</strong> 未設定 <code>CLAW_CORE_BINARY</code> 和 <code>CLAW_CORE_SOURCE</code>，且 <code>$PLUGIN_ROOT/bin/claw_core</code> 不存在。</li>
+<li><strong>動作：</strong> 依序執行 <code>postinstall-download-binary.sh</code>（從 GitHub Releases 下載 binary）、<code>postinstall-config-openclaw.cjs</code>（在 <code>openclaw.json</code> 中設定 <code>binaryPath</code>）、<code>install-skills-to-openclaw.sh</code>（將 skills 複製到 <code>~/.openclaw/skills/</code>）、<code>setup-cursor-integration.cjs</code>（在 <code>openclaw.json</code> 中設定 Cursor 整合）。</li>
+<li><strong>之後：</strong> 呼叫 <code>find_binary()</code> 並啟動 daemon。</li>
+</ol>
+<p>這樣可實現一步安裝：<code>openclaw plugins install @wchklaus97hk/claw-core</code> 後再執行 <code>openclaw clawcore start</code>，即可完成安裝，無需額外手動操作。</p>
+<h3 id="openclaw-skills"><a class="header" href="#openclaw-skills">OpenClaw Skills</a></h3>
+<p>外掛包含 12+ 個 skills（規範列表：<code>scripts/claw-core-skills.list</code>）：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Skill</th><th>用途</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>claw-core-runtime</strong></td><td>透過 claw_core 執行命令（封裝 <code>claw_core_exec.py</code>）</td></tr>
+<tr><td><strong>claw-core-sessions</strong></td><td>列出並管理 claw_core 會話</td></tr>
+<tr><td><strong>claw-core-daemon</strong></td><td>從 Agent 側啟動/停止/檢視 daemon</td></tr>
+<tr><td><strong>claw-core-install</strong></td><td>完整安裝或補充安裝（plugins install、daemon start、Cursor 設定）</td></tr>
+<tr><td><strong>claw-core-remove</strong></td><td>完整卸載（停止 daemon、清理設定、移除 skills 與外掛）</td></tr>
+<tr><td><strong>cron-helper</strong></td><td>定時任務排程輔助</td></tr>
+<tr><td><strong>cursor-agent</strong></td><td>Cursor 代理協調</td></tr>
+<tr><td><strong>cursor-cron-bridge</strong></td><td>Cursor 與定時任務的橋接</td></tr>
+<tr><td><strong>plans-mode</strong></td><td>規劃模式工作流程</td></tr>
+<tr><td><strong>status-dashboard</strong></td><td>狀態面板監控</td></tr>
+<tr><td><strong>cursor-setup</strong></td><td>在 <code>openclaw.json</code> 中設定 Cursor CLI 整合</td></tr>
+<tr><td><strong>claw-core-workspace</strong></td><td>如何在 claw_core 工作區內工作（閱讀 WORKSPACE.md，使用 shared_memory、shared_skills）</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="安裝--卸載"><a class="header" href="#安裝--卸載">安裝 / 卸載</a></h3>
+<p><strong>一步安裝（npm）：</strong></p>
+<pre><code class="language-bash">openclaw plugins install @wchklaus97hk/claw-core
+openclaw clawcore start   # 首次執行 daemon 自動下載 binary
+</code></pre>
+<p><strong>本機/開發安裝（建置二進位、安裝外掛、自動設定 openclaw.json）：</strong></p>
+<pre><code class="language-bash"># 安裝
+./scripts/install-claw-core-openclaw.sh
+
+# 重新安裝
+./scripts/install-claw-core-openclaw.sh --force
+
+# 卸載（同時清理 openclaw.json 中的 Cursor 整合）
+./scripts/remove-claw-core-openclaw.sh
+
+# 驗證
+./scripts/verify_integration.sh
+</code></pre>
+<p>安裝後請重新啟動 OpenClaw gateway。</p>
+<h2 id="cursor-cli-整合"><a class="header" href="#cursor-cli-整合">Cursor CLI 整合</a></h2>
+<p>外掛可以設定 OpenClaw 將任務委派給 Cursor CLI，包括：</p>
+<ul>
+<li><strong>cliBackends</strong>：<code>cursor-cli</code>、<code>cursor-plan</code>、<code>cursor-ask</code>（Agent、Plan、Ask 模式）</li>
+<li><strong>cursor-dev agent</strong>：使用 <code>cursor-cli/auto</code> 作為模型</li>
+<li><strong>subagents.allowAgents</strong>：允許主 Agent 將任務派給 cursor-dev</li>
+</ul>
+<p><strong>為何需要：</strong> OpenClaw 安裝外掛時只解壓 npm 套件，不執行 <code>npm install</code>，因此 postinstall 不會執行。daemon 腳本會在首次啟動時執行 <code>setup-cursor-integration.cjs</code> 補齊設定。若自動設定被略過或需重新設定，請使用下方手動步驟。</p>
+<h3 id="分步設定"><a class="header" href="#分步設定">分步設定</a></h3>
+<ol>
+<li><strong>安裝外掛：</strong> <code>openclaw plugins install @wchklaus97hk/claw-core</code></li>
+<li><strong>啟動 daemon（自動設定）：</strong> <code>openclaw clawcore start</code> — 首次執行會下載 binary 並在 <code>openclaw.json</code> 中設定 Cursor</li>
+<li><strong>可選手動設定：</strong> 若 Cursor 整合缺失或需指定其他 workspace：<code>openclaw clawcore setup-cursor</code>（或 <code>--workspace /path/to/project</code>）</li>
+<li><strong>重啟 gateway：</strong> <code>openclaw gateway restart</code></li>
+</ol>
+<h3 id="工作區結構"><a class="header" href="#工作區結構">工作區結構</a></h3>
+<p>執行 <code>openclaw clawcore setup-cursor</code> 時，會建立並設定 Cursor 代理的工作目錄（<strong>工作區</strong>）。預設路徑為 <code>~/Documents/claw_core</code>。</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>路徑</th><th>用途</th></tr>
+</thead>
+<tbody>
+<tr><td><code>shared_memory/</code></td><td>每日日誌（<code>YYYY-MM-DD.md</code>）、長期筆記、主題檔 — 跨工作階段持久化上下文</td></tr>
+<tr><td><code>shared_skills/</code></td><td>所有代理可用的技能（superpowers 工作流程、claw-core-workspace、model-selection-agent 等）</td></tr>
+<tr><td><code>projects/</code></td><td>外部倉庫的符號連結或克隆 — 在 <code>projects/repo-name/</code> 內工作，保持在工作區內</td></tr>
+<tr><td><code>generated/exports/</code></td><td>產生產物</td></tr>
+</tbody>
+</table>
+</div>
+<p><code>setup-cursor</code> 會呼叫 <code>init-workspace.cjs</code>，後者會複製 <code>WORKSPACE.md</code> 與 <code>.gitignore</code>，並從 <code>default-skills.json</code> 安裝預設技能到 <code>shared_skills/</code>。進階使用者可執行 <code>node $PLUGIN_ROOT/scripts/init-workspace.cjs init</code>（或 <code>reset</code>）來重新初始化或重置工作區。</p>
+<h3 id="依賴"><a class="header" href="#依賴">依賴</a></h3>
+<ul>
+<li><strong>Cursor CLI</strong> 在 PATH 中（<code>agent</code> 或 <code>cursor</code> — 有 <code>agent</code> 時優先使用）</li>
+<li><strong>Cursor 登入：</strong> 執行 <code>agent login</code> 或 <code>cursor agent login</code> 或設定 <code>CURSOR_API_KEY</code></li>
+</ul>
+<h3 id="自動設定首次啟動"><a class="header" href="#自動設定首次啟動">自動設定（首次啟動）</a></h3>
+<p><code>openclaw clawcore start</code> 首次執行下載 binary 時，會自動執行 <code>setup-cursor-integration.cjs</code>。</p>
+<h3 id="手動設定"><a class="header" href="#手動設定">手動設定</a></h3>
+<pre><code class="language-bash"># 一行指令：設定 Cursor 並重啟 gateway
+openclaw clawcore setup-cursor &amp;&amp; openclaw gateway restart
+
+# 使用預設 workspace
+openclaw clawcore setup-cursor
+
+# 指定 workspace
+openclaw clawcore setup-cursor --workspace /path/to/project
+
+# 重啟 gateway
+openclaw gateway restart
+</code></pre>
+<h3 id="透過-agent-聊天"><a class="header" href="#透過-agent-聊天">透過 Agent 聊天</a></h3>
+<p>告訴 Agent：「設定 Cursor 整合」或「set up Cursor integration」。Agent 會使用 <code>cursor-setup</code> skill。</p>
+<h3 id="會寫入-openclawjson-的設定"><a class="header" href="#會寫入-openclawjson-的設定">會寫入 openclaw.json 的設定</a></h3>
+<pre><code class="language-json">{
+  "agents": {
+    "defaults": {
+      "workspace": "~/Documents/claw_core",
+      "cliBackends": {
+        "cursor-cli": {
+          "command": "agent",
+          "args": ["--print", "--output-format", "stream-json", "--workspace", "..."]
+        }
+      }
+    },
+    "list": [
+      { "id": "main", "default": true, "subagents": { "allowAgents": ["*"] } },
+      { "id": "cursor-dev", "model": { "primary": "cursor-cli/auto" } }
+    ]
+  }
+}
+</code></pre>
+<h3 id="疑難排解"><a class="header" href="#疑難排解">疑難排解</a></h3>
+<ul>
+<li><strong><code>agentId is not allowed for sessions_spawn</code></strong>：執行 <code>openclaw clawcore setup-cursor</code>，再執行 <code>openclaw gateway restart</code></li>
+<li><strong>找不到 <code>agent</code> / <code>cursor</code> 指令</strong>：安裝 Cursor CLI 並確認 <code>agent</code> 或 <code>cursor</code> 在 PATH 中</li>
+<li><strong>設定檔 schema 錯誤</strong>：先執行 <code>openclaw doctor --fix</code>，再重新執行 <code>openclaw clawcore setup-cursor</code></li>
+</ul>
+<h2 id="picoclaw選用尚未測試"><a class="header" href="#picoclaw選用尚未測試">PicoClaw（選用，尚未測試）</a></h2>
+<p>外掛（v0.1.8）可整合 <a href="https://github.com/sipeed/picoclaw">PicoClaw</a>，用於快速問答與網頁搜尋。</p>
+<ul>
+<li><strong>工具：</strong> <code>picoclaw_chat</code>（發送訊息）、<code>picoclaw_config</code>（檢視/設定模型、提供者、語言）</li>
+<li><strong>CLI：</strong> <code>openclaw picoclaw status | config | chat "&lt;訊息&gt;"</code></li>
+<li><strong>設定：</strong> 若已安裝 PicoClaw，可於外掛設定中設定 <code>picoClawPath</code> 與 <code>enablePicoClaw: true</code>。</li>
+</ul>
+<p><strong>說明：</strong> PicoClaw 整合<strong>尚未經過測試</strong>，僅作為選用功能提供。如需嘗試，請從 https://github.com/sipeed/picoclaw 安裝 PicoClaw。</p>
+<h2 id="zeroclaw-支援實驗性尚未測試"><a class="header" href="#zeroclaw-支援實驗性尚未測試">ZeroClaw 支援（實驗性，尚未測試）</a></h2>
+<p><a href="https://github.com/ArcadeLabsInc/zeroclaw">ZeroClaw</a> 是一個獨立的全 Rust AI 代理執行環境，專注於效能、最小二進位大小與安全性。與 OpenClaw（Node.js/npm）不同，ZeroClaw 不使用 npm 外掛系統，因此 OpenClaw 外掛無法直接在其中執行。</p>
+<p>然而，<code>claw_core</code> 守護程序協定（Unix socket 上的 JSON）與<strong>執行環境無關</strong>。我們提供了一個獨立的 Rust crate — <a href="https://crates.io/crates/claw-core-protocol"><code>claw-core-protocol</code></a> — 為 ZeroClaw（或任何 Rust 程式）提供型別化的非同步客戶端來連線守護程序。</p>
+<h3 id="運作原理"><a class="header" href="#運作原理">運作原理</a></h3>
+<ol>
+<li><strong>安裝 crate：</strong> 該 crate 已發佈到 crates.io，也可作為路徑依賴從 <code>crates/claw-core-protocol/</code> 取得。</li>
+<li><strong>功能旗標：</strong> ZeroClaw 透過 <code>cargo install zeroclaw --features claw-core</code> 進行整合。</li>
+<li><strong>執行時：</strong> 當 <code>claw-core</code> 功能啟用且 ZeroClaw 設定中 <code>claw_core.enabled = true</code> 時，會註冊一個 <code>ClawCoreExecTool</code>。它連線到同一個守護程序 socket，建立工作階段並執行命令 — 與 OpenClaw 外掛的方式相同。</li>
+</ol>
+<h3 id="架構-1"><a class="header" href="#架構-1">架構</a></h3>
+<pre><code>ZeroClaw（Rust 二進位）
+  └─ claw-core 功能旗標
+       └─ claw-core-protocol crate
+            └─ Unix socket ─── claw_core 守護程序
+</code></pre>
+<h3 id="狀態"><a class="header" href="#狀態">狀態</a></h3>
+<blockquote>
+<p><strong>此整合尚未經過測試。</strong> <code>claw-core-protocol</code> crate 可以編譯，架構已就緒，但尚未在 ZeroClaw + claw_core 守護程序的完整環境中進行端對端測試。使用風險自負，如有問題請在 GitHub 上回報。</p>
+</blockquote>
+<p>詳情請參閱 <a href="https://github.com/wchklaus97/claw-core/tree/main/crates/claw-core-protocol"><code>crates/claw-core-protocol/README.md</code></a>。</p>
+<h2 id="快速參考"><a class="header" href="#快速參考">快速參考</a></h2>
+<ul>
+<li><strong>一步安裝：</strong> <code>openclaw plugins install @wchklaus97hk/claw-core</code>，然後 <code>openclaw clawcore start</code></li>
+<li><strong>本機安裝：</strong> <code>./scripts/install-claw-core-openclaw.sh</code>（用 <code>--force</code> 重裝）</li>
+<li><strong>卸載：</strong> <code>./scripts/remove-claw-core-openclaw.sh</code></li>
+<li><strong>驗證：</strong> <code>./scripts/verify_integration.sh</code></li>
+<li><strong>啟動 Runtime：</strong> <code>openclaw clawcore start</code> 或 daemon 腳本</li>
+<li><strong>檢視狀態：</strong> <code>openclaw clawcore status</code></li>
+<li><strong>設定 Cursor：</strong> <code>openclaw clawcore setup-cursor</code></li>
+<li><strong>RPC：</strong> 從 gateway 呼叫 <code>clawcore.status</code></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="resource-control.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="resource-control.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>
