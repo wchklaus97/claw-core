@@ -123,7 +123,7 @@ if os.path.isfile(skills_list):
             if name in se:
                 del se[name]
                 changed = True
-# Remove Cursor integration (added by setup-cursor-integration.js)
+# Remove Cursor integration (added by setup-cursor-integration.cjs)
 agents = cfg.get("agents", {})
 defaults = agents.get("defaults", {})
 cli_backends = defaults.get("cliBackends")

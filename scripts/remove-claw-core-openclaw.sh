@@ -174,7 +174,7 @@ for name in skill_names:
         del skill_entries[name]
         changed = True
 
-# --- Remove Cursor integration (added by setup-cursor-integration.js) ---
+# --- Remove Cursor integration (added by setup-cursor-integration.cjs) ---
 agents = cfg.get("agents", {})
 defaults = agents.get("defaults", {})
 cli_backends = defaults.get("cliBackends")

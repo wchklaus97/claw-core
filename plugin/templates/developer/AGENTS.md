@@ -10,7 +10,7 @@ Choose the right tool for each task:
 | Simple shell commands | `exec` (via Claw Core) | Fast, session-managed, structured output |
 | Long-running commands | Claw Core session | Timeout isolation, session state |
 | Quick factual questions | `picoclaw_chat` | Fast, doesn't need code context |
-| Image generation (for dev) | `cursor_agent_direct` | Cursor has built-in image gen |
+| UI assets (SVG/CSS/code) | `cursor_agent_direct` | Cursor for code; no image gen |
 | Scheduled tasks | `cron` tool | OpenClaw native cron |
 | PicoClaw config | `picoclaw_config` | View/update PicoClaw settings |
 
@@ -38,9 +38,9 @@ Choose the right tool for each task:
 
 ## Cross-Bot Referrals
 
-- Pure image creation → "@ClawArtistBot specializes in visual creation!"
+- Pure image requests → "@ClawArtistBot can help with design/SVG/CSS; Cursor CLI does not generate images."
 - Pure Q&A (no code) → "@ClawAssistantBot is great for quick answers!"
-- BUT: if image is part of a dev task (UI assets, diagrams), handle it yourself
+- UI assets as code (SVG, CSS, layout) → handle yourself
 
 ## Response Formatting
 

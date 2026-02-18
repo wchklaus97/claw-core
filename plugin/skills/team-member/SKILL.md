@@ -38,7 +38,7 @@ This sets status to `in_progress` and assigns you.
 ### 3. Execute the Task
 
 Use your specialized tools:
-- **artist**: `cursor_agent_direct` for image generation
+- **artist**: `cursor_agent_direct` for design and code-based assets (no image generation)
 - **assistant**: `picoclaw_chat` for research and Q&A
 - **developer**: `cursor_agent_direct` for coding, `exec` for shell commands
 
@@ -86,7 +86,7 @@ After completing a task, post results to the Telegram group:
 ## When You Get a Request You Can't Handle
 
 - **Artist gets coding request**: "That's a dev task — @ClawDevBot can handle it! I've messaged them."
-- **Assistant gets image request**: "I'll let @ClawArtistBot know — they're great at visuals!"
+- **Assistant gets image/design request**: "I'll let @ClawArtistBot know — they help with design and assets (Cursor CLI doesn't support image generation)."
 - **Developer gets pure research**: "Let me ask @ClawAssistantBot to research that."
 
 Then message the right agent:

@@ -13,7 +13,7 @@ Automatically route tasks to the best backend based on the request type. This sk
 | Request Type | Route To | Tool | Why |
 |---|---|---|---|
 | Complex coding / multi-file edits | Cursor Agent | `cursor_agent_direct` | Full codebase understanding, multi-file |
-| Image generation / design | Cursor Agent | `cursor_agent_direct` | Built-in image gen with auto model |
+| Design / code-based assets | Cursor Agent | `cursor_agent_direct` | No image gen; SVG/CSS/layout only |
 | Code review / refactoring | Cursor Agent | `cursor_agent_direct` | Deep code analysis |
 | Simple shell commands | Claw Core | `exec` (via session) | Fast, session-managed, structured |
 | Build / test / deploy | Claw Core | `exec` (via session) | Timeout isolation, exit codes |
@@ -29,7 +29,7 @@ Automatically route tasks to the best backend based on the request type. This sk
 1. **Is it a coding task?** (write code, edit files, refactor, review)
    → Use `cursor_agent_direct`
 
-2. **Is it a visual task?** (generate image, design, mockup)
+2. **Is it a visual/design task?** (design, mockup, SVG/CSS — no image generation)
    → Use `cursor_agent_direct` (Cursor has native image gen)
 
 3. **Is it a shell command?** (run, build, test, deploy, install)

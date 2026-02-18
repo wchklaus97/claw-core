@@ -89,8 +89,8 @@ Cursor 整合優先使用 PATH 中的 `agent`，否則使用 `cursor agent`。�
    - `scripts/cron_helper.py` — 簡單 cron 任務建立
    - `scripts/status_dashboard.py` — 顯示 sessions、cron 任務、活動
    - `scripts/install-skills-to-openclaw.sh` — 將 skills 複製到 `~/.openclaw/skills/`（postinstall 時執行）
-   - `scripts/setup-cursor-integration.js` — 在 openclaw.json 中設定 Cursor CLI 整合
-   - `scripts/teardown-openclaw-config.js` — 清理 openclaw.json 和 skills（用於移除/卸載）
+   - `scripts/setup-cursor-integration.cjs` — 在 openclaw.json 中設定 Cursor CLI 整合
+   - `scripts/teardown-openclaw-config.cjs` — 清理 openclaw.json 和 skills（用於移除/卸載）
 
 Skills 引用 `$PLUGIN_ROOT` 作為腳本路徑（外掛安裝目錄，例如 `~/.openclaw/extensions/claw-core`）。
 

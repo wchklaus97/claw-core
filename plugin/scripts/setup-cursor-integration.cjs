@@ -15,8 +15,8 @@
  * Safe to run multiple times (idempotent); re-running with --workspace updates all paths.
  *
  * Usage:
- *   node setup-cursor-integration.js [--workspace /path/to/project]
- *   CURSOR_WORKSPACE=/path node setup-cursor-integration.js
+ *   node setup-cursor-integration.cjs [--workspace /path/to/project]
+ *   CURSOR_WORKSPACE=/path node setup-cursor-integration.cjs
  */
 
 const fs = require('fs');
@@ -38,10 +38,10 @@ function getWorkspace() {
 
 /**
  * Ensure workspace directory and structure exist.
- * Delegates to init-workspace.js for actual creation.
+ * Delegates to init-workspace.cjs for actual creation.
  */
 function ensureWorkspaceDirs(workspace) {
-  const initScript = path.join(__dirname, 'init-workspace.js');
+  const initScript = path.join(__dirname, 'init-workspace.cjs');
   if (fs.existsSync(initScript)) {
     const { execSync } = require('child_process');
     execSync('node ' + JSON.stringify(initScript) + ' init --workspace ' + JSON.stringify(workspace), { stdio: 'inherit' });

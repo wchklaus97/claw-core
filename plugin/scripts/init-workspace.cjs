@@ -7,9 +7,9 @@
  *   reset  — Back up shared_memory, then recreate workspace from scratch
  *
  * Usage:
- *   node init-workspace.js init  [--workspace /path]
- *   node init-workspace.js reset [--workspace /path]
- *   CURSOR_WORKSPACE=/path node init-workspace.js init
+ *   node init-workspace.cjs init  [--workspace /path]
+ *   node init-workspace.cjs reset [--workspace /path]
+ *   CURSOR_WORKSPACE=/path node init-workspace.cjs init
  */
 
 const fs = require('fs');
@@ -270,7 +270,7 @@ function main() {
     resetWorkspace(workspace);
   } else {
     console.error('Unknown action: ' + action);
-    console.error('Usage: node init-workspace.js {init|reset} [--workspace /path]');
+    console.error('Usage: node init-workspace.cjs {init|reset} [--workspace /path]');
     process.exit(1);
   }
 }

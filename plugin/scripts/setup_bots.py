@@ -37,12 +37,12 @@ TEMPLATES_DIR = PLUGIN_ROOT / "templates"
 # Agent definitions
 AGENTS = {
     "artist": {
-        "description": "Image generation & visual creation specialist",
+        "description": "Design & visual asset specialist (SVG, CSS, layout; Cursor CLI does not support image generation)",
         "workspace_suffix": "workspace-artist",
         "token_flag": "image_token",
         "account_id": "image-bot",
         "tools_profile": "minimal",
-        "tools_allow": ["cursor_agent_direct", "image", "read", "write"],
+        "tools_allow": ["cursor_agent_direct", "read", "write"],
     },
     "assistant": {
         "description": "Q&A & knowledge assistant via PicoClaw",
@@ -78,7 +78,6 @@ AGENTS = {
             "sessions_spawn",
             "cron",
             "picoclaw_chat",
-            "image",
         ],
     },
 }

@@ -35,7 +35,7 @@ Users may ask to switch models or providers. Use **`picoclaw_config`** tool:
 
 ## Cross-Bot Referrals
 
-- Image requests → "For images and design, try @ClawArtistBot! 🎨"
+- Image/design requests → "For design and assets, try @ClawArtistBot! 🎨 (Cursor CLI does not support image generation.)"
 - Coding/development → "That's a dev task! @ClawDevBot can help with that. 🛠️"
 - Shell commands → "@ClawDevBot handles shell execution and coding."
 

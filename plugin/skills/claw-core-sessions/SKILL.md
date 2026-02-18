@@ -7,41 +7,62 @@
 ## What This Skill Is For
 
 - **List sessions** — see active sessions (name, id, working_dir, state)
-- **Inspect session** — get details for a specific session
+- **Create session** — create a named session for persistent work
+- **Run in session** — execute a command in an existing session (by name or id)
 - **Destroy session** — terminate a session when done or stuck
 
 ---
 
-## Protocol (claw_core socket)
+## How To Use
 
-Connect to `$CLAW_CORE_SOCKET` (default `/tmp/trl.sock`), send JSON-RPC:
+The plugin ships `claw_core_sessions.py`. Always use this script — do NOT use raw `socat` or JSON-RPC directly.
 
-### session.list
+### List all sessions
 
-```json
-{"id":"1","method":"session.list","params":{}}
+```bash
+python3 $PLUGIN_ROOT/scripts/claw_core_sessions.py list
 ```
 
-Response:
+Output example:
 
-```json
-{"ok":true,"data":{"sessions":[{"session_id":"s-xxx","name":"build-env","working_dir":"/tmp/proj","state":"idle",...}]}}
+```
+  s-a71da6ce  name=timeout-test3  state=idle  cwd=/tmp
+  s-6db019de  name=timeout-test2  state=idle  cwd=/tmp
 ```
 
-### session.info
+If no sessions exist, prints `No sessions.`
 
-```json
-{"id":"2","method":"session.info","params":{"session_id":"s-xxx"}}
+### Create a named session
+
+```bash
+python3 $PLUGIN_ROOT/scripts/claw_core_sessions.py create --name my-session --cwd /path/to/dir --timeout 300
 ```
 
-### session.destroy
+### Run a command in a session
 
-```json
-{"id":"3","method":"session.destroy","params":{"session_id":"s-xxx","force":true}}
+```bash
+python3 $PLUGIN_ROOT/scripts/claw_core_sessions.py run --name my-session -- ls -la
+python3 $PLUGIN_ROOT/scripts/claw_core_sessions.py run --session-id s-a71da6ce -- echo hello
+```
+
+### Destroy a session
+
+```bash
+python3 $PLUGIN_ROOT/scripts/claw_core_sessions.py destroy --name my-session --force
+python3 $PLUGIN_ROOT/scripts/claw_core_sessions.py destroy --session-id s-a71da6ce --force
 ```
 
 ---
 
-## CLI / Scripts
+## Error Handling
 
-The plugin does not ship a sessions script; agents use the socket protocol directly or the claw repo's `claw_core_sessions.py` if available.
+- If claw_core daemon is not running: `Socket not found: /tmp/trl.sock`
+- If session name not found: `No session_id or name given, or name not found.`
+- Start daemon first: `openclaw clawcore start`
+
+---
+
+## Config
+
+- Socket path: `$CLAW_CORE_SOCKET` (default `/tmp/trl.sock`)
+- Override: `python3 claw_core_sessions.py --socket /path/to/sock list`

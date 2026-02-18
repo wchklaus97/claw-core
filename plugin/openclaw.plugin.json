@@ -1,8 +1,8 @@
 {
   "id": "claw-core",
   "name": "Claw Core",
-  "description": "Terminal Runtime Layer with Agent Teams, multi-bot Telegram setup, PicoClaw integration, direct Cursor Agent invocation, and Cursor agent workspace. Provides session-managed command execution, image generation via Cursor, Q&A via PicoClaw, multi-agent team collaboration with shared task boards, shared_memory/shared_skills workspace, and a one-command 3-bot setup (artist, assistant, developer). Linux and macOS only.",
-  "version": "0.1.6",
+  "description": "Terminal Runtime Layer with Agent Teams, multi-bot Telegram setup, PicoClaw integration, direct Cursor Agent invocation, and Cursor agent workspace. Provides session-managed command execution, Q&A via PicoClaw, multi-agent team collaboration with shared task boards, shared_memory/shared_skills workspace, and a one-command 3-bot setup (artist, assistant, developer). Linux and macOS only.",
+  "version": "0.0.7",
   "configSchema": {
     "type": "object",
     "additionalProperties": false,
@@ -138,7 +138,6 @@
     "./skills/plans-mode",
     "./skills/status-dashboard",
     "./skills/cursor-setup",
-    "./skills/image-via-cursor",
     "./skills/picoclaw-bridge",
     "./skills/picoclaw-config",
     "./skills/multi-backend-router",
