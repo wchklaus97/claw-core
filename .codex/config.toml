@@ -1,0 +1,25 @@
+# Codex CLI — project-level configuration
+# Loaded automatically by Codex CLI when the project is trusted.
+# User config at ~/.codex/config.toml takes higher precedence.
+# See: https://developers.openai.com/codex/config-basic
+
+# Default model for non-interactive runs (codex exec)
+model = "gpt-4.1-mini"
+
+# Approval policy: on-request = Codex asks before running commands (safe default)
+# Options: "on-request" | "auto" | "never-auto"
+approval_policy = "on-request"
+
+# Sandbox: workspace-write = Codex can read/write within the working directory
+# Options: "workspace-write" | "read-only" | "danger-full-access"
+sandbox_mode = "workspace-write"
+
+# Web search: cached = use OpenAI's pre-indexed web cache (safer than live)
+# Options: "cached" | "live" | "disabled"
+web_search = "cached"
+
+[features]
+# Enable plan mode (/plan slash command and --plan flag)
+collaboration_modes = true
+# Enable undo via per-turn git ghost snapshots
+undo = true

@@ -2,7 +2,7 @@
   "id": "claw-core",
   "name": "Claw Core",
   "description": "Terminal Runtime Layer with Agent Teams, multi-bot Telegram setup, PicoClaw integration, direct Cursor Agent invocation, and Cursor agent workspace. Provides session-managed command execution, Q&A via PicoClaw, multi-agent team collaboration with shared task boards, shared_memory/shared_skills workspace, and a one-command 3-bot setup (artist, assistant, developer). Linux and macOS only.",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "configSchema": {
     "type": "object",
     "additionalProperties": false,
@@ -50,6 +50,20 @@
       "enableCursorDirect": {
         "type": "boolean",
         "description": "Enable direct Cursor Agent tool (cursor_agent_direct)",
+        "default": true
+      },
+      "codexPath": {
+        "type": "string",
+        "description": "Path to Codex CLI binary. If unset, uses codex from PATH."
+      },
+      "codexTimeout": {
+        "type": "string",
+        "description": "Default timeout for Codex Agent in seconds",
+        "default": "600"
+      },
+      "enableCodexDirect": {
+        "type": "boolean",
+        "description": "Enable direct Codex Agent tool (codex_agent_direct)",
         "default": true
       },
       "teamWorkspaceDir": {
@@ -111,6 +125,17 @@
     "enableCursorDirect": {
       "label": "Enable direct Cursor Agent"
     },
+    "codexPath": {
+      "label": "Codex CLI path",
+      "placeholder": "codex or /path/to/codex"
+    },
+    "codexTimeout": {
+      "label": "Codex timeout (seconds)",
+      "placeholder": "600"
+    },
+    "enableCodexDirect": {
+      "label": "Enable direct Codex Agent"
+    },
     "teamWorkspaceDir": {
       "label": "Team workspace directory",
       "placeholder": "~/.openclaw/teams/"
@@ -134,6 +159,7 @@
     "./skills/claw-core-daemon",
     "./skills/cron-helper",
     "./skills/cursor-agent",
+    "./skills/codex-agent",
     "./skills/cursor-cron-bridge",
     "./skills/plans-mode",
     "./skills/status-dashboard",

@@ -15,7 +15,7 @@
 3. 透過 skills 管理 **claw_core** 生命週期
 4. 當 **claw_core** 不可用時平滑降級到普通 `exec`
 
-## 外掛功能與說明（v0.1.7）
+## 外掛功能與說明（v0.1.8）
 
 claw-core 外掛提供以下能力。
 
@@ -255,7 +255,7 @@ openclaw gateway restart
 
 ## PicoClaw（選用，尚未測試）
 
-外掛（v0.1.7）可整合 [PicoClaw](https://github.com/sipeed/picoclaw)，用於快速問答與網頁搜尋。
+外掛（v0.1.8）可整合 [PicoClaw](https://github.com/sipeed/picoclaw)，用於快速問答與網頁搜尋。
 
 - **工具：** `picoclaw_chat`（發送訊息）、`picoclaw_config`（檢視/設定模型、提供者、語言）
 - **CLI：** `openclaw picoclaw status | config | chat "<訊息>"`

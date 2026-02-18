@@ -49,7 +49,7 @@ The tool returns structured JSON:
 
 ## Fallback Method: sessions_spawn via Claw Core
 
-If `cursor_agent_direct` tool is not available, use **sessions_spawn** to delegate to the `cursor-dev` agent. Do NOT use exec to run `agent` or `cursor agent` — it hangs in headless mode with default text format.
+If `cursor_agent_direct` tool is not available, use **sessions_spawn** to delegate to the `cursor-dev` agent. This is the only valid fallback — do NOT exec cursor directly.
 
 ```json
 {
@@ -62,16 +62,27 @@ If `cursor_agent_direct` tool is not available, use **sessions_spawn** to delega
 }
 ```
 
-- **agentId**: `"cursor-dev"` (uses cursor-cli/auto — model set to auto)
+- **agentId**: `"cursor-dev"` (uses cursor-cli/auto)
 - **task**: The user's request verbatim or a concise summary
 - **runTimeoutSeconds**: 300–600 (Cursor can run long)
 
-### Output Format Options
+## Error Handling — No Further Interaction
 
-```bash
-cursor agent "<prompt>" --print --output-format json
-cursor agent "<prompt>" --print --output-format stream-json
-```
+### When `cursor_agent_direct` returns `ok: false`:
+
+1. **Read the `error` or `output` field** — it contains the failure reason
+2. **Report it to the user directly** — do not retry
+3. **Do NOT** exec cursor, spawn processes, or poll — these all hang or fail the same way
+4. If sessions_spawn is available, try that once as fallback — if it also fails, report to user
+
+### Common errors and what to tell the user:
+
+| Error | Tell user |
+|---|---|
+| `cursor CLI not found` | Run `openclaw clawcore setup-cursor` to configure Cursor integration |
+| `agentId is not allowed` | Run `openclaw clawcore setup-cursor` to register the cursor-dev agent |
+| `timed out` | Task was too long — try breaking it into smaller steps |
+| Empty output | Cursor may not be logged in — run `agent login` or `cursor agent login` |
 
 ## Prerequisites
 
