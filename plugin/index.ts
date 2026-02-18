@@ -3,7 +3,7 @@
  *
  * Features:
  * - Auto-starts claw_core daemon, provides skills and CLI
- * - Agent tools: cursor_agent_direct, picoclaw_chat, picoclaw_config, team_coordinate
+ * - Agent tools: cursor_agent_direct, codex_agent_direct, picoclaw_chat, picoclaw_config, team_coordinate
  * - Multi-bot setup: 3 specialized Telegram bots (artist, assistant, developer)
  * - Agent Teams: multi-agent collaboration with shared task board
  * - PicoClaw bridge: chat, config, status
@@ -35,6 +35,10 @@ function getExecScript(): string {
 
 function getCursorAgentScript(): string {
   return join(PLUGIN_ROOT, "scripts", "cursor_agent_direct.py");
+}
+
+function getCodexAgentScript(): string {
+  return join(PLUGIN_ROOT, "scripts", "codex_agent_direct.py");
 }
 
 function getPicoClawScript(): string {
@@ -229,6 +233,7 @@ export default function register(api: PluginApi) {
   const daemonScript = getDaemonScript();
   const execScript = getExecScript();
   const cursorScript = getCursorAgentScript();
+  const codexScript = getCodexAgentScript();
   const picoScript = getPicoClawScript();
   const sessionsScript = getSessionsScript();
   const setupScript = getSetupBotsScript();
@@ -550,6 +555,9 @@ export default function register(api: PluginApi) {
     const cursorAvailable = isBinaryAvailable(
       pluginConfig.cursorPath || "cursor",
     );
+    const codexAvailable = isBinaryAvailable(
+      pluginConfig.codexPath || "codex",
+    );
     const picoClawAvailable = isBinaryAvailable(
       pluginConfig.picoClawPath || "picoclaw",
     );
@@ -559,6 +567,7 @@ export default function register(api: PluginApi) {
     respond(true, {
       backends: {
         cursor: { available: cursorAvailable },
+        codex: { available: codexAvailable },
         picoclaw: { available: picoClawAvailable },
         clawCore: { available: clawCoreRunning, socket: clawCoreSocket },
       },
@@ -666,6 +675,96 @@ export default function register(api: PluginApi) {
     } else {
       skippedTools.push(
         `cursor_agent_direct (${!enableCursor ? "disabled" : "script not found"})`,
+      );
+    }
+
+    // Tool: codex_agent_direct
+    const enableCodex = pluginConfig.enableCodexDirect !== "false";
+    if (enableCodex && existsSync(codexScript)) {
+      api.registerTool(
+        {
+          name: "codex_agent_direct",
+          description:
+            "Invoke OpenAI Codex CLI directly for coding and complex multi-file operations. " +
+            "Uses the model from ~/.codex/config.toml by default (gpt-5.3-codex for ChatGPT accounts). " +
+            "Use for: coding, refactoring, analysis, multi-file tasks.",
+          parameters: {
+            type: "object",
+            properties: {
+              prompt: {
+                type: "string",
+                description:
+                  "The prompt to send to Codex. Be specific and detailed.",
+              },
+              workspace: {
+                type: "string",
+                description:
+                  "Workspace path for Codex to operate in (optional, passed as -C).",
+              },
+              model: {
+                type: "string",
+                description:
+                  'Model override (optional). Omit to use ~/.codex/config.toml default. Options: gpt-5.3-codex, gpt-4.1, gpt-4.1-mini.',
+              },
+              mode: {
+                type: "string",
+                enum: ["agent", "plan", "ask"],
+                description:
+                  "Codex mode: agent (workspace-write sandbox), plan (same + planning), ask (read-only sandbox). Default: agent.",
+              },
+            },
+            required: ["prompt"],
+          },
+          async execute(
+            _id: string,
+            params: Record<string, unknown>,
+          ) {
+            const prompt = params.prompt as string;
+            const workspace = resolveWorkspace(_id, params, pluginConfig);
+            const model = (params.model as string) || "auto";
+            const mode = params.mode as string | undefined;
+            const args = ["--prompt", prompt, "--model", model];
+            if (mode && mode !== "agent") args.push("--mode", mode);
+            if (workspace) args.push("--workspace", workspace);
+            const timeout =
+              parseInt(pluginConfig.codexTimeout || "600", 10) * 1000;
+            const result = await runPythonScript(codexScript, args, timeout);
+            const data = result.data as Record<string, unknown>;
+
+            const content: Array<{
+              type: string;
+              text?: string;
+            }> = [];
+
+            if (data.output) {
+              content.push({ type: "text", text: data.output as string });
+            } else if (data.error) {
+              content.push({
+                type: "text",
+                text: `Error: ${data.error as string}`,
+              });
+            } else {
+              content.push({ type: "text", text: result.raw || "No output" });
+            }
+
+            const files = (data.files_created as string[]) || [];
+            if (files.length > 0) {
+              const fileList = files.map((f) => `  • ${f}`).join("\n");
+              content.push({
+                type: "text",
+                text: `\n\nGenerated files:\n${fileList}`,
+              });
+            }
+
+            return { content };
+          },
+        },
+        { optional: true },
+      );
+      registeredTools.push("codex_agent_direct");
+    } else {
+      skippedTools.push(
+        `codex_agent_direct (${!enableCodex ? "disabled" : "script not found"})`,
       );
     }
 

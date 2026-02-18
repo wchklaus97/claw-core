@@ -6,6 +6,8 @@ OpenClaw 的 **Claw Core** 終端執行層外掛。安裝後，claw_core 會隨 
 
 **相容性：** 參見 [相容性](#相容性) 了解 OpenClaw 與 Cursor CLI 版本需求。
 
+> **整合狀態：** **Cursor CLI** 與 **OpenAI Codex CLI** 整合已可用但尚未完全整合；**Kilo Code** 尚未執行或測試；**PicoClaw** 與 **ZeroClaw** 尚未完全測試。可能會遇到邊界情況（例如透過 Telegram 委派、工作區信任或回退行為）。使用時請注意，如有問題請回饋。
+
 ## 安裝
 
 ```bash
@@ -114,6 +116,10 @@ openclaw gateway restart
 首次執行 `openclaw clawcore start`（下載 binary 時）也會自動執行。
 
 或在聊天中對 agent 說：「Set up Cursor integration」。
+
+### Cursor IDE 圖片生成（未整合）
+
+Cursor IDE 的圖片生成功能未整合到 claw-core。Cursor IDE 中圖片生成由 agent/編排層與工具處理，與 Cursor CLI 是兩套體系。因此難以將其封裝進 claw-core 進行整合與測試（截至 2026-02-18）。
 
 ## 疑難排解
 

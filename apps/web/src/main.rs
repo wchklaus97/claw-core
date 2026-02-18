@@ -164,6 +164,17 @@ fn Landing(#[props(into)] locale: String) -> Element {
                             span { class: "hero-highlight-card", "data-motion": "card", { t!("hero-highlight-cli") } }
                             span { class: "hero-highlight-card", "data-motion": "card", { t!("hero-highlight-integrations") } }
                         }
+                        p { class: "hero-compliance",
+                            { t!("hero-compliance-prefix") }
+                            " "
+                            a {
+                                href: "https://github.com/wchklaus97/claw-core/blob/main/assets/images/cursor-tos-screenshot.png",
+                                target: "_blank",
+                                rel: "noopener noreferrer",
+                                class: "hero-compliance-link",
+                                { t!("hero-compliance-link") }
+                            }
+                        }
                     }
                 }
 
@@ -390,6 +401,19 @@ fn Landing(#[props(into)] locale: String) -> Element {
                     }
                 }
 
+                section { id: "verify", class: "verify-section", "data-motion": "section",
+                    div { class: "verify-card", "data-motion": "card",
+                        h2 { class: "verify-title", { t!("verify-title") } }
+                        p { class: "verify-desc", { t!("verify-desc") } }
+                        a {
+                            href: "https://github.com/wchklaus97/claw-core#testing",
+                            class: "verify-link",
+                            target: "_blank",
+                            rel: "noopener noreferrer",
+                            { t!("verify-link") }
+                        }
+                    }
+                }
                 section { id: "pricing", class: "pricing-section", "data-motion": "section",
                     h2 { class: "section-title", { t!("pricing-title") } }
                     div { class: "pricing-card", "data-motion": "card",

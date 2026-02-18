@@ -18,6 +18,8 @@ OpenClaw plugin for the **Claw Core** Terminal Runtime Layer. Provides session-m
 
 **Compatibility:** See [Compatibility](#compatibility) for OpenClaw and Cursor CLI versions.
 
+> **Integration status:** **Cursor CLI** and **OpenAI Codex CLI** integrations are functional but not yet fully integrated. **Kilo Code** has not been run or tested yet. **PicoClaw** and **ZeroClaw** have not been fully tested yet. You may encounter edge cases (e.g. when delegating via Telegram, workspace trust, or fallback behavior). Use with care and report issues.
+
 ## Install
 
 ```bash
@@ -294,6 +296,16 @@ openclaw gateway restart
 This is also run automatically on first `openclaw clawcore start` (when binary is downloaded).
 
 Or ask the agent in chat: "Set up Cursor integration".
+
+### Cursor IDE image generation (not integrated)
+
+Cursor IDE's image generation features are **not** integrated into claw-core. In Cursor IDE, image generation is handled by the agent/orchestrator layer and tools—which is separate from the Cursor CLI. Because Cursor IDE and Cursor CLI are different surfaces, it was difficult and ultimately not feasible to wrap image generation for integration and testing with claw-core (as of 18 Feb 2026).
+
+### Cursor ToS — plugin legality
+
+The plugin wraps the Cursor CLI as a local subprocess, which is permitted under Cursor's Terms of Service. Key sections: §1.5 (Use Restrictions — no reverse engineering, no redistribution, no competitive training) and §6 (Third-Party Services — Cursor explicitly anticipates and allows third-party plugins and integrations). The plugin does not bundle or redistribute Cursor, and is not a commercial resale of the service.
+
+ToS last updated Jan 13, 2026. Screenshot on file: [`../assets/images/cursor-tos-screenshot.png`](../assets/images/cursor-tos-screenshot.png)
 
 ## Gateway RPC Methods
 
