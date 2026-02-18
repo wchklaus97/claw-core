@@ -15,7 +15,7 @@
 3. 通过 skills 管理 **claw_core** 生命周期
 4. 当 **claw_core** 不可用时平滑降级到普通 `exec`
 
-## 插件功能与说明（v0.1.7）
+## 插件功能与说明（v0.0.7）
 
 claw-core 插件提供以下能力。
 
@@ -255,7 +255,7 @@ openclaw gateway restart
 
 ## PicoClaw（可选，尚未测试）
 
-插件（v0.1.7）可集成 [PicoClaw](https://github.com/sipeed/picoclaw)，用于快速问答与网页搜索。
+插件（v0.0.7）可集成 [PicoClaw](https://github.com/sipeed/picoclaw)，用于快速问答与网页搜索。
 
 - **工具：** `picoclaw_chat`（发送消息）、`picoclaw_config`（查看/设置模型、提供商、语言）
 - **CLI：** `openclaw picoclaw status | config | chat "<消息>"`

@@ -15,7 +15,7 @@ How `claw_core` integrates with OpenClaw for automatic startup and managed comma
 3. **Manage claw_core** lifecycle via skills
 4. **Fall back gracefully** to normal exec if claw_core is unavailable
 
-## Plugin features and functions (v0.1.7)
+## Plugin features and functions (v0.0.7)
 
 The claw-core plugin provides the following.
 
@@ -255,7 +255,7 @@ Ask the agent: "Set up Cursor integration" or "設定 Cursor 整合". The agent 
 
 ## PicoClaw (optional, not yet tested)
 
-The plugin (v0.1.7) can integrate with [PicoClaw](https://github.com/sipeed/picoclaw), an ultra-lightweight AI assistant, for quick Q&A and web search.
+The plugin (v0.0.7) can integrate with [PicoClaw](https://github.com/sipeed/picoclaw), an ultra-lightweight AI assistant, for quick Q&A and web search.
 
 - **Tools:** `picoclaw_chat` (send messages), `picoclaw_config` (view/set model, provider, language)
 - **CLI:** `openclaw picoclaw status | config | chat "<message>"`
